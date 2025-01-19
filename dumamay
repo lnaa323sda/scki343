@@ -113,7 +113,7 @@ UIGradient.Color = ColorSequence.new{
 UIGradient.Parent = UIStroke
 
 T.Font = Enum.Font.GothamBold
-T.Text = "UI X PRO"
+T.Text = "UI X PRO KAITUN VIP"
 T.TextColor3 = Color3.fromRGB(255, 255, 255)
 T.TextSize = 16.5
 T.TextYAlignment = Enum.TextYAlignment.Bottom
