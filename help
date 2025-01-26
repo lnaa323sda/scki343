@@ -1,0 +1,47 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Hàm gửi yêu cầu kết bạn
+local function sendFriendRequest(player)
+    local success, message = pcall(function()
+        player:RequestFriendship()
+    end)
+    if success then
+        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Please accept to be my friend", "All")
+    else
+        print("Failed to send friend request to " .. player.Name)
+    end
+end
+
+-- Hàm gửi yêu cầu kết bạn cho tất cả người chơi trong server
+local function sendRequestsToAllPlayers()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            sendFriendRequest(player)
+        end
+    end
+end
+
+-- Hàm gửi tin nhắn chat tự động
+local function sendAutoChatMessages()
+    while true do
+        wait(10) -- 10 giây giữa các tin nhắn
+        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Make friends with me, I have VIP server", "All")
+        wait(10) -- Chờ 10 giây sau tin nhắn đầu tiên
+        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Tôi có server vip nè , kết bạn đi anh em", "All")
+        wait(600) -- Lặp lại mỗi 10 phút (600 giây)
+    end
+end
+
+-- Hàm gửi yêu cầu kết bạn lại sau mỗi 2 phút nếu không được chấp nhận
+local function retryFailedRequests()
+    while true do
+        wait(120) -- Mỗi 2 phút
+        sendRequestsToAllPlayers()
+    end
+end
+
+-- Chạy các chức năng
+sendRequestsToAllPlayers()
+retryFailedRequests()
+sendAutoChatMessages()
