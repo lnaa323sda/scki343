@@ -1,47 +1,138 @@
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- Tạo UI chính với các nút có cần gạt
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
 
--- Hàm gửi yêu cầu kết bạn
-local function sendFriendRequest(player)
-    local success, message = pcall(function()
-        player:RequestFriendship()
-    end)
-    if success then
-        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Please accept to be my friend", "All")
-    else
-        print("Failed to send friend request to " .. player.Name)
-    end
-end
+-- Tạo hàm để tạo nút công tắc kiểu cần gạt
+local function createSwitchButton(parent, position, size, defaultText, onColor, offColor, onToggle)
+    local frame = Instance.new("Frame")
+    frame.Parent = parent
+    frame.BackgroundColor3 = offColor
+    frame.Position = position
+    frame.Size = size
 
--- Hàm gửi yêu cầu kết bạn cho tất cả người chơi trong server
-local function sendRequestsToAllPlayers()
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= Players.LocalPlayer then
-            sendFriendRequest(player)
+    local uicornerFrame = Instance.new("UICorner")
+    uicornerFrame.CornerRadius = UDim.new(0, 8)
+    uicornerFrame.Parent = frame
+
+    local label = Instance.new("TextLabel")
+    label.Parent = frame
+    label.BackgroundTransparency = 1
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.Font = Enum.Font.SourceSans
+    label.Text = defaultText .. " OFF"
+    label.TextColor3 = Color3.new(1, 1, 1)
+    label.TextScaled = true
+
+    local switch = Instance.new("Frame")
+    switch.Parent = frame
+    switch.BackgroundColor3 = Color3.new(1, 1, 1)
+    switch.Size = UDim2.new(0, size.Y.Offset - 15, 0, size.Y.Offset - 15)
+    switch.Position = UDim2.new(0, 5, 0, 5)
+
+    local uicornerSwitch = Instance.new("UICorner")
+    uicornerSwitch.CornerRadius = UDim.new(0, 7)
+    uicornerSwitch.Parent = switch
+
+    local isOn = false
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            isOn = not isOn
+            frame.BackgroundColor3 = isOn and onColor or offColor
+            switch:TweenPosition(isOn and UDim2.new(1, -size.Y.Offset - 10, 0, 5) or UDim2.new(0, 5, 0, 5), "Out", "Quad", 0.2, true)
+            label.Text = defaultText .. (isOn and " ON" or " OFF")
+            onToggle(isOn)
         end
-    end
+    end)
+
+    return frame
 end
 
--- Hàm gửi tin nhắn chat tự động
-local function sendAutoChatMessages()
-    while true do
-        wait(10) -- 10 giây giữa các tin nhắn
-        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Make friends with me, I have VIP server", "All")
-        wait(10) -- Chờ 10 giây sau tin nhắn đầu tiên
-        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Tôi có server vip nè , kết bạn đi anh em", "All")
-        wait(600) -- Lặp lại mỗi 10 phút (600 giây)
-    end
-end
+-- Nút ESP với cần gạt
+createSwitchButton(ScreenGui, UDim2.new(0, 0, 0, 50), UDim2.new(0, 150, 0, 30), "ESP", 
+    Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 0), function(state)
+        espEnabled = state
+        if state then
+            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                if player ~= game.Players.LocalPlayer and player.Character then
+                    local char = player.Character
+                    local head = char:FindFirstChild("Head")
+                    if head then
+                        local billboard = Instance.new("BillboardGui", head)
+                        billboard.Size = UDim2.new(0, 100, 0, 50)
+                        billboard.StudsOffset = Vector3.new(0, 3, 0)
+                        billboard.AlwaysOnTop = true
 
--- Hàm gửi yêu cầu kết bạn lại sau mỗi 2 phút nếu không được chấp nhận
-local function retryFailedRequests()
-    while true do
-        wait(120) -- Mỗi 2 phút
-        sendRequestsToAllPlayers()
-    end
-end
+                        local textLabel = Instance.new("TextLabel", billboard)
+                        textLabel.Size = UDim2.new(1, 0, 1, 0)
+                        textLabel.BackgroundTransparency = 1
+                        textLabel.Text = player.Name
+                        textLabel.TextColor3 = Color3.new(1, 1, 1)
+                        textLabel.TextScaled = true
+                    end
+                end
+            end
+        else
+            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                if player.Character then
+                    local head = player.Character:FindFirstChild("Head")
+                    if head then
+                        for _, gui in pairs(head:GetChildren()) do
+                            if gui:IsA("BillboardGui") then
+                                gui:Destroy()
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end)
 
--- Chạy các chức năng
-sendRequestsToAllPlayers()
-retryFailedRequests()
-sendAutoChatMessages()
+-- Nút Aim với cần gạt
+createSwitchButton(ScreenGui, UDim2.new(0, 0, 0, 90), UDim2.new(0, 150, 0, 30), "Aim", 
+    Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 0), function(state)
+        aimEnabled = state
+    end)
+
+-- Nút Fly + Speed với cần gạt
+createSwitchButton(ScreenGui, UDim2.new(0, 0, 0, 130), UDim2.new(0, 150, 0, 30), "Fly+Speed", 
+    Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 0), function(state)
+        flySpeedEnabled = state
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        if state then
+            humanoid.WalkSpeed = 100
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)
+            bodyVelocity.Velocity = Vector3.zero
+            bodyVelocity.Parent = character:WaitForChild("HumanoidRootPart")
+            
+            game:GetService("RunService").RenderStepped:Connect(function()
+                if flySpeedEnabled then
+                    local moveDirection = Vector3.zero
+                    local userInputService = game:GetService("UserInputService")
+
+                    if userInputService:IsKeyDown(Enum.KeyCode.W) then
+                        moveDirection = moveDirection + workspace.CurrentCamera.CFrame.LookVector
+                    end
+                    if userInputService:IsKeyDown(Enum.KeyCode.S) then
+                        moveDirection = moveDirection - workspace.CurrentCamera.CFrame.LookVector
+                    end
+                    if userInputService:IsKeyDown(Enum.KeyCode.A) then
+                        moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector
+                    end
+                    if userInputService:IsKeyDown(Enum.KeyCode.D) then
+                        moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector
+                    end
+
+                    bodyVelocity.Velocity = moveDirection * 50
+                else
+                    bodyVelocity:Destroy()
+                    humanoid.WalkSpeed = 16
+                end
+            end)
+        else
+            humanoid.WalkSpeed = 16
+        end
+    end)
