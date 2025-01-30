@@ -1,0 +1,187 @@
+--[[  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+      ▒██████▒▒▒▒█▒▒▒▒▒█▒▒▒█████▒▒▒██████▒▒▒▒██████▒▒▒███▒▒█▒▒█████▒▒███▒▒▒█▒
+      ▒█▒▒▒▒▒█▒▒▒█▒▒▒▒▒█▒▒█▒▒▒▒▒▒▒▒█▒▒▒▒▒█▒▒▒█▒▒▒▒▒▒▒█▒▒▒▒▒█▒▒█▒▒▒▒▒▒█▒▒█▒▒█▒
+      ▒█▒▒▒▒▒██▒▒█▒▒▒▒▒█▒▒█▒▒▒▒▒▒▒▒█▒▒▒▒▒██▒▒██████▒▒████▒▒█▒▒█▒███▒▒█▒▒▒█▒█▒
+      ▒█▒▒▒▒▒█▒▒▒█▒▒▒▒▒█▒▒█▒▒▒▒▒▒▒▒█▒▒▒▒▒█▒▒▒█▒▒▒▒▒▒▒▒▒▒█▒▒█▒▒█▒▒▒█▒▒█▒▒▒▒██▒
+      ▒██████▒▒▒▒▒█████▒▒▒▒█████▒▒▒██████▒▒▒▒██████▒▒███▒▒▒█▒▒█████▒▒█▒▒▒▒▒█▒
+      ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+]]--
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Duc18-code/ducsharelinkhub/refs/heads/main/uivv"))()
+
+-- Tạo UI chính với các nút có cần gạt
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
+
+-- Tạo hàm để tạo nút công tắc kiểu cần gạt
+local function createSwitchButton(parent, position, size, defaultText, onColor, offColor, onToggle)
+    local frame = Instance.new("Frame")
+    frame.Parent = parent
+    frame.BackgroundColor3 = offColor
+    frame.Position = position
+    frame.Size = size
+
+    local uicornerFrame = Instance.new("UICorner")
+    uicornerFrame.CornerRadius = UDim.new(0, 12)
+    uicornerFrame.Parent = frame
+
+    local label = Instance.new("TextLabel")
+    label.Parent = frame
+    label.BackgroundTransparency = 1
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.Font = Enum.Font.SourceSans
+    label.Text = defaultText .. " OFF"
+    label.TextColor3 = Color3.new(1, 1, 1)
+    label.TextScaled = true
+
+    local switch = Instance.new("Frame")
+    switch.Parent = frame
+    switch.BackgroundColor3 = Color3.new(1, 1, 1)
+    switch.Size = UDim2.new(0, size.Y.Offset - 10, 0, size.Y.Offset - 10)
+    switch.Position = UDim2.new(0, 5, 0, 5)
+
+    local uicornerSwitch = Instance.new("UICorner")
+    uicornerSwitch.CornerRadius = UDim.new(0, 10)
+    uicornerSwitch.Parent = switch
+
+    local isOn = false
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            isOn = not isOn
+            frame.BackgroundColor3 = isOn and onColor or offColor
+            switch:TweenPosition(isOn and UDim2.new(1, -size.Y.Offset - 5, 0, 5) or UDim2.new(0, 5, 0, 5), "Out", "Quad", 0.2, true)
+            label.Text = defaultText .. (isOn and " ON" or " OFF")
+            onToggle(isOn)
+        end
+    end)
+
+    return frame
+end
+
+-- Nút ESP với cần gạt
+createSwitchButton(ScreenGui, UDim2.new(0, 0, 0, 100), UDim2.new(0, 200, 0, 50), "ESP", 
+    Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 0), function(state)
+        espEnabled = state
+        if state then
+            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                if player ~= game.Players.LocalPlayer and player.Character then
+                    local char = player.Character
+                    local head = char:FindFirstChild("Head")
+                    if head then
+                        local billboard = Instance.new("BillboardGui", head)
+                        billboard.Size = UDim2.new(0, 100, 0, 50)
+                        billboard.StudsOffset = Vector3.new(0, 3, 0)
+                        billboard.AlwaysOnTop = true
+
+                        local textLabel = Instance.new("TextLabel", billboard)
+                        textLabel.Size = UDim2.new(1, 0, 1, 0)
+                        textLabel.BackgroundTransparency = 1
+                        textLabel.Text = player.Name
+                        textLabel.TextColor3 = Color3.new(1, 1, 1)
+                        textLabel.TextScaled = true
+                    end
+                end
+            end
+        else
+            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                if player.Character then
+                    local head = player.Character:FindFirstChild("Head")
+                    if head then
+                        for _, gui in pairs(head:GetChildren()) do
+                            if gui:IsA("BillboardGui") then
+                                gui:Destroy()
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end)
+
+-- Nút Aim với cần gạt
+createSwitchButton(ScreenGui, UDim2.new(0, 0, 0, 160), UDim2.new(0, 200, 0, 50), "Aim", 
+    Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 0), function(state)
+        aimEnabled = state
+        if state then
+            game:GetService("RunService").RenderStepped:Connect(function()
+                if aimEnabled then
+                    local closestPlayer = nil
+                    local shortestDistance = math.huge
+
+                    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                        if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
+                            local head = player.Character:FindFirstChild("Head")
+                            if head then
+                                local screenPosition, onScreen = workspace.CurrentCamera:WorldToViewportPoint(head.Position)
+                                if onScreen then
+                                    local mousePosition = game:GetService("UserInputService"):GetMouseLocation()
+                                    local distance = (Vector2.new(screenPosition.X, screenPosition.Y) - mousePosition).Magnitude
+                                    if distance < shortestDistance then
+                                        closestPlayer = head
+                                        shortestDistance = distance
+                                    end
+                                end
+                            end
+                        end
+                    end
+
+                    if closestPlayer then
+                        local targetPosition = workspace.CurrentCamera:WorldToViewportPoint(closestPlayer.Position)
+                        local mousePosition = game:GetService("UserInputService"):GetMouseLocation()
+                        mousemoverel((targetPosition.X - mousePosition.X) / 5, (targetPosition.Y - mousePosition.Y) / 5)
+                    end
+                end
+            end)
+        end
+    end)
+
+-- Nút Fly + Speed với cần gạt
+createSwitchButton(ScreenGui, UDim2.new(0, 0, 0, 220), UDim2.new(0, 200, 0, 50), "Fly+Speed", 
+    Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 0), function(state)
+        flySpeedEnabled = state
+        if state then
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+
+            -- Tăng tốc độ chạy
+            humanoid.WalkSpeed = 100
+
+            -- Kích hoạt Fly
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)
+            bodyVelocity.Velocity = Vector3.zero
+            bodyVelocity.Parent = character:WaitForChild("HumanoidRootPart")
+
+            game:GetService("RunService").RenderStepped:Connect(function()
+                if flySpeedEnabled then
+                    local moveDirection = Vector3.zero
+                    local userInputService = game:GetService("UserInputService")
+
+                    if userInputService:IsKeyDown(Enum.KeyCode.W) then
+                        moveDirection = moveDirection + workspace.CurrentCamera.CFrame.LookVector
+                    end
+                    if userInputService:IsKeyDown(Enum.KeyCode.S) then
+                        moveDirection = moveDirection - workspace.CurrentCamera.CFrame.LookVector
+                    end
+                    if userInputService:IsKeyDown(Enum.KeyCode.A) then
+                        moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector
+                    end
+                    if userInputService:IsKeyDown(Enum.KeyCode.D) then
+                        moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector
+                    end
+
+                    bodyVelocity.Velocity = moveDirection * 50
+                else
+                    bodyVelocity:Destroy()
+                end
+            end)
+        else
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+
+            -- Đặt lại tốc độ chạy
+            humanoid.WalkSpeed = 16
+        end
+    end)
