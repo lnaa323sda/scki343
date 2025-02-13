@@ -1,0 +1,130 @@
+-- Yae Miko Hub - Quét Toàn Bộ Đảo, Tự Đổi Server, Auto Store Fruit
+
+-- ID để đổi Avatar
+local avatarAssetId = "101013072299995" -- Thay ID này để đổi avatar
+
+-- Tự động đổi Avatar
+pcall(function()
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    player.CharacterAppearanceId = avatarAssetId
+    player:LoadCharacter()
+    print("Avatar đã được đổi thành Asset ID: " .. avatarAssetId)
+end)
+
+-- Tạo UI hiển thị thời gian treo ở giữa màn hình
+local ScreenGui = Instance.new("ScreenGui")
+local TimerLabel = Instance.new("TextLabel")
+
+ScreenGui.Parent = game.CoreGui
+TimerLabel.Parent = ScreenGui
+TimerLabel.Position = UDim2.new(0.5, -75, 0.05, 0)
+TimerLabel.Size = UDim2.new(0, 150, 0, 50)
+TimerLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TimerLabel.TextSize = 20
+TimerLabel.Text = "Treo: 0s"
+
+-- Biến kiểm soát thời gian treo
+local treoThoiGian = 0
+local tamDungDem = false -- Tạm dừng đếm khi phát hiện trái
+
+-- Bắt đầu đếm thời gian treo
+spawn(function()
+    while true do
+        wait(1)
+        if not tamDungDem then
+            treoThoiGian = treoThoiGian + 1
+            TimerLabel.Text = "Treo: " .. treoThoiGian .. "s"
+        end
+    end
+end)
+
+-- Hàm tự động lưu (store) Trái Ác Quỷ
+local function storeFruit(fruitName)
+    local args = {
+        [1] = "StoreFruit",
+        [2] = fruitName
+    }
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+    print("Đã lưu Trái Ác Quỷ: " .. fruitName)
+end
+
+-- Hàm di chuyển để quét toàn bộ các đảo
+local function moveToIsland(position)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(position)
+    wait(2) -- Chờ 2 giây để load dữ liệu ở đảo đó
+end
+
+-- Danh sách vị trí các đảo (thêm hoặc chỉnh sửa tọa độ nếu cần)
+local islands = {
+    Vector3.new(1000, 100, 2000),  -- Đảo 1
+    Vector3.new(3000, 150, 4000),  -- Đảo 2
+    Vector3.new(5000, 200, 6000),  -- Đảo 3
+    Vector3.new(7000, 250, 8000),  -- Đảo 4
+    Vector3.new(9000, 300, 10000), -- Đảo 5
+}
+
+-- Hàm tìm kiếm Trái Ác Quỷ trên toàn bộ các đảo
+local function scanForFruits()
+    for _, islandPos in pairs(islands) do
+        moveToIsland(islandPos)
+        for _, obj in pairs(game.Workspace:GetDescendants()) do
+            if obj:IsA("Tool") and (string.find(obj.Name:lower(), "fruit") or obj:FindFirstChild("Handle")) then
+                print("Phát hiện Trái Ác Quỷ tại đảo:", obj.Name)
+
+                -- Tạm dừng đếm thời gian treo
+                tamDungDem = true
+
+                -- Chờ đến khi đồng hồ đạt 15 giây mới đi nhặt
+                while treoThoiGian < 15 do
+                    wait(1)
+                end
+
+                -- Đi nhặt trái
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = obj.Handle.CFrame
+                wait(1)
+                obj.Parent = game.Players.LocalPlayer.Backpack
+                print("Đã nhặt được trái: " .. obj.Name)
+
+                -- Tự động lưu (store) Trái Ác Quỷ
+                storeFruit(obj.Name)
+
+                -- Tiếp tục đếm thời gian sau khi nhặt xong
+                tamDungDem = false
+                treoThoiGian = 0 -- Reset thời gian treo
+                return true -- Đã tìm thấy và nhặt trái
+            end
+        end
+    end
+    return false -- Không tìm thấy trái trên các đảo
+end
+
+-- Tự tìm Trái Ác Quỷ và tự động đổi server sau khi quét hết đảo
+local function findFruitAndHop()
+    while true do
+        wait(5)
+        local fruitFound = scanForFruits()
+
+        if not fruitFound then
+            print("Không tìm thấy Trái Ác Quỷ trên các đảo, đang đợi 10 giây trước khi chuyển server...")
+            wait(10)
+            print("Đang chuyển server...")
+
+            local HttpService = game:GetService("HttpService")
+            local TeleportService = game:GetService("TeleportService")
+            local PlaceID = game.PlaceId
+
+            local Servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..PlaceID.."/servers/Public?sortOrder=Asc&limit=100")).data
+            for _, server in pairs(Servers) do
+                if server.playing < server.maxPlayers then
+                    TeleportService:TeleportToPlaceInstance(PlaceID, server.id)
+                    break
+                end
+            end
+        end
+    end
+end
+
+-- Bắt đầu Auto Find Fruit
+findFruitAndHop()
