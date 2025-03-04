@@ -1,130 +1,192 @@
--- Yae Miko Hub - Quét Toàn Bộ Đảo, Tự Đổi Server, Auto Store Fruit
+hookfunction(require(game:GetService("ReplicatedStorage").Effect.Container.Death),function() end);
+hookfunction(require(game:GetService("ReplicatedStorage").Effect.Container.Respawn),function() end);
+hookfunction(require(game:GetService("ReplicatedStorage"):WaitForChild("GuideModule")).ChangeDisplayedNPC,function() end);
+require(game.ReplicatedStorage.Util.CameraShaker):Stop();
 
--- ID để đổi Avatar
-local avatarAssetId = "101013072299995" -- Thay ID này để đổi avatar
+if (game.PlaceId==2753915549) then World1=true;
 
--- Tự động đổi Avatar
-pcall(function()
-    local Players = game:GetService("Players")
-    local player = Players.LocalPlayer
-    player.CharacterAppearanceId = avatarAssetId
-    player:LoadCharacter()
-    print("Avatar đã được đổi thành Asset ID: " .. avatarAssetId)
-end)
+elseif (game.PlaceId==4442272183) then World2=true;
 
--- Tạo UI hiển thị thời gian treo ở giữa màn hình
-local ScreenGui = Instance.new("ScreenGui")
-local TimerLabel = Instance.new("TextLabel")
+elseif (game.PlaceId==7449423635) then World3=true;
+end 
 
-ScreenGui.Parent = game.CoreGui
-TimerLabel.Parent = ScreenGui
-TimerLabel.Position = UDim2.new(0.5, -75, 0.05, 0)
-TimerLabel.Size = UDim2.new(0, 150, 0, 50)
-TimerLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TimerLabel.TextSize = 20
-TimerLabel.Text = "Treo: 0s"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V2/refs/heads/main/UiREDzV2.lua"))();
+local v0=MakeWindow({Hub={Title="Min Gaming",Animation="Hop Boss"},
+Key={KeySystem=false,
+Title="Get Key",
+Description="Api By Xeter Hub",
+KeyLink="https://link4m.com/Jguhg",
+Keys={"teddyskibidi"},
+Notifi={Notifications=true,CorrectKey="Đang Chạy Script....",
+Incorrectkey="Key sai",
+CopyKeyLink="Sao Chép Link"}}});
 
--- Biến kiểm soát thời gian treo
-local treoThoiGian = 0
-local tamDungDem = false -- Tạm dừng đếm khi phát hiện trái
-
--- Bắt đầu đếm thời gian treo
+MinimizeButton({Image="http://www.roblox.com/asset/?id=13717478897",
+Size={45,45},Color=Color3.fromRGB(10,10,10),Corner=true,
+Stroke=false,StrokeColor=Color3.fromRGB(255,0,0)});
+local v1=MakeTab({Name="Welcome"});
+local v2=MakeTab({Name="Tab Auto Boss"});
+function CheckNearestTeleporter(v4) local v5=game.Players.LocalPlayer.Data.Level.Value;
+local v6=v4.Position;local v7=math.huge;
+local v8=math.huge;
+local v9=game.PlaceId;
+local v10,v11,v12;
+if (v9==2753915549) then v10=true;
+elseif (v9==4442272183) then v11=true;
+elseif (v9==7449423635) then v12=true;
+end 
+local v13={};
+if v12 then v13={Mansion=Vector3.new( -12471,374, -7551),
+Hydra=Vector3.new(5659,1013, -341),
+["Caslte On The Sea"]=Vector3.new( -5092,315, -3130),
+["Floating Turtle"]=Vector3.new( -12001,332, -8861),
+["Beautiful Pirate"]=Vector3.new(5319,23, -93),
+["Temple Of Time"]=Vector3.new(28286,14897,103)};
+elseif v11 then v13={["Flamingo Mansion"]=Vector3.new( -317,331,597),
+["Flamingo Room"]=Vector3.new(2283,15,867),
+["Cursed Ship"]=Vector3.new(923,125,32853),
+["Zombie Island"]=Vector3.new( -6509,83, -133)};
+elseif v10 then v13={["Sky Island 1"]=Vector3.new( -4652,873, -1754),
+["Sky Island 2"]=Vector3.new( -7895,5547, -380),
+["Under Water Island"]=Vector3.new(61164,5,1820),
+["Under Water Island Entrace"]=Vector3.new(3865,5, -1926)};
+end 
+local v14={};
+for v34,v35 in pairs(v13) do v14[v34]=(v35-v6).Magnitude;end for v38,v39 in pairs(v14) do if (v39<v7) then v7=v39;v8=v39;
+end 
+end 
+local v15;
+for v40,
+v41 in pairs(v14) do if (v41<=v7) then v15=v13[v40];
+end 
+end 
+local v16=(v6-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude;
+if (v8<=v16) then return v15;
+end 
+end 
+function requestEntrance(v17) 
+local v18={"requestEntrance",v17};
+game.ReplicatedStorage.Remotes.CommF_:InvokeServer(unpack(v18));
+local v19=game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame;
+local v20=game.Players.LocalPlayer.Character.HumanoidRootPart;v20.CFrame=CFrame.new(v19.X,v19.Y + 50 ,v19.Z);
+task.wait(0.5);
+end 
+function topos(v22) pcall(function() 
+if (game:GetService("Players").LocalPlayer and game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid") and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and (game:GetService("Players").LocalPlayer.Character.Humanoid.Health>0) and game:GetService("Players").LocalPlayer.Character.HumanoidRootPart) then if  not TweenSpeed then TweenSpeed=350;
+end 
+DefualtY=v22.Y;
+TargetY=v22.Y;
+targetCFrameWithDefualtY=CFrame.new(v22.X,DefualtY,v22.Z);targetPos=v22.Position;
+oldcframe=game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame;
+Distance=(targetPos-game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude;
+if (Distance<=300) then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=v22;
+end 
+local v63=CheckNearestTeleporter(v22);
+if v63 then pcall(function() 
+tween:Cancel();
+end);
+requestEntrance(v63);
+end 
+b1=CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,DefualtY,game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z);
+IngoreY=true;
+if (IngoreY and ((b1.Position-targetCFrameWithDefualtY.Position).Magnitude>5)) then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,DefualtY,game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z);local v77={};local v78=game:GetService("TweenService");local v79=TweenInfo.new((targetPos-game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude/TweenSpeed ,Enum.EasingStyle.Linear);
+tween=v78:Create(game:GetService("Players").LocalPlayer.Character['HumanoidRootPart'],v79,{CFrame=targetCFrameWithDefualtY});
+tween:Play();v77.Stop=function(v91) tween:Cancel();
+end;
+tween.Completed:Wait();
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,TargetY,game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z);
+else local v81={};
+local v82=game:GetService("TweenService");
+local v83=TweenInfo.new((targetPos-game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude/TweenSpeed ,Enum.EasingStyle.Linear);
+tween=v82:Create(game:GetService("Players").LocalPlayer.Character['HumanoidRootPart'],v83,{CFrame=v22});
+tween:Play();
+v81.Stop=function(v92) 
+tween:Cancel();
+end;
+tween.Completed:Wait();game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,TargetY,game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z);end if  not tween then return tween;end return tweenfunc;end end);end function StopTween(v23) if  not v23 then _G.StopTween=true;wait();topos(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame);wait();if game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip"):Destroy();
+end 
+_G.StopTween=false;
+_G.Clip=false;end if game.Players.LocalPlayer.Character:FindFirstChild("Highlight") then game.Players.LocalPlayer.Character:FindFirstChild("Highlight"):Destroy();
+end 
+end
+spawn(function() pcall(function()
+while wait() do if (_G.FarmBoss or _G.DarkFull or _G.DoughFull or _G.RipFull) then if  not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then local v93=Instance.new("BodyVelocity");v93.Name="BodyClip";v93.Parent=game:GetService("Players").LocalPlayer.Character.HumanoidRootPart;v93.MaxForce=Vector3.new(100000,100000,100000);v93.Velocity=Vector3.new(0,0,0);end end end end);end);spawn(function() pcall(function() game:GetService("RunService").Stepped:Connect(function() if (_G.FarmBoss or _G.DarkFull or _G.DoughFull or _G.RipFull) then for v86,v87 in pairs(game:GetService("Players").LocalPlayer.Character:GetDescendants()) do if v87:IsA("BasePart") then v87.CanCollide=false;
+end 
+end
+end 
+end);
+end);
+end);
+PosY=25;
+Type=1;
+spawn(function() 
+while wait() do if (Type==1) then Pos=CFrame.new(0,PosY, -19);elseif (Type==2) then Pos=CFrame.new(19,PosY,0);elseif (Type==3) then Pos=CFrame.new(0,PosY,19);
+elseif (Type==4) then Pos=CFrame.new( -19,PosY,0);
+end 
+end 
+end);
+spawn(function() 
+while wait(0.1) do Type=1;
+wait(0.2);Type=2;wait(0.2);
+Type=3;
+wait(0.2);
+Type=4;
+wait(0.2);
+end 
+end);
+local v3=game.Players.LocalPlayer;
+function AttackNoCoolDown() 
+local v24=v3.Character;if  not v24 then return;
+end 
+local v25=nil;
+for v42,v43 in ipairs(v24:GetChildren()) do if v43:IsA("Tool") then v25=v43;break;
+end 
+end 
+if  not v25 then return;
+end 
+local function v26(v44) return v44 and v44:FindFirstChild("Humanoid") and (v44.Humanoid.Health>0) ;
+end 
+local function v27(v45) local v46=game:GetService("Workspace").Enemies:GetChildren();
+local v47={};local v48=v24:GetPivot().Position;for v49,v50 in ipairs(v46) do local v51=v50:FindFirstChild("HumanoidRootPart");
+if (v51 and v26(v50) and ((v51.Position-v48).Magnitude<=v45)) then table.insert(v47,v50);
+end 
+end 
+return v47;
+end 
+if v25:FindFirstChild("LeftClickRemote") then local v52=1;
+local v53=v27(60);
+for v64,v65 in ipairs(v53) do local v66=(v65.HumanoidRootPart.Position-v24:GetPivot().Position).Unit;
+pcall(function() v25.LeftClickRemote:FireServer(v66,v52);
+end);
+v52=v52 + 1 ;
+if (v52>1000000000) then v52=1;
+end
+end
+else 
+local v54={};
+local v55=game:GetService("Workspace").Enemies:GetChildren();
+local v56=v24:GetPivot().Position;local v57=nil;
+for v67,v68 in ipairs(v55) do if ( not v68:GetAttribute("IsBoat") and v26(v68)) then local v88=v68:FindFirstChild("Head");
+if (v88 and ((v56-v88.Position).Magnitude<=60)) then table.insert(v54,{v68,v88});v57=v88;end end end if  not v57 then return;
+end 
+pcall(function() local v69=game:GetService("ReplicatedStorage");local v70=v69:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterAttack");
+local v71=v69:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterHit");
+if ( #v54>0) then v70:FireServer(1e-9);v71:FireServer(v57,v54);
+else 
+task.wait(1e-9);
+end 
+end);
+end 
+end 
+_G.FastAttack=true;
 spawn(function()
-    while true do
-        wait(1)
-        if not tamDungDem then
-            treoThoiGian = treoThoiGian + 1
-            TimerLabel.Text = "Treo: " .. treoThoiGian .. "s"
-        end
-    end
-end)
-
--- Hàm tự động lưu (store) Trái Ác Quỷ
-local function storeFruit(fruitName)
-    local args = {
-        [1] = "StoreFruit",
-        [2] = fruitName
-    }
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
-    print("Đã lưu Trái Ác Quỷ: " .. fruitName)
+while wait(0.1) do if 
+_G.FastAttack then pcall(function() repeat task.wait(0.1);AttackNoCoolDown();
+until  not 
+_G.FastAttack 
+end);
 end
-
--- Hàm di chuyển để quét toàn bộ các đảo
-local function moveToIsland(position)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(position)
-    wait(2) -- Chờ 2 giây để load dữ liệu ở đảo đó
-end
-
--- Danh sách vị trí các đảo (thêm hoặc chỉnh sửa tọa độ nếu cần)
-local islands = {
-    Vector3.new(1000, 100, 2000),  -- Đảo 1
-    Vector3.new(3000, 150, 4000),  -- Đảo 2
-    Vector3.new(5000, 200, 6000),  -- Đảo 3
-    Vector3.new(7000, 250, 8000),  -- Đảo 4
-    Vector3.new(9000, 300, 10000), -- Đảo 5
-}
-
--- Hàm tìm kiếm Trái Ác Quỷ trên toàn bộ các đảo
-local function scanForFruits()
-    for _, islandPos in pairs(islands) do
-        moveToIsland(islandPos)
-        for _, obj in pairs(game.Workspace:GetDescendants()) do
-            if obj:IsA("Tool") and (string.find(obj.Name:lower(), "fruit") or obj:FindFirstChild("Handle")) then
-                print("Phát hiện Trái Ác Quỷ tại đảo:", obj.Name)
-
-                -- Tạm dừng đếm thời gian treo
-                tamDungDem = true
-
-                -- Chờ đến khi đồng hồ đạt 15 giây mới đi nhặt
-                while treoThoiGian < 15 do
-                    wait(1)
-                end
-
-                -- Đi nhặt trái
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = obj.Handle.CFrame
-                wait(1)
-                obj.Parent = game.Players.LocalPlayer.Backpack
-                print("Đã nhặt được trái: " .. obj.Name)
-
-                -- Tự động lưu (store) Trái Ác Quỷ
-                storeFruit(obj.Name)
-
-                -- Tiếp tục đếm thời gian sau khi nhặt xong
-                tamDungDem = false
-                treoThoiGian = 0 -- Reset thời gian treo
-                return true -- Đã tìm thấy và nhặt trái
-            end
-        end
-    end
-    return false -- Không tìm thấy trái trên các đảo
-end
-
--- Tự tìm Trái Ác Quỷ và tự động đổi server sau khi quét hết đảo
-local function findFruitAndHop()
-    while true do
-        wait(5)
-        local fruitFound = scanForFruits()
-
-        if not fruitFound then
-            print("Không tìm thấy Trái Ác Quỷ trên các đảo, đang đợi 10 giây trước khi chuyển server...")
-            wait(10)
-            print("Đang chuyển server...")
-
-            local HttpService = game:GetService("HttpService")
-            local TeleportService = game:GetService("TeleportService")
-            local PlaceID = game.PlaceId
-
-            local Servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..PlaceID.."/servers/Public?sortOrder=Asc&limit=100")).data
-            for _, server in pairs(Servers) do
-                if server.playing < server.maxPlayers then
-                    TeleportService:TeleportToPlaceInstance(PlaceID, server.id)
-                    break
-                end
-            end
-        end
-    end
-end
-
--- Bắt đầu Auto Find Fruit
-findFruitAndHop()
+end 
+end);
+function AutoHaki()
+if  not game:GetService("Players").LocalPlayer.Character:FindFirstChild("HasBuso") then game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso");end end function EquipWeapon(v28) if  not Nill then if game.Players.LocalPlayer.Backpack:FindFirstChild(v28) then Tool=game.Players.LocalPlayer.Backpack:FindFirstChild(v28);wait(0.1);game.Players.LocalPlayer.Character.Humanoid:EquipTool(Tool);end end end _G.SelectWeapon="Melee";task.spawn(function() while wait() do pcall(function() if (_G.SelectWeapon=="Melee") then for v89,v90 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do if (v90.ToolTip=="Melee") then if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v90.Name)) then _G.SelectWeapon=v90.Name;end end end elseif (_G.SelectWeapon=="Sword") then for v103,v104 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do if (v104.ToolTip=="Sword") then if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v104.Name)) then _G.SelectWeapon=v104.Name;end end end elseif (_G.SelectWeapon=="Gun") then for v114,v115 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do if (v115.ToolTip=="Gun") then if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v115.Name)) then _G.SelectWeapon=v115.Name;end end end elseif (_G.SelectWeapon=="Fruit") then for v123,v124 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do if (v124.ToolTip=="Blox Fruit") then if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v124.Name)) then _G.SelectWeapon=v124.Name;end end end end end);end end);Di=AddSection(v1,{"Discord"});Dis=AddParagraph(v1,{"Join Discord Update Script",""});AddButton(v1,{Name="Discord",Callback=function() setclipboard("https://discord.com/invite/hcJ8PHtkfy");end});SF=AddSection(v2,{"Farm Boss"});AddButton(v2,{Name="Auto Hop Blackbeard",Callback=function() loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))();end});AddButton(v2,{Name="Auto Hop Rip Indra",Callback=function() loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))();end});AddButton(v2,{Name="Auto Hop Dough King",Callback=function() loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))();end});SelectWeapon=AddDropdown(v2,{Name="Select Boss",Options={"rip_indra True Form","Dough King","Darkbeard"},Default="false",Callback=function(v29) _G.SelectBoss=v29;end});Toggle=AddToggle(v2,{Name="Farm Boss Select",Default=false,Callback=function(v30) _G.FarmBoss=v30;StopTween(_G.FarmBoss);end});spawn(function() while wait() do if _G.FarmBoss then pcall(function() if game:GetService("Workspace").Enemies:FindFirstChild(_G.SelectBoss) then for v105,v106 in pairs(game:GetService("Workspace").Enemies:GetChildren()) do if (v106.Name==_G.SelectBoss) then if (v106:FindFirstChild("Humanoid") and v106:FindFirstChild("HumanoidRootPart") and (v106.Humanoid.Health>0)) then repeat task.wait();AutoHaki();EquipWeapon(_G.SelectWeapon);v106.HumanoidRootPart.CanCollide=false;v106.Humanoid.WalkSpeed=0;topos(v106.HumanoidRootPart.CFrame * Pos );sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);until  not _G.FarmBoss or  not v106.Parent or (v106.Humanoid.Health<=0)  end end end elseif game:GetService("ReplicatedStorage"):FindFirstChild(_G.SelectBoss) then topos(game:GetService("ReplicatedStorage"):FindFirstChild(_G.SelectBoss).HumanoidRootPart.CFrame * CFrame.new(5,10,7) );end end);end end end);AF=AddSection(v2,{"Farm Boss Fully"});Toggle=AddToggle(v2,{Name="Auto Darkbeard And Hop",Default=false,Callback=function(v31) _G.DarkFull=v31;StopTween(_G.DarkFull);end});spawn(function() while wait() do if (_G.DarkFull and  not BypassTP) then pcall(function() local v72=game:GetService("Workspace").Enemies;if v72:FindFirstChild("Darkbeard") then for v107,v108 in pairs(v72:GetChildren()) do if ((v108.Name=="Darkbeard") and v108:FindFirstChild("Humanoid") and v108:FindFirstChild("HumanoidRootPart") and (v108.Humanoid.Health>0)) then repeat task.wait();AutoHaki();EquipWeapon(_G.SelectWeapon);v108.HumanoidRootPart.CanCollide=false;v108.Humanoid.WalkSpeed=0;topos(v108.HumanoidRootPart.CFrame * Pos );sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);until  not _G.DarkFull or  not v108.Parent or (v108.Humanoid.Health<=0)  end end else local v99=game:GetService("ReplicatedStorage"):FindFirstChild("Darkbeard");if v99 then topos(v99.HumanoidRootPart.CFrame * CFrame.new(5,10,7) );else wait(3);loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))();end end end);end end end);Toggle=AddToggle(v2,{Name="Auto Rip Indra And Hop",Default=false,Callback=function(v32) _G.RipFull=v32;StopTween(_G.RipFull);end});spawn(function() while wait() do if (_G.RipFull and  not BypassTP) then pcall(function() local v73=game:GetService("Workspace").Enemies;if v73:FindFirstChild("rip_indra True Form") then for v109,v110 in pairs(v73:GetChildren()) do if ((v110.Name=="rip_indra True Form") and v110:FindFirstChild("Humanoid") and v110:FindFirstChild("HumanoidRootPart") and (v110.Humanoid.Health>0)) then repeat task.wait();AutoHaki();EquipWeapon(_G.SelectWeapon);v110.HumanoidRootPart.CanCollide=false;v110.Humanoid.WalkSpeed=0;topos(v110.HumanoidRootPart.CFrame * Pos );sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);until  not _G.RipFull or  not v110.Parent or (v110.Humanoid.Health<=0)  end end else local v100=game:GetService("ReplicatedStorage"):FindFirstChild("rip_indra True Form");if v100 then topos(v100.HumanoidRootPart.CFrame * CFrame.new(5,10,7) );else wait(3);loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))();end end end);end end end);Toggle=AddToggle(v2,{Name="Auto Dough King And Hop",Default=false,Callback=function(v33) _G.DoughFull=v33;StopTween(_G.DoughFull);end});spawn(function() while wait() do if (_G.DoughFull and  not BypassTP) then pcall(function() local v74=game:GetService("Workspace").Enemies;if v74:FindFirstChild("Dough King") then for v111,v112 in pairs(v74:GetChildren()) do if ((v112.Name=="Dough King") and v112:FindFirstChild("Humanoid") and v112:FindFirstChild("HumanoidRootPart") and (v112.Humanoid.Health>0)) then repeat task.wait();AutoHaki();EquipWeapon(_G.SelectWeapon);v112.HumanoidRootPart.CanCollide=false;v112.Humanoid.WalkSpeed=0;topos(v112.HumanoidRootPart.CFrame * Pos );sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);until  not _G.DoughFull or  not v112.Parent or (v112.Humanoid.Health<=0)  end end else local v101=game:GetService("ReplicatedStorage"):FindFirstChild("Dough King");if v101 then topos(v101.HumanoidRootPart.CFrame * CFrame.new(5,10,7) );else wait(3);loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))();end end end);end end end);
