@@ -22,8 +22,8 @@ local InterfaceManager =
 local Window =
     Fluent:CreateWindow(
     {
-        Title = "PhatCrystal Hub[Free]",
-        SubTitle = "Make by @phat_crystal",
+        Title = "Rush  [Beta]",
+        SubTitle = "  Make by Duck",
         TabWidth = 160,
         Size = UDim2.fromOffset(530, 350),
         Acrylic = false,
@@ -111,7 +111,7 @@ do
     game:GetService("StarterGui"):SetCore(
         "SendNotification",
         {
-            Title = "Phat Crystal Hub",
+            Title = "Rush",
             Text = "Loaded Success",
             Duration = 10
         }
@@ -4291,10 +4291,10 @@ do
 
     Tabs.Sever:AddButton(
         {
-            Title = "Sever Discord PhatCrystal",
+            Title = "Server Discord Duck",
             Description = "Click to copy the Discord link",
             Callback = function()
-                setclipboard("https://discord.gg/hyGgHBudcs")
+                setclipboard("https://discord.gg/ADZ7H2rwk7")
                 print("Discord link copied!")
             end
         }
@@ -10054,7 +10054,7 @@ RunService.RenderStepped:Connect(
                 Fluent:Notify(
                     {
                         Title = "Prehistoric Island Spawn",
-                        Content = "Phat Hub Notification",
+                        Content = "Rush Notification",
                         Duration = 10
                     }
                 )
