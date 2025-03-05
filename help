@@ -538,21 +538,3 @@ Tabs.Main:AddDropdown({
     end
 })
 
-_G.FarmBoss = false
-
--- Tạo thanh gạt Toggle
-Tabs.Main:AddToggle({
-    Title = "Kill Boss",
-    Description = "Hãy chọn boss trước khi bật",
-    Default = false, -- Trạng thái mặc định là tắt
-    Callback = function(state)
-        -- Đổi trạng thái bật/tắt của Island ESP theo toggle
-        _G.IslandESP = state
-
-        if _G.IslandESP then
-            print(" bật!")
-        else
-            print("tắt!")
-        end
-    end
-})
