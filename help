@@ -35,8 +35,9 @@ local Tabs = {
 Servers=Window:AddTab({ Title="Tab Info" }),
   Status=Window:AddTab({ Title="Tab Server" }),
   Main=Window:AddTab({ Title="Tab Main" }),
+  Item=Window:AddTab({Title = "Get Item" }),
 }
-local Discord = Tabs.Servers:AddSection("Discord")
+local Discord = Tabs.Servers:AddSection("TeleGram")
 Tabs.Servers:AddButton({
         Title="Onyx",
         Description="TeleGram",
@@ -289,14 +290,14 @@ wait(1.0)  loadstring(game:HttpGet("https://raw.githubusercontent.com/ccskiderla
     end
 })
 
-local Main = Tabs.Main:AddSection("Misc")
+local FarmBoss = Tabs.Item:AddSection("Misc")
 
 -- Biến để theo dõi trạng thái bật/tắt
 -- Ban đầu trạng thái tắt
 _G.MysticIsland = false
 
 -- Tạo thanh gạt Toggle
-Tabs.Main:AddToggle({
+Tabs.Item:AddToggle({
     Title = "Auto Bay đến đảo",
     Description = "Không bay nếu không có",
     Default = false, -- Trạng thái mặc định là tắt
@@ -356,7 +357,7 @@ end)
 _G.IslandESP = false
 
 -- Tạo thanh gạt Toggle
-Tabs.Main:AddToggle({
+Tabs.Item:AddToggle({
     Title = "Định vị đảo",
     Description = "Hiện vị trí các đảo",
     Default = false, -- Trạng thái mặc định là tắt
@@ -422,7 +423,7 @@ end)
 
 _G.TweenMGear = false
 
-Tabs.Main:AddButton({
+Tabs.Item:AddButton({
     Title = "Auto Nhặt Gear",
     Description = "1 Click",
     Callback = function()
@@ -474,7 +475,7 @@ end)
 
 _G.Miragenpc = false 
 
-Tabs.Main:AddButton({
+Tabs.Item:AddButton({
     Title = "Bay Đến Npc Bán Trái",
     Description = "1 Click",
     Callback = function()
@@ -520,7 +521,7 @@ spawn(function()
     end
 end)
 
-Tabs.Main:AddDropdown({
+Tabs.Item:AddDropdown({
     Title = "Chọn boss",
     Description = "Chọn danh sách boss cần đấm",
     Items = {"Dough King", "Rip_Indra", "Dark"}, -- Danh sách các tùy chọn
