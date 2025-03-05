@@ -82,7 +82,7 @@ do
     b.Position = UDim2.new(0.103761353, 0, 0.214939028, 0)
     b.Size = UDim2.new(0, 50, 0, 50)
     b.Draggable = true
-    b.Image = "rbxassetid://106595114856025"
+    b.Image = "rbxassetid://129268713156156"
     c.Parent = b
     local function d()
         local e = Instance.new("LocalScript", b)
