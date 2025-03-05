@@ -356,10 +356,10 @@ end)
 
 _G.IslandESP = false
 
--- Tạo thanh gạt Toggle
+-- Tạo thanh gạt Toggle cho ESP Đảo
 Tabs.Item:AddToggle({
     Title = "Định vị đảo",
-    Description = "Hiện vị trí các đảo",
+    Description = "Hiển thị vị trí các đảo",
     Default = false, -- Trạng thái mặc định là tắt
     Callback = function(state)
         -- Đổi trạng thái bật/tắt của Island ESP theo toggle
@@ -386,6 +386,7 @@ function UpdateIslandESP()
                         bill.Size = UDim2.new(1, 200, 1, 30)
                         bill.Adornee = v
                         bill.AlwaysOnTop = true
+
                         local name = Instance.new("TextLabel", bill)
                         name.Font = Enum.Font.GothamBold
                         name.TextSize = 14
@@ -423,12 +424,14 @@ end)
 
 _G.TweenMGear = false
 
-Tabs.Item:AddButton({
+-- Tạo toggle cho Auto Nhặt Gear
+Tabs.Item:AddToggle({
     Title = "Auto Nhặt Gear",
-    Description = "1 Click",
-    Callback = function()
-        -- Đổi trạng thái bật/tắt của Mystic Island
-        _G.TweenMGear = not _G.TweenMGear
+    Description = "Bật/Tắt Auto nhặt gear",
+    Default = false, -- Mặc định là tắt
+    Callback = function(state)
+        -- Đổi trạng thái bật/tắt của _G.TweenMGear theo toggle
+        _G.TweenMGear = state
 
         if _G.TweenMGear then
             print("Auto bay đến gear bật!")
@@ -440,31 +443,39 @@ Tabs.Item:AddButton({
 
 -- Function bay đến vị trí
 function topos(Pos) -- Tween
-    Distance = (Pos.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-    if game.Players.LocalPlayer.Character.Humanoid.Sit == true then game.Players.LocalPlayer.Character.Humanoid.Sit = false end
-    pcall(function() tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart,TweenInfo.new(Distance/350, Enum.EasingStyle.Linear),{CFrame = Pos}) end)
+    local Distance = (Pos.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+    if game.Players.LocalPlayer.Character.Humanoid.Sit == true then 
+        game.Players.LocalPlayer.Character.Humanoid.Sit = false 
+    end
+    pcall(function() 
+        tween = game:GetService("TweenService"):Create(
+            game.Players.LocalPlayer.Character.HumanoidRootPart,
+            TweenInfo.new(Distance / 350, Enum.EasingStyle.Linear),
+            {CFrame = Pos}
+        )
+    end)
     tween:Play()
+    
     if Distance <= 350 then
         tween:Cancel()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Pos
     end
+
     if _G.StopTween == true then
         tween:Cancel()
         _G.Clip = false
     end
 end
 
--- Chạy chức năng bay đến đảo nếu _G.MysticIsland bật
+-- Chạy chức năng tự động nhặt gear nếu _G.TweenMGear bật
 spawn(function()
     pcall(function()
         while wait() do
             if _G.TweenMGear then
                 if game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
                     for i, v in pairs(game:GetService("Workspace").Map.MysticIsland:GetChildren()) do
-                        if v:IsA("MeshPart") then
-                            if v.Material == Enum.Material.Neon then
-                                topos(v.CFrame)
-                            end
+                        if v:IsA("MeshPart") and v.Material == Enum.Material.Neon then
+                            topos(v.CFrame)
                         end
                     end
                 end
@@ -475,38 +486,50 @@ end)
 
 _G.Miragenpc = false 
 
-Tabs.Item:AddButton({
+-- Tạo toggle cho việc bay đến NPC bán trái
+Tabs.Item:AddToggle({
     Title = "Bay Đến Npc Bán Trái",
-    Description = "1 Click",
-    Callback = function()
-        -- Đổi trạng thái bật/tắt của Mystic Island
-        _G.TweenMGear = not _G.TweenMGear
+    Description = "Bật/Tắt Auto bay đến NPC bán trái",
+    Default = false, -- Mặc định là tắt
+    Callback = function(state)
+        -- Đổi trạng thái bật/tắt của _G.Miragenpc theo toggle
+        _G.Miragenpc = state
 
-        if _G.TweenMGear then
-            print("Auto bay đến bật!")
+        if _G.Miragenpc then
+            print("Auto bay đến NPC bật!")
         else
-            print("Auto bay đến tắt!")
+            print("Auto bay đến NPC tắt!")
         end
     end
 })
 
 -- Function bay đến vị trí
 function topos(Pos) -- Tween
-    Distance = (Pos.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-    if game.Players.LocalPlayer.Character.Humanoid.Sit == true then game.Players.LocalPlayer.Character.Humanoid.Sit = false end
-    pcall(function() tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart,TweenInfo.new(Distance/350, Enum.EasingStyle.Linear),{CFrame = Pos}) end)
+    local Distance = (Pos.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+    if game.Players.LocalPlayer.Character.Humanoid.Sit == true then 
+        game.Players.LocalPlayer.Character.Humanoid.Sit = false 
+    end
+    pcall(function() 
+        tween = game:GetService("TweenService"):Create(
+            game.Players.LocalPlayer.Character.HumanoidRootPart,
+            TweenInfo.new(Distance / 350, Enum.EasingStyle.Linear),
+            {CFrame = Pos}
+        )
+    end)
     tween:Play()
+
     if Distance <= 350 then
         tween:Cancel()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Pos
     end
+
     if _G.StopTween == true then
         tween:Cancel()
         _G.Clip = false
     end
 end
 
--- Chạy chức năng bay đến đảo nếu _G.MysticIsland bật
+-- Chạy chức năng bay đến NPC nếu _G.Miragenpc bật
 spawn(function()
     while wait() do
         if _G.Miragenpc then
@@ -521,21 +544,27 @@ spawn(function()
     end
 end)
 
-Tabs.Item:AddDropdown({
-    Title = "Chọn boss",
-    Description = "Chọn danh sách boss cần đấm",
-    Items = {"Dough King", "Rip_Indra", "Dark"}, -- Danh sách các tùy chọn
-    Callback = function(selected)
-        if selected == "Auto Kill Dough King" then
-            -- Thêm hành động Auto Kill Dough King tại đây
-            print("Auto Kill Dough King đã được chọn!")
-        elseif selected == "Option 2" then
-            -- Thêm hành động cho Option 2
-            print("Auto Kill Rip đã được chọn!")
-        elseif selected == "Option 3" then
-            -- Thêm hành động cho Option 3
-            print("Auto Kill Dark đã được chọn!")
-        end
+-- Tạo toggle cho Lock Moon
+local Toggle = Tabs.Item:AddToggle("MyToggle", {Title = "Lock Moon", Default = false })
+
+-- Biến để theo dõi trạng thái
+Toggle:OnChanged(function(Value)
+    _G.LockMoon = Value
+end)
+
+-- Sử dụng RunService để cập nhật liên tục camera
+local RunService = game:GetService("RunService")
+RunService.RenderStepped:Connect(function()
+    if LockFullMoon1 then
+        -- Lấy vị trí của camera và vị trí của mặt trăng
+        local camera = workspace.CurrentCamera
+        local moonPosition = game:GetService("Lighting"):GetMoonDirection() * 10000 -- Phóng to khoảng cách mặt trăng để dễ nhìn
+
+        -- Xác định hướng nhìn từ camera tới mặt trăng
+        local lookAtPosition = camera.CFrame.Position + moonPosition
+
+        -- Đặt camera luôn nhìn về phía mặt trăng
+        camera.CFrame = CFrame.new(camera.CFrame.Position, lookAtPosition)
     end
-})
+end)
 
