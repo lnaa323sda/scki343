@@ -246,4 +246,92 @@ Toggle=AddToggle(v2,{Name="Farm Boss Select",Default=false,Callback=function(v30
 _G.FarmBoss=v30;StopTween(_G.FarmBoss);end});spawn(function() 
 while wait() do if 
 _G.FarmBoss then pcall(function() 
-if game:GetService("Workspace").Enemies:FindFirstChild(_G.SelectBoss) then for v105,v106 in pairs(game:GetService("Workspace").Enemies:GetChildren()) do if (v106.Name==_G.SelectBoss) then if (v106:FindFirstChild("Humanoid") and v106:FindFirstChild("HumanoidRootPart") and (v106.Humanoid.Health>0)) then repeat task.wait();AutoHaki();EquipWeapon(_G.SelectWeapon);v106.HumanoidRootPart.CanCollide=false;v106.Humanoid.WalkSpeed=0;topos(v106.HumanoidRootPart.CFrame * Pos );sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);until  not _G.FarmBoss or  not v106.Parent or (v106.Humanoid.Health<=0)  end end end elseif game:GetService("ReplicatedStorage"):FindFirstChild(_G.SelectBoss) then topos(game:GetService("ReplicatedStorage"):FindFirstChild(_G.SelectBoss).HumanoidRootPart.CFrame * CFrame.new(5,10,7) );end end);end end end);AF=AddSection(v2,{"Farm Boss Fully"});Toggle=AddToggle(v2,{Name="Auto Darkbeard And Hop",Default=false,Callback=function(v31) _G.DarkFull=v31;StopTween(_G.DarkFull);end});spawn(function() while wait() do if (_G.DarkFull and  not BypassTP) then pcall(function() local v72=game:GetService("Workspace").Enemies;if v72:FindFirstChild("Darkbeard") then for v107,v108 in pairs(v72:GetChildren()) do if ((v108.Name=="Darkbeard") and v108:FindFirstChild("Humanoid") and v108:FindFirstChild("HumanoidRootPart") and (v108.Humanoid.Health>0)) then repeat task.wait();AutoHaki();EquipWeapon(_G.SelectWeapon);v108.HumanoidRootPart.CanCollide=false;v108.Humanoid.WalkSpeed=0;topos(v108.HumanoidRootPart.CFrame * Pos );sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);until  not _G.DarkFull or  not v108.Parent or (v108.Humanoid.Health<=0)  end end else local v99=game:GetService("ReplicatedStorage"):FindFirstChild("Darkbeard");if v99 then topos(v99.HumanoidRootPart.CFrame * CFrame.new(5,10,7) );else wait(3);loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))();end end end);end end end);Toggle=AddToggle(v2,{Name="Auto Rip Indra And Hop",Default=false,Callback=function(v32) _G.RipFull=v32;StopTween(_G.RipFull);end});spawn(function() while wait() do if (_G.RipFull and  not BypassTP) then pcall(function() local v73=game:GetService("Workspace").Enemies;if v73:FindFirstChild("rip_indra True Form") then for v109,v110 in pairs(v73:GetChildren()) do if ((v110.Name=="rip_indra True Form") and v110:FindFirstChild("Humanoid") and v110:FindFirstChild("HumanoidRootPart") and (v110.Humanoid.Health>0)) then repeat task.wait();AutoHaki();EquipWeapon(_G.SelectWeapon);v110.HumanoidRootPart.CanCollide=false;v110.Humanoid.WalkSpeed=0;topos(v110.HumanoidRootPart.CFrame * Pos );sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);until  not _G.RipFull or  not v110.Parent or (v110.Humanoid.Health<=0)  end end else local v100=game:GetService("ReplicatedStorage"):FindFirstChild("rip_indra True Form");if v100 then topos(v100.HumanoidRootPart.CFrame * CFrame.new(5,10,7) );else wait(3);loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))();end end end);end end end);Toggle=AddToggle(v2,{Name="Auto Dough King And Hop",Default=false,Callback=function(v33) _G.DoughFull=v33;StopTween(_G.DoughFull);end});spawn(function() while wait() do if (_G.DoughFull and  not BypassTP) then pcall(function() local v74=game:GetService("Workspace").Enemies;if v74:FindFirstChild("Dough King") then for v111,v112 in pairs(v74:GetChildren()) do if ((v112.Name=="Dough King") and v112:FindFirstChild("Humanoid") and v112:FindFirstChild("HumanoidRootPart") and (v112.Humanoid.Health>0)) then repeat task.wait();AutoHaki();EquipWeapon(_G.SelectWeapon);v112.HumanoidRootPart.CanCollide=false;v112.Humanoid.WalkSpeed=0;topos(v112.HumanoidRootPart.CFrame * Pos );sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);until  not _G.DoughFull or  not v112.Parent or (v112.Humanoid.Health<=0)  end end else local v101=game:GetService("ReplicatedStorage"):FindFirstChild("Dough King");if v101 then topos(v101.HumanoidRootPart.CFrame * CFrame.new(5,10,7) );else wait(3);loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))();end end end);end end end);
+if game:GetService("Workspace").Enemies:FindFirstChild(_G.SelectBoss) then for v105,v106 in pairs(game:GetService("Workspace").Enemies:GetChildren()) do if (v106.Name==_G.SelectBoss) then if (v106:FindFirstChild("Humanoid") and v106:FindFirstChild("HumanoidRootPart") and (v106.Humanoid.Health>0)) then repeat task.wait();
+AutoHaki();
+EquipWeapon(_G.SelectWeapon);
+v106.HumanoidRootPart.CanCollide=false;
+v106.Humanoid.WalkSpeed=0;topos(v106.HumanoidRootPart.CFrame * Pos );
+sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);
+until  not 
+_G.FarmBoss or  not v106.Parent or (v106.Humanoid.Health<=0)  
+end 
+end 
+end 
+elseif game:GetService("ReplicatedStorage"):FindFirstChild(_G.SelectBoss) then topos(game:GetService("ReplicatedStorage"):FindFirstChild(_G.SelectBoss).HumanoidRootPart.CFrame * CFrame.new(5,10,7) );
+end 
+end);
+end 
+end
+end);
+AF=AddSection(v2,{"Farm Boss Fully"});
+Toggle=AddToggle(v2,{Name="Auto Darkbeard And Hop",Default=false,Callback=function(v31)
+_G.DarkFull=v31;
+StopTween(_G.DarkFull);
+end});
+spawn(function()
+while wait() do if (_G.DarkFull and  not BypassTP) then pcall(function() local v72=game:GetService("Workspace").Enemies;
+if v72:FindFirstChild("Darkbeard") then for v107,v108 in pairs(v72:GetChildren()) do if ((v108.Name=="Darkbeard") and v108:FindFirstChild("Humanoid") and v108:FindFirstChild("HumanoidRootPart") and (v108.Humanoid.Health>0)) then repeat task.wait();AutoHaki();EquipWeapon(_G.SelectWeapon);v108.HumanoidRootPart.CanCollide=false;v108.Humanoid.WalkSpeed=0;topos(v108.HumanoidRootPart.CFrame * Pos );
+sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);
+until  not 
+_G.DarkFull or  not v108.Parent or (v108.Humanoid.Health<=0)  
+end 
+end
+else 
+local v99=game:GetService("ReplicatedStorage"):FindFirstChild("Darkbeard");
+if v99 then topos(v99.HumanoidRootPart.CFrame * CFrame.new(5,10,7) );
+else 
+wait(3); loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))();
+end 
+end 
+end);
+end
+end
+end);
+Toggle=AddToggle(v2,{Name="Auto Rip Indra And Hop",Default=false,Callback=function(v32)
+_G.RipFull=v32;
+StopTween(_G.RipFull);end});
+spawn(function()
+while wait() do if (_G.RipFull and  not BypassTP) then pcall(function() 
+local v73=game:GetService("Workspace").Enemies;
+if v73:FindFirstChild("rip_indra True Form") then for v109,v110 in pairs(v73:GetChildren()) do if ((v110.Name=="rip_indra True Form") and v110:FindFirstChild("Humanoid") and v110:FindFirstChild("HumanoidRootPart") and (v110.Humanoid.Health>0)) then repeat task.wait();AutoHaki();EquipWeapon(_G.SelectWeapon);v110.HumanoidRootPart.CanCollide=false;v110.Humanoid.WalkSpeed=0;topos(v110.HumanoidRootPart.CFrame * Pos );sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);
+until  not 
+_G.RipFull or  not v110.Parent or (v110.Humanoid.Health<=0)  
+end 
+end
+else 
+local v100=game:GetService("ReplicatedStorage"):FindFirstChild("rip_indra True Form");
+if v100 then topos(v100.HumanoidRootPart.CFrame * CFrame.new(5,10,7) );
+else 
+wait(3); loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))();
+end 
+end
+end);
+end 
+end 
+end);
+Toggle=AddToggle(v2,{Name="Auto Dough King And Hop",Default=false,Callback=function(v33) 
+_G.DoughFull=v33;
+StopTween(_G.DoughFull);
+end});
+spawn(function() 
+while wait() do if (_G.DoughFull and  not BypassTP) then pcall(function() 
+local v74=game:GetService("Workspace").Enemies;if v74:FindFirstChild("Dough King") then for v111,v112 in pairs(v74:GetChildren()) do if ((v112.Name=="Dough King") and v112:FindFirstChild("Humanoid") and v112:FindFirstChild("HumanoidRootPart") and (v112.Humanoid.Health>0)) then repeat task.wait();
+AutoHaki();
+EquipWeapon(_G.SelectWeapon);
+v112.HumanoidRootPart.CanCollide=false;
+v112.Humanoid.WalkSpeed=0;
+topos(v112.HumanoidRootPart.CFrame * Pos );sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge);until  not 
+_G.DoughFull or  not v112.Parent or (v112.Humanoid.Health<=0) 
+end 
+end 
+else 
+local v101=game:GetService("ReplicatedStorage"):FindFirstChild("Dough King");
+if v101 then topos(v101.HumanoidRootPart.CFrame * CFrame.new(5,10,7) );
+else 
+wait(3); loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))();
+end 
+end 
+end);
+end
+end
+end);
