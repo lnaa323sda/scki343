@@ -553,46 +553,44 @@ spawn(function()
     end
 end)
 
-local AutoMysticIsland = Tabs.Teleport:AddToggle("MyToggle", {Title="Lock Moon", Default=false })
-Toggle:OnChanged(function(Value)
-    _G.AutoLockMoon = Value
-end)
+local Togglelockmoon =
+              Tabs.Teleport:AddToggle("Togglelockmoon", {Title = "Lock Moon and Use Race Skill", Default = false})
+          Togglelockmoon:OnChanged(
+              function(Value)
+                  _G.AutoLockMoon = Value
+              end
+          )
+          Options.Togglelockmoon:SetValue(false)
 
--- Hàm teleport đến nơi khác và lia tâm vào mặt trăng
-spawn(
-    function()
-        while wait() do
-            pcall(
-                function()
-                    if _G.AutoLockMoon then
-                        -- Lấy vị trí của mặt trăng
-                        local moonDir = game.Lighting:GetMoonDirection()
-                        local playerPos = game.Workspace.CurrentCamera.CFrame.p
-                        -- Vị trí mặt trăng xa hơn để camera hướng chính xác
-                        local moonPos = playerPos + moonDir * 1000
-                        
-                        -- Đặt camera nhìn về phía mặt trăng
-                        game.Workspace.CurrentCamera.CFrame = CFrame.lookAt(playerPos, moonPos)
-                    end
-                end
-            )
-        end
-    end
-)
+          spawn(
+              function()
+                  while wait() do
+                      pcall(
+                          function()
+                              if _G.AutoLockMoon then
+                                  local moonDir = game.Lighting:GetMoonDirection()
+                                  local lookAtPos = game.Workspace.CurrentCamera.CFrame.p + moonDir * 100
+                                  game.Workspace.CurrentCamera.CFrame =
+                                      CFrame.lookAt(game.Workspace.CurrentCamera.CFrame.p, lookAtPos)
+                              end
+                          end
+                      )
+                  end
+              end
+          )
 
--- Gửi phím "T" liên tục khi AutoLockMoon bật
-spawn(
-    function()
-        while wait() do
-            pcall(
-                function()
-                    if _G.AutoLockMoon then
-                        game:GetService("VirtualInputManager"):SendKeyEvent(true, "T", false, game)
-                        wait(0.1)
-                        game:GetService("VirtualInputManager"):SendKeyEvent(false, "T", false, game)
-                    end
-                end
-            )
-        end
-    end
-)
+          spawn(
+              function()
+                  while wait() do
+                      pcall(
+                          function()
+                              if _G.AutoLockMoon then
+                                  game:GetService("VirtualInputManager"):SendKeyEvent(true, "T", false, game)
+                                  wait(0.1)
+                                  game:GetService("VirtualInputManager"):SendKeyEvent(false, "T", false, game)
+                              end
+                          end
+                      )
+                  end
+              end
+          )
