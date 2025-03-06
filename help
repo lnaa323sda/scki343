@@ -408,3 +408,191 @@ spawn(function()
         end
     end)
 end)
+
+local AutoMysticIsland = Tabs.Teleport:AddToggle("MyToggle", {Title="Định vị đảo", Default=false })
+Toggle:OnChanged(function(Value)
+    _G.IslandESP = Value
+end)
+
+-- Hàm teleport đến nơi khác
+function UpdateIslandESP()
+    for i, v in pairs(game:GetService("Workspace")["_WorldOrigin"].Locations:GetChildren()) do
+        pcall(function()
+            if _G.IslandESP then
+                if v.Name ~= "Sea" then -- Lọc bỏ Sea nếu có
+                    if not v:FindFirstChild("IslandESP") then
+                        local bill = Instance.new("BillboardGui", v)
+                        bill.Name = "IslandESP"
+                        bill.ExtentsOffset = Vector3.new(0, 1, 0)
+                        bill.Size = UDim2.new(1, 200, 1, 30)
+                        bill.Adornee = v
+                        bill.AlwaysOnTop = true
+
+                        local name = Instance.new("TextLabel", bill)
+                        name.Font = Enum.Font.GothamBold
+                        name.TextSize = 14
+                        name.TextWrapped = true
+                        name.Size = UDim2.new(1, 0, 1, 0)
+                        name.TextYAlignment = Enum.TextYAlignment.Top
+                        name.BackgroundTransparency = 1
+                        name.TextStrokeTransparency = 0.5
+                        name.TextColor3 = Color3.new(1, 1, 1) -- Màu trắng cho tên
+                    end
+                    v.IslandESP.TextLabel.Text = (v.Name .. "   \n" .. round((game:GetService("Players").LocalPlayer.Character.Head.Position - v.Position).Magnitude) .. " M")
+                end
+            else
+                if v:FindFirstChild("IslandESP") then
+                    v:FindFirstChild("IslandESP"):Destroy()
+                end
+            end
+        end)
+    end
+end
+-- Hàm round để làm tròn số
+local function round(n)
+    return math.floor(tonumber(n) + 0.5)
+end
+-- Hàm di chuyển đến đảo bí ẩn
+spawn(function()
+    while wait(1) do
+        if _G.IslandESP then
+            UpdateIslandESP()
+        end
+    end
+end)
+
+local AutoMysticIsland = Tabs.Teleport:AddToggle("MyToggle", {Title="Bay tới gear", Default=false })
+Toggle:OnChanged(function(Value)
+    _G.TweenMGear = Value
+end)
+
+-- Hàm teleport đến nơi khác
+function topos(Pos) -- Tween
+    local Distance = (Pos.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+    if game.Players.LocalPlayer.Character.Humanoid.Sit == true then 
+        game.Players.LocalPlayer.Character.Humanoid.Sit = false 
+    end
+    pcall(function() 
+        tween = game:GetService("TweenService"):Create(
+            game.Players.LocalPlayer.Character.HumanoidRootPart,
+            TweenInfo.new(Distance / 350, Enum.EasingStyle.Linear),
+            {CFrame = Pos}
+        )
+    end)
+    tween:Play()
+    
+    if Distance <= 350 then
+        tween:Cancel()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Pos
+    end
+
+    if _G.StopTween == true then
+        tween:Cancel()
+        _G.Clip = false
+    end
+end
+-- Hàm di chuyển đến đảo bí ẩn
+spawn(function()
+    pcall(function()
+        while wait() do
+            if _G.TweenMGear then
+                if game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
+                    for i, v in pairs(game:GetService("Workspace").Map.MysticIsland:GetChildren()) do
+                        if v:IsA("MeshPart") and v.Material == Enum.Material.Neon then
+                            topos(v.CFrame)
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+local AutoMysticIsland = Tabs.Teleport:AddToggle("MyToggle", {Title="Bay tới ông bán trái", Default=false })
+Toggle:OnChanged(function(Value)
+    _G.Miragenpc = Value
+end)
+
+-- Hàm teleport đến nơi khác
+function topos(Pos) -- Tween
+    local Distance = (Pos.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+    if game.Players.LocalPlayer.Character.Humanoid.Sit == true then 
+        game.Players.LocalPlayer.Character.Humanoid.Sit = false 
+    end
+    pcall(function() 
+        tween = game:GetService("TweenService"):Create(
+            game.Players.LocalPlayer.Character.HumanoidRootPart,
+            TweenInfo.new(Distance / 350, Enum.EasingStyle.Linear),
+            {CFrame = Pos}
+        )
+    end)
+    tween:Play()
+
+    if Distance <= 350 then
+        tween:Cancel()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Pos
+    end
+
+    if _G.StopTween == true then
+        tween:Cancel()
+        _G.Clip = false
+    end
+end
+-- Hàm di chuyển đến đảo bí ẩn
+spawn(function()
+    while wait() do
+        if _G.Miragenpc then
+            local advancedFruitDealer = game.ReplicatedStorage.NPCs:FindFirstChild("Advanced Fruit Dealer")
+            if advancedFruitDealer and advancedFruitDealer:IsA("Model") then
+                local dealerPosition = advancedFruitDealer.PrimaryPart and advancedFruitDealer.PrimaryPart.Position
+                if dealerPosition then
+                    topos(CFrame.new(dealerPosition))
+                end
+            end
+        end
+    end
+end)
+
+local AutoMysticIsland = Tabs.Teleport:AddToggle("MyToggle", {Title="Lock Moon", Default=false })
+Toggle:OnChanged(function(Value)
+    _G.AutoLockMoon = Value
+end)
+
+-- Hàm teleport đến nơi khác và lia tâm vào mặt trăng
+spawn(
+    function()
+        while wait() do
+            pcall(
+                function()
+                    if _G.AutoLockMoon then
+                        -- Lấy vị trí của mặt trăng
+                        local moonDir = game.Lighting:GetMoonDirection()
+                        local playerPos = game.Workspace.CurrentCamera.CFrame.p
+                        -- Vị trí mặt trăng xa hơn để camera hướng chính xác
+                        local moonPos = playerPos + moonDir * 1000
+                        
+                        -- Đặt camera nhìn về phía mặt trăng
+                        game.Workspace.CurrentCamera.CFrame = CFrame.lookAt(playerPos, moonPos)
+                    end
+                end
+            )
+        end
+    end
+)
+
+-- Gửi phím "T" liên tục khi AutoLockMoon bật
+spawn(
+    function()
+        while wait() do
+            pcall(
+                function()
+                    if _G.AutoLockMoon then
+                        game:GetService("VirtualInputManager"):SendKeyEvent(true, "T", false, game)
+                        wait(0.1)
+                        game:GetService("VirtualInputManager"):SendKeyEvent(false, "T", false, game)
+                    end
+                end
+            )
+        end
+    end
+)
