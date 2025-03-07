@@ -295,7 +295,7 @@ Tabs.Main:AddButton({
     Title="Hop Boss Dark",
     Description="Có thể mất hoặc bị kill chết",
     Callback=function()
-wait(1.0)  loadstring(game:HttpGet("https://raw.githubusercontent.com/obfalchx/Api/refs/heads/main/Dark.txt"))()
+wait(1.0)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()
     end
 })
 
