@@ -1,69 +1,69 @@
 _G.AutoFruit = true -- Bật/tắt auto lấy trái cây
 _G.ResetAfterGetFruit = true -- Bật/tắt reset nhân vật sau khi lấy
 
--- Hàm lấy trái cây có giá trị cao nhất trong kho đồ
+-- 📌 Hàm lấy trái cây có giá trị Beli cao nhất
 function GetHighestValueFruitInInventory()
-    local fruits = {} -- Lưu danh sách trái cây
-    local backpack = game:GetService("Players").LocalPlayer.Backpack -- Lấy kho đồ của người chơi
+    local fruits = {}
+    local player = game:GetService("Players").LocalPlayer
+    local backpack = player:FindFirstChild("Backpack") or player:FindFirstChild("Inventory")
 
+    if not backpack then
+        print("❌ Không tìm thấy kho đồ!")
+        return nil
+    end
+
+    -- 📌 Lấy danh sách trái cây trong kho
     for _, item in pairs(backpack:GetChildren()) do
-        if item:IsA("Tool") then
-            -- Kiểm tra xem item có chứa giá trị Beli không
-            local beliValue = item:FindFirstChild("BeliValue")
-            if beliValue and beliValue:IsA("NumberValue") then
-                table.insert(fruits, {name = item.Name, price = beliValue.Value})
-            else
-                print("Không tìm thấy giá trị Beli của " .. item.Name)
-            end
+        if item:IsA("Tool") and item:FindFirstChild("BeliValue") then
+            table.insert(fruits, {name = item.Name, price = item.BeliValue.Value})
         end
     end
 
-    -- Sắp xếp trái cây theo giá trị Beli từ cao xuống thấp
-    table.sort(fruits, function(a, b)
-        return a.price > b.price
-    end)
+    -- 📌 Sắp xếp trái cây theo giá trị Beli giảm dần
+    table.sort(fruits, function(a, b) return a.price > b.price end)
 
-    -- Nếu có ít nhất một trái cây, trả về trái cây có giá trị cao nhất
-    return #fruits > 0 and fruits[1] or nil
-end
-
--- Hàm lưu trái cây vào kho
-function StoreFruit(fruitName)
-    if not fruitName then return end
-    local remote = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
-    
-    if remote and remote:FindFirstChild("StoreFruit") then
-        remote.StoreFruit:InvokeServer(fruitName)
-        print("Đã lưu trái cây: " .. fruitName)
+    if #fruits > 0 then
+        print("🔍 Trái cây giá trị nhất: " .. fruits[1].name .. " - Giá: " .. fruits[1].price)
+        return fruits[1]
     else
-        print("Không tìm thấy sự kiện StoreFruit")
+        print("❌ Không có trái cây nào trong kho đồ!")
+        return nil
     end
 end
 
--- Hàm reset nhân vật
+-- 📌 Hàm lưu trái cây vào kho
+function StoreFruit(fruitName)
+    local remote = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+    if remote and remote:FindFirstChild("StoreFruit") then
+        remote.StoreFruit:InvokeServer(fruitName)
+        print("✅ Đã lưu trái cây: " .. fruitName)
+    else
+        print("❌ Không tìm thấy sự kiện StoreFruit!")
+    end
+end
+
+-- 📌 Hàm reset nhân vật
 function ResetCharacter()
     local player = game:GetService("Players").LocalPlayer
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         player.Character.Humanoid.Health = 0 -- Reset nhân vật bằng cách giảm máu về 0
+        print("🔄 Reset nhân vật thành công!")
     else
-        print("Không tìm thấy Humanoid để reset nhân vật")
+        print("❌ Không tìm thấy Humanoid để reset nhân vật!")
     end
 end
 
--- Chạy vòng lặp chính
+-- 📌 Chạy vòng lặp chính
 spawn(function()
     while _G.AutoFruit do
-        wait(10) -- Chờ 10 giây trước khi lặp lại
+        wait(10) -- ⏳ Chờ 10 giây trước khi thực hiện lại
 
         local highestFruit = GetHighestValueFruitInInventory()
         if highestFruit then
-            print("Lấy trái cây: " .. highestFruit.name .. " - Giá trị: " .. highestFruit.price)
             StoreFruit(highestFruit.name)
             if _G.ResetAfterGetFruit then
                 ResetCharacter()
             end
-        else
-            print("Không có trái cây nào trong kho đồ")
         end
     end
 end)
