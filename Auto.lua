@@ -60,7 +60,7 @@ Servers=Window:AddTab({ Title="Tab Info" }),
   Status=Window:AddTab({ Title="Tab Server" }),
   Main=Window:AddTab({ Title="Tab Hop" }),
   Item=Window:AddTab({Title = "Tab Main" }),
-  Teleport=Window:AddTab({Title = "Tab Mirage" }),
+  Teleport=Window:AddTab({Title = "Tab Mirage [wait fix]" }),
 }
 local Discord = Tabs.Servers:AddSection("TeleGram")
 Tabs.Servers:AddButton({
