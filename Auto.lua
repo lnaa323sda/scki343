@@ -311,7 +311,7 @@ Tabs.Main:AddButton({
     Title="Hop Boss Dough",
     Description="Có thể mất boss hoặc bị kill mất",
     Callback=function()
-wait(1.0)  loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/dough%20king.luau.txt"))()
+wait(1.0)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))()
     end
 })
 
