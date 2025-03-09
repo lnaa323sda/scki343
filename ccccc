@@ -926,7 +926,7 @@ spawn(
     end
 )
 
-local SF = AddSection(v4, {"Hop"})
+local AT = AddSection(v4, {"Hop"})
 AddButton(
     v4,
     {Name = "Auto Hop Saishi", Callback = function()
