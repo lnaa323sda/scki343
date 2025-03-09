@@ -29,13 +29,13 @@ local v0 =
         Key = {
             KeySystem = true,
             Title = "Get Key",
-            Description = "1 Key Tồn Tại 24h",
-            KeyLink = "https://link4m.com/1VKk0",
+            Description = "2 Link thôi mà",
+            KeyLink = "https://link4m.com/XUiaBFo",
             Keys = {"teddyskibidi2025"},
             Notifi = {
                 Notifications = true,
                 CorrectKey = "Đang Chạy Script....",
-                Incorrectkey = "Key sai con đĩ mẹ mày",
+                Incorrectkey = "Key sai",
                 CopyKeyLink = "Sao Chép Link"
             }
         }
@@ -43,7 +43,7 @@ local v0 =
 )
 MinimizeButton(
     {
-        Image = "http://www.roblox.com/asset/?id=105718426361827",
+        Image = "http://www.roblox.com/asset/?id=136687555060367",
         Size = {45, 45},
         Color = Color3.fromRGB(10, 10, 10),
         Corner = true,
@@ -54,7 +54,7 @@ MinimizeButton(
 local v1 = MakeTab({Name = "Tab Info"})
 local v2 = MakeTab({Name = "Tab Hop"})
 local v3 = MakeTab({Name = "Tab Mirage"})
-local v4 = MakeTab({Name="Tab Legendary Sword"})
+local v4 = MakeTab({Name= "Tab Sword"})
 function CheckNearestTeleporter(v5)
     local v6 = game.Players.LocalPlayer.Data.Level.Value
     local v7 = v5.Position
@@ -925,34 +925,30 @@ spawn(
         )
     end
 )
-SF = AddSection(v4, {"Sword Legendary"})
-
+SF = AddSection(v4, {"Hop"})
 AddButton(
     v4,
     {Name = "Auto Hop Saishi", Callback = function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Saisi.txt"))()
         end}
 )
-
 AddButton(
     v4,
     {Name = "Auto Hop Shizu", Callback = function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Shizu.txt"))()
         end}
 )
-
 AddButton(
     v4,
     {Name = "Auto Hop Oroshi", Callback = function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Oroshi.txt"))()
         end}
 )
-
 Toggle =
     AddToggle(
     v4,
-    {Name = "Auto Buy Sword Legendary", Default = false, Callback = function(v40)
-        _G.BuyLegendarySword = v40
+    {Name = "Auto Buy Sword Legendary", Default = false, Callback = function()
+        _G.BuyLegendarySword = v4
             StopTween(_G.BuyLegendarySword)
         end}
 )
