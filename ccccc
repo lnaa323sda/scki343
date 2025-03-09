@@ -925,7 +925,8 @@ spawn(
         )
     end
 )
-SF = AddSection(v4, {"Hop"})
+
+local SF = AddSection(v4, {"Hop"})
 AddButton(
     v4,
     {Name = "Auto Hop Saishi", Callback = function()
@@ -944,27 +945,32 @@ AddButton(
             loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Oroshi.txt"))()
         end}
 )
-Toggle =
+local Toggle = 
     AddToggle(
     v4,
-    {Name = "Auto Buy Sword Legendary", Default = false, Callback = function()
-        _G.BuyLegendarySword = v4
+    {Name = "Auto Buy Sword Legendary", Default = false, Callback = function(state)
+        _G.BuyLegendarySword = state
+        if not state then
             StopTween(_G.BuyLegendarySword)
-        end}
+        end
+    end}
 )
-spawn(
-    function() 
-        while wait() 
-        do if _G.BuyLegendarySword then 
+
+-- Spawn thread to auto-buy Legendary Sword
+spawn(function() 
+    while wait() do 
+        if _G.BuyLegendarySword then 
             pcall(function()
                 local v4={[1]="LegendarySwordDealer",[2]="1"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
                 local v4={[1]="LegendarySwordDealer",[2]="2"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
                 local v4={[1]="LegendarySwordDealer",[2]="3"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
+                
+                -- Hop server after buying sword in World2
                 if (_G.BuyLegendarySword_Hop and _G.BuyLegendarySword and World2) then
-                    wait(10) Hop()
+                    wait(10)
+                    Hop() -- function to hop server
                 end 
             end)
         end 
     end 
 end)
-                
