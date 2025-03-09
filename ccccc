@@ -29,13 +29,13 @@ local v0 =
         Key = {
             KeySystem = true,
             Title = "Get Key",
-            Description = "2 Link thôi mà",
+            Description = "1 Key Tồn Tại 24h",
             KeyLink = "https://link4m.com/XUiaBFo",
             Keys = {"teddyskibidi2025"},
             Notifi = {
                 Notifications = true,
                 CorrectKey = "Đang Chạy Script....",
-                Incorrectkey = "Key sai",
+                Incorrectkey = "Key sai con đĩ mẹ mày",
                 CopyKeyLink = "Sao Chép Link"
             }
         }
