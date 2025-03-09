@@ -1,3 +1,8 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"))()
+while task.wait() do
+     Click(0.000000000000000000000000000000004)
+end
+    
 hookfunction(
     require(game:GetService("ReplicatedStorage").Effect.Container.Death),
     function()
@@ -25,11 +30,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V2
 local v0 =
     MakeWindow(
     {
-        Hub = {Title = "Teddy Hub [Pro]", Animation = "Teddy Hub Auto Hop"},
+        Hub = {Title = "Teddy Hub [Pro]", Animation = "Welcome Teddy Hub"},
         Key = {
             KeySystem = true,
             Title = "Get Key",
-            Description = "2 Link thôi mà",
+            Description = "Update : 10/03/2025",
             KeyLink = "https://link4m.com/XUiaBFo",
             Keys = {"teddyskibidi2025"},
             Notifi = {
@@ -970,52 +975,3 @@ spawn(
         )
     end
 )
-
-AT = AddSection(v4, {"Hop"})
-AddButton(
-    v4,
-    {Name = "Auto Hop Saishi", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Saisi.txt"))()
-        end}
-)
-AddButton(
-    v4,
-    {Name = "Auto Hop Shizu", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Shizu.txt"))()
-        end}
-)
-AddButton(
-    v4,
-    {Name = "Auto Hop Oroshi", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Oroshi.txt"))()
-        end}
-)
-local Toggle = 
-    AddToggle(
-    v4,
-    {Name = "Auto Buy Sword Legendary", Default = false, Callback = function(state)
-        _G.BuyLegendarySword = state
-        if not state then
-            StopTween(_G.BuyLegendarySword)
-        end
-    end}
-)
-
--- Spawn thread to auto-buy Legendary Sword
-spawn(function() 
-    while wait() do 
-        if _G.BuyLegendarySword then 
-            pcall(function()
-                local v4={[1]="LegendarySwordDealer",[2]="1"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
-                local v4={[1]="LegendarySwordDealer",[2]="2"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
-                local v4={[1]="LegendarySwordDealer",[2]="3"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
-                
-                -- Hop server after buying sword in World2
-                if (_G.BuyLegendarySword_Hop and _G.BuyLegendarySword and World2) then
-                    wait(10)
-                    Hop() -- function to hop server
-                end 
-            end)
-        end 
-    end 
-end)
