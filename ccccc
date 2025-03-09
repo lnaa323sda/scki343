@@ -32,7 +32,7 @@ local v0 =
     {
         Hub = {Title = "Teddy Hub [Pro]", Animation = "Teddy Hub Auto Hop"},
         Key = {
-            KeySystem = true,
+            KeySystem = false,
             Title = "Get Key",
             Description = "2 Link thôi mà",
             KeyLink = "https://link4m.com/XUiaBFo",
