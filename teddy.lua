@@ -787,7 +787,8 @@ Toggle =
             StopTween(_G.BuyLegendarySword)
         end
     end}
-)-- Spawn thread to auto-buy Legendary Sword
+)
+-- Spawn thread to auto-buy Legendary Sword
 spawn(function() 
     while wait() do 
         if _G.BuyLegendarySword then 
