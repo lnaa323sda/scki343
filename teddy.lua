@@ -976,11 +976,13 @@ spawn(
         )
     end
 )
-Toggle =
+Toggle = 
     AddToggle(
-    v3,
-    {Name = "Bay đến đền thờ", Default = false, Callback = function()
-        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(28286.35546875, 14895.3017578125, 102.62469482421875))
-        Tween2(CFrame.new(28575.181640625, 14936.6279296875, 72.31636810302734))
-        end}
+    v3, 
+    {Name = "Bay đến đền thờ", Default = false, Callback = function(state)
+        if state then
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(28286.35546875, 14895.3017578125, 102.62469482421875))
+            Tween2(CFrame.new(28575.181640625, 14936.6279296875, 72.31636810302734))
+        end
+    end}
 )
