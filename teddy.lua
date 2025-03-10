@@ -487,6 +487,24 @@ AddButton(
             setclipboard("https://discord.gg/rSWEGGrHZP")
         end}
 )
+AddButton(
+    v1,
+    {Name = "Dịch chuyển sea 1", Callback = function()
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelMain")
+        end}
+)
+AddButton(
+    v1,
+    {Name = "Dịch chuyển sea 2", Callback = function()
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
+        end}
+)
+AddButton(
+    v1,
+    {Name = "Dịch chuyển sea 3", Callback = function()
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelZou")
+        end}
+)
 SF = AddSection(v2, {"Farm Boss & Hop"})
 AddButton(
     v2,
