@@ -54,6 +54,7 @@ MinimizeButton(
 local v1 = MakeTab({Name = "Tab Info"})
 local v2 = MakeTab({Name = "Tab Hop"})
 local v3 = MakeTab({Name = "Tab Mirage"})
+local v4 = MakeTab({Name = "Tab Misc"})
 function CheckNearestTeleporter(v5)
     local v6 = game.Players.LocalPlayer.Data.Level.Value
     local v7 = v5.Position
@@ -503,6 +504,13 @@ AddButton(
     v1,
     {Name = "Dịch chuyển sea 3", Callback = function()
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelZou")
+        end}
+)
+Dis = AddParagraph(v1, {"Setting", ""})
+AddButton(
+    v1,
+    {Name = "Giảm Fps + Treo mượt", Callback = function()
+          
         end}
 )
 SF = AddSection(v2, {"Farm Boss & Hop"})
