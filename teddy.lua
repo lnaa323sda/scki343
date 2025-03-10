@@ -787,8 +787,7 @@ Toggle =
             StopTween(_G.BuyLegendarySword)
         end
     end}
-)
--- Spawn thread to auto-buy Legendary Sword
+)-- Spawn thread to auto-buy Legendary Sword
 spawn(function() 
     while wait() do 
         if _G.BuyLegendarySword then 
@@ -796,7 +795,6 @@ spawn(function()
                 local v4={[1]="LegendarySwordDealer",[2]="1"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
                 local v4={[1]="LegendarySwordDealer",[2]="2"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
                 local v4={[1]="LegendarySwordDealer",[2]="3"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
-                
                 -- Hop server after buying sword in World2
                 if (_G.BuyLegendarySword_Hop and _G.BuyLegendarySword and World2) then
                     wait(10)
@@ -806,18 +804,6 @@ spawn(function()
         end 
     end 
 end)
-Toggle = AddToggle(
-    v2,
-    {Name = "Gạt Cần Tự Động (Wait Fix)", Default = false, Callback = function(state)
-        _G.GatCanAuto = state  -- Bật/tắt chế độ gạt cần tự động
-
-        if state then
-            StartGatCanFunction()  -- Kích hoạt chức năng khi toggle bật
-        else
-            StopGatCanFunction()   -- Dừng chức năng khi toggle tắt
-        end
-    end}
-)
 SF = AddSection(v3, {"Hop Server"})
 AddButton(
     v3,
