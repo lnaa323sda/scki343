@@ -1005,70 +1005,7 @@ Toggle =
 Toggle =
     AddToggle(
     v3,
-    {Name = "Gạt Cần [Beta]", Default = false, Callback = function(value)
-            _G.AutoGatCan = value 
+    {Name = "Gạt Cần [Beta]", Default = false, Callback = function()
+
         end}
 )
-function getBlueGear()
-    if game.workspace.Map:FindFirstChild("MysticIsland") then
-        for r, v in pairs(game.workspace.Map.MysticIsland:GetChildren()) do
-            if v:IsA("MeshPart") and v.MeshId == "rbxassetid://10153114969" then
-                return v
-            end
-        end
-    end
-end
-spawn(function()
-    while wait() do
-        if _G.AutoGatCan then
-            if game.ReplicatedStorage.Remotes.CommF_:InvokeServer("CheckTempleDoor") then
-                Noti('Notication',"Đã Gạt Cần Hoặc Đã Gạt Cần Thành Công",3)
-                wait(3)
-            elseif not GetItem("Mirror Fractal") then
-                Noti('Notication',"Không Tìm Thấy Mảnh Gương",3)
-                wait(3)
-            elseif not GetItem("Valkyrie Helm") then
-                Noti('Notication',"Không Tìm Thấy Mũ",3)
-                wait(3)
-            else
-                if game.ReplicatedStorage.Remotes.CommF_:InvokeServer("RaceV4Progress", "Check") == 1 then
-                    Noti("Script Status", "Begin", 10)
-                    game.ReplicatedStorage.Remotes.CommF_:InvokeServer("RaceV4Progress", "Begin")
-                elseif game.ReplicatedStorage.Remotes.CommF_:InvokeServer("RaceV4Progress", "Check") == 2 then
-                    Noti("Script Status", "Conitnue Time 1", 10)
-                    TweenTempleLegit()
-                elseif game.ReplicatedStorage.Remotes.CommF_:InvokeServer("RaceV4Progress", "Check") == 3 then
-                    Noti("Script Status", "Continue Time 2", 10)
-                    game.ReplicatedStorage.Remotes.CommF_:InvokeServer("RaceV4Progress", "Continue")
-                elseif game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
-                    local HighestPointRealCFrame = Function2().CFrame
-                    if HighestPointRealCFrame and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - HighestPointRealCFrame.Position).Magnitude > 10 then
-                        Tween2(HighestPointRealCFrame * CFrame.new(0, 211.88, 0))
-                    else
-                        BlueGear = getBlueGear()
-                        if game.ReplicatedStorage.Remotes.CommF_:InvokeServer("CheckTempleDoor") then
-                            _G.LockFullMoon = false
-                        elseif BlueGear and not BlueGear.CanCollide and BlueGear.Transparency ~= 1 then
-                            repeat
-                                wait()
-                                TweentoBlueGear()
-                            until not getBlueGear() or getBlueGear().Transparency == 1
-                            _G.LockCamToMoon = false
-                            Noti('Notication',"Đã Gạt Cần",3)
-                        else
-                            _G.LockCamToMoon = true
-                            game:service("VirtualInputManager"):SendKeyEvent(true, "T", false, game)
-                            task.wait()
-                            game:service("VirtualInputManager"):SendKeyEvent(false, "T", false, game)
-                            task.wait(1.5)
-                        end
-                    end
-                else
-                    Noti('Notication',"Không Thể Tìm Thấy Đảo Bí Ẩn",3)
-                    wait(3)
-                end
-            end
-        end
-    end
-end)
-
