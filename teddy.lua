@@ -25,7 +25,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V2
 local v0 =
     MakeWindow(
     {
-        Hub = {Title = "Teddy Hub [Pro]", Animation = "Welcome Teddy Hub"},
+        Hub = {Title = "Zush [Pro]", Animation = "Welcome Zush Pro"},
         Key = {
             KeySystem = false,
             Title = "Get Key",
@@ -43,7 +43,7 @@ local v0 =
 )
 MinimizeButton(
     {
-        Image = "http://www.roblox.com/asset/?id=136687555060367",
+        Image = "http://www.roblox.com/asset/?id=102829205572656",
         Size = {45, 45},
         Color = Color3.fromRGB(10, 10, 10),
         Corner = true,
@@ -811,6 +811,11 @@ Toggle =
     v2,
     {Name = "Gạt Cần Tự Động", Default = false, Callback = function(state)
             _G.GatCanAuto = state
+            if state then
+            StartGatCanFunction()  -- Kích hoạt chức năng khi toggle bật
+        else
+            StopGatCanFunction()   -- Dừng chức năng khi toggle tắt
+        end
         end}
 )
 SF = AddSection(v3, {"Hop Server"})
