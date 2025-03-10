@@ -808,7 +808,7 @@ spawn(function()
 end)
 Toggle = AddToggle(
     v2,
-    {Name = "Gạt Cần Tự Động", Default = false, Callback = function(state)
+    {Name = "Gạt Cần Tự Động (Wait Fix)", Default = false, Callback = function(state)
         _G.GatCanAuto = state  -- Bật/tắt chế độ gạt cần tự động
 
         if state then
@@ -818,87 +818,6 @@ Toggle = AddToggle(
         end
     end}
 )
--- Hàm tìm BlueGear
-function getBlueGear()
-    if game.workspace.Map:FindFirstChild("MysticIsland") then
-        for r, v in pairs(game.workspace.Map.MysticIsland:GetChildren()) do
-            if v:IsA("MeshPart") and v.MeshId == "rbxassetid://10153114969" then
-                return v -- Trả về đối tượng BlueGear đã tìm thấy
-            end
-        end
-    end
-    return nil -- Trả về nil nếu không tìm thấy
-end
-
--- Bắt đầu gạt cần tự động
-function StartGatCanFunction()
-    spawn(function()
-        while _G.GatCanAuto do
-            wait() -- Thời gian chờ giữa mỗi lần kiểm tra
-
-            -- Kiểm tra trạng thái cửa đền thờ
-            if game.ReplicatedStorage.Remotes.CommF_:InvokeServer("CheckTempleDoor") then
-                Noti("Mystic Island Notication", "Đã Gạt Cần Hoặc Đã Gạt Cần Thành Công", 3)
-                wait(3)
-            elseif not GetItem("Mirror Fractal") then
-                Noti("Mystic Island Notication", "Không Tìm Thấy Mảnh Gương", 3)
-                wait(3)
-            elseif not GetItem("Valkyrie Helm") then
-                Noti("Mystic Island Notication", "Không Tìm Thấy Mũ", 3)
-                wait(3)
-            else
-                -- Kiểm tra tiến trình Race V4
-                if game.ReplicatedStorage.Remotes.CommF_:InvokeServer("RaceV4Progress", "Check") == 1 then
-                    Noti("Script Status", "Begin", 10)
-                    game.ReplicatedStorage.Remotes.CommF_:InvokeServer("RaceV4Progress", "Begin")
-                elseif game.ReplicatedStorage.Remotes.CommF_:InvokeServer("RaceV4Progress", "Check") == 2 then
-                    Noti("Script Status", "Continue Time 1", 10)
-                    TweenTempleLegit()
-                elseif game.ReplicatedStorage.Remotes.CommF_:InvokeServer("RaceV4Progress", "Check") == 3 then
-                    Noti("Script Status", "Continue Time 2", 10)
-                    game.ReplicatedStorage.Remotes.CommF_:InvokeServer("RaceV4Progress", "Continue")
-                elseif game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
-                    -- Kiểm tra vị trí cao nhất và Tween tới đó
-                    local HighestPointRealCFrame = Function2().CFrame
-                    if HighestPointRealCFrame and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - HighestPointRealCFrame.Position).Magnitude > 10 then
-                        Tween2(HighestPointRealCFrame * CFrame.new(0, 211.88, 0))
-                    else
-                        -- Gọi hàm getBlueGear để lấy đối tượng BlueGear
-                        local BlueGear = getBlueGear()
-                        
-                        -- Nếu cửa đã mở
-                        if game.ReplicatedStorage.Remotes.CommF_:InvokeServer("CheckTempleDoor") then
-                            LockFullMoon = false
-                        -- Nếu tìm thấy BlueGear và có thể tương tác
-                        elseif BlueGear and not BlueGear.CanCollide and BlueGear.Transparency ~= 1 then
-                            repeat
-                                wait()
-                                TweentoBlueGear() -- Di chuyển tới vị trí của BlueGear
-                            until not getBlueGear() or getBlueGear().Transparency == 1
-                            LockFullMoon = false
-                            Noti("Mystic Island Notication", "Đã Gạt Cần", 3)
-                        else
-                            -- Nếu không tìm thấy hoặc không thể tương tác với BlueGear, kích hoạt phím T
-                            LockFullMoon = true
-                            game:service("VirtualInputManager"):SendKeyEvent(true, "T", false, game)
-                            task.wait()
-                            game:service("VirtualInputManager"):SendKeyEvent(false, "T", false, game)
-                            task.wait(1.5)
-                        end
-                    end
-                else
-                    -- Nếu không tìm thấy đảo bí ẩn
-                    Noti("Mystic Island Notication", "Không Thể Tìm Thấy Đảo Bí Ẩn", 3)
-                    wait(3)
-                end
-            end
-        end
-    end)
-end
-function StopGatCanFunction()
-    _G.GatCanAuto = false
-    Noti("Mystic Island Notication", "Đã tắt chức năng gạt cần", 3)
-end
 SF = AddSection(v3, {"Hop Server"})
 AddButton(
     v3,
