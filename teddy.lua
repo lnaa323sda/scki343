@@ -54,7 +54,6 @@ MinimizeButton(
 local v1 = MakeTab({Name = "Tab Info"})
 local v2 = MakeTab({Name = "Tab Hop"})
 local v3 = MakeTab({Name = "Tab Mirage"})
-local v4 = MakeTab({Name = "Tab Misc"})
 function CheckNearestTeleporter(v5)
     local v6 = game.Players.LocalPlayer.Data.Level.Value
     local v7 = v5.Position
@@ -510,7 +509,7 @@ Dis = AddParagraph(v1, {"Setting", ""})
 AddButton(
     v1,
     {Name = "Giảm Fps + Treo mượt", Callback = function()
-          
+          loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/avt-UILITE.lua"))()
         end}
 )
 SF = AddSection(v2, {"Farm Boss & Hop"})
