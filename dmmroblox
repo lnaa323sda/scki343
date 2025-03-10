@@ -1,4 +1,4 @@
-    hookfunction(
+hookfunction(
     require(game:GetService("ReplicatedStorage").Effect.Container.Death),
     function()
     end
