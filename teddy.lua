@@ -1006,7 +1006,7 @@ Toggle =
     AddToggle(
     v3,
     {Name = "Gạt Cần [Beta]", Default = false, Callback = function(value)
-            AutoGatCan = value 
+            _G.AutoGatCan = value 
         end}
 )
 function getBlueGear()
@@ -1020,7 +1020,7 @@ function getBlueGear()
 end
 spawn(function()
     while wait() do
-        if AutoGatCan then
+        if _G.AutoGatCan then
             if game.ReplicatedStorage.Remotes.CommF_:InvokeServer("CheckTempleDoor") then
                 Noti('Notication',"Đã Gạt Cần Hoặc Đã Gạt Cần Thành Công",3)
                 wait(3)
@@ -1047,16 +1047,16 @@ spawn(function()
                     else
                         BlueGear = getBlueGear()
                         if game.ReplicatedStorage.Remotes.CommF_:InvokeServer("CheckTempleDoor") then
-                            LockFullMoon = false
+                            _G.LockFullMoon = false
                         elseif BlueGear and not BlueGear.CanCollide and BlueGear.Transparency ~= 1 then
                             repeat
                                 wait()
                                 TweentoBlueGear()
                             until not getBlueGear() or getBlueGear().Transparency == 1
-                            LockFullMoon = false
+                            _G.LockCamToMoon = false
                             Noti('Notication',"Đã Gạt Cần",3)
                         else
-                            LockFullMoon = true
+                            _G.LockCamToMoon = true
                             game:service("VirtualInputManager"):SendKeyEvent(true, "T", false, game)
                             task.wait()
                             game:service("VirtualInputManager"):SendKeyEvent(false, "T", false, game)
