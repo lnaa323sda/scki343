@@ -491,43 +491,43 @@ SF = AddSection(v2, {"Farm Boss & Hop"})
 AddButton(
     v2,
     {Name = "Auto Hop Saishi", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Saisi.txt"))()
+         wait(1)   loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Saisi.txt"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Shizu", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Shizu.txt"))()
+        wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Shizu.txt"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Oroshi", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Oroshi.txt"))()
+         wait(1)   loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Oroshi.txt"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Blackbeard", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()
+         wait(1)   loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Rip Indra", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))()
+        wait(1)    loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Dough King", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))()
+      wait(1)    loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Soul Reaper", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/soulreaper.lua%20(1).txt"))()
+       wait(1)    loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/soulreaper.lua%20(1).txt"))()
         end}
 )
 SelectWeapon =
@@ -792,13 +792,13 @@ SF = AddSection(v3, {"Hop Server"})
 AddButton(
     v3,
     {Name = "Auto Hop Full Moon", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/FullMon.txt"))()
+         wait(1)   loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/FullMon.txt"))()
         end}
 )
 AddButton(
     v3,
     {Name = "Auto Hop Mirage", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Mirage.txt"))()
+         wait(1)   loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Mirage.txt"))()
         end}
 )
 SF = AddSection(v3, {"Pull Lever"})
