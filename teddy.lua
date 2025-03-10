@@ -797,6 +797,12 @@ AddButton(
 )
 AddButton(
     v3,
+    {Name = "Auto Hop Near Full Moon", Callback = function()
+         wait(1)   loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/near-fullmoon.lua%20(1).txt"))()
+        end}
+)
+AddButton(
+    v3,
     {Name = "Auto Hop Mirage", Callback = function()
          wait(1)   loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Mirage.txt"))()
         end}
