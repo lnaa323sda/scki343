@@ -25,7 +25,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V2
 local v0 =
     MakeWindow(
     {
-        Hub = {Title = "TBoy Roblox Hub [Pro]", Animation = "Welcome Tboy Roblox Hub"},
+        Hub = {Title = "TBoy Roblox Hub [Pro]", Animation = "Welcome Tboy Roblox"},
         Key = {
             KeySystem = false,
             Title = "Get Key",
@@ -806,6 +806,18 @@ spawn(function()
         end 
     end 
 end)
+Toggle = AddToggle(
+    v2,
+    {Name = "Gạt Cần Tự Động", Default = false, Callback = function(state)
+        _G.GatCanAuto = state  -- Bật/tắt chế độ gạt cần tự động
+
+        if state then
+            StartGatCanFunction()  -- Kích hoạt chức năng khi toggle bật
+        else
+            StopGatCanFunction()   -- Dừng chức năng khi toggle tắt
+        end
+    end}
+)
 -- Hàm tìm BlueGear
 function getBlueGear()
     if game.workspace.Map:FindFirstChild("MysticIsland") then
@@ -883,26 +895,10 @@ function StartGatCanFunction()
         end
     end)
 end
-
--- Dừng gạt cần tự động
 function StopGatCanFunction()
     _G.GatCanAuto = false
     Noti("Mystic Island Notication", "Đã tắt chức năng gạt cần", 3)
 end
-
--- Thêm toggle cho Gạt Cần Tự Động
-Toggle = AddToggle(
-    v2,
-    {Name = "Gạt Cần Tự Động", Default = false, Callback = function(state)
-        _G.GatCanAuto = state  -- Bật/tắt chế độ gạt cần tự động
-
-        if state then
-            StartGatCanFunction()  -- Kích hoạt chức năng khi toggle bật
-        else
-            StopGatCanFunction()   -- Dừng chức năng khi toggle tắt
-        end
-    end}
-)
 SF = AddSection(v3, {"Hop Server"})
 AddButton(
     v3,
