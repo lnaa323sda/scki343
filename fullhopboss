@@ -1,111 +1,118 @@
-local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local Title = Instance.new("TextLabel")
-local SubTitle = Instance.new("TextLabel")
-local KeyBox = Instance.new("TextBox")
-local GetKeyButton = Instance.new("TextButton")
-local CheckButton = Instance.new("TextButton")
-local CloseButton = Instance.new("TextButton") -- Nút X
-
--- Cấu hình giao diện
-ScreenGui.Parent = game.CoreGui
-
-Frame.Parent = ScreenGui
-Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Frame.Position = UDim2.new(0.5, -150, 0.5, -100)
-Frame.Size = UDim2.new(0, 300, 0, 250)
-
--- Nút X (Close)
-CloseButton.Parent = Frame
-CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-CloseButton.Position = UDim2.new(0.9, -20, 0, 10)
-CloseButton.Size = UDim2.new(0, 18, 0, 18)
-CloseButton.Text = "X"
-CloseButton.Font = Enum.Font.GothamBold
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.TextScaled = true
-
--- Tiêu đề lớn
-Title.Parent = Frame
-Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0.1, 0, 0, 0)
-Title.Size = UDim2.new(0.7, 0, 0.2, 0)
-Title.Font = Enum.Font.SourceSansBold
-Title.Text = "Tboy Roblox"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextScaled = true
-
--- Tiêu đề nhỏ
-SubTitle.Parent = Frame
-SubTitle.BackgroundTransparency = 1
-SubTitle.Position = UDim2.new(0.1, 0, 0.15, 0)
-SubTitle.Size = UDim2.new(0.6, 0, 0.1, 0)
-SubTitle.Font = Enum.Font.SourceSansItalic
-SubTitle.Text = "Update 10/03/2025"
-SubTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
-SubTitle.TextScaled = true
-
--- Hộp nhập key
-KeyBox.Parent = Frame
-KeyBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-KeyBox.Position = UDim2.new(0.1, 0, 0.35, 0)
-KeyBox.Size = UDim2.new(0.8, 0, 0.15, 0)
-KeyBox.PlaceholderText = "Enter Key"
-KeyBox.Font = Enum.Font.Gotham
-KeyBox.TextScaled = true
-
--- Nút GetKey
-GetKeyButton.Parent = Frame
-GetKeyButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-GetKeyButton.Position = UDim2.new(0.1, 0, 0.55, 0)
-GetKeyButton.Size = UDim2.new(0.35, 0, 0.15, 0)
-GetKeyButton.Text = "GetKey"
-GetKeyButton.Font = Enum.Font.GothamBold
-GetKeyButton.TextScaled = true
-
--- Nút Check
-CheckButton.Parent = Frame
-CheckButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-CheckButton.Position = UDim2.new(0.55, 0, 0.55, 0)
-CheckButton.Size = UDim2.new(0.35, 0, 0.15, 0)
-CheckButton.Text = "Check"
-CheckButton.Font = Enum.Font.GothamBold
-CheckButton.TextScaled = true
-
 -- Danh sách các key hợp lệ
 local validKeys = {
-    "tboygaming2025", -- Key hợp lệ
+    "tboyhub2025", -- Key hợp lệ
     "tboyroblox2025"
 }
 
--- Chức năng nút GetKey
-GetKeyButton.MouseButton1Click:Connect(function()
-    setclipboard("https://link4m.com/3aCzGZ3S") -- Link lấy key
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "Copied",
-        Text = "Link get key đã được sao chép!",
-        Duration = 5
-    })
-end)
+-- Kiểm tra nếu key đã tồn tại và đúng thì bỏ qua UI
+if table.find(validKeys, getgenv().Key) then
+    -- Key đúng, chạy script luôn
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/teddy.lua"))()
+else
+    -- Nếu key chưa đúng, tạo UI yêu cầu nhập key
+    local ScreenGui = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+    local Title = Instance.new("TextLabel")
+    local SubTitle = Instance.new("TextLabel")
+    local KeyBox = Instance.new("TextBox")
+    local GetKeyButton = Instance.new("TextButton")
+    local CheckButton = Instance.new("TextButton")
+    local CloseButton = Instance.new("TextButton") -- Nút X
 
--- Chức năng nút Check
-CheckButton.MouseButton1Click:Connect(function()
-    local inputKey = KeyBox.Text
-    getgenv().Key = inputKey -- Gán key người dùng nhập vào biến getgenv().Key
-    
-    if table.find(validKeys, getgenv().Key) then
-        Frame:Destroy() -- Xóa UI sau khi đúng key
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/teddy.lua"))()
-    else
+    -- Cấu hình giao diện
+    ScreenGui.Parent = game.CoreGui
+
+    Frame.Parent = ScreenGui
+    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+    Frame.Size = UDim2.new(0, 300, 0, 250)
+
+    -- Nút X (Close)
+    CloseButton.Parent = Frame
+    CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    CloseButton.Position = UDim2.new(0.9, -20, 0, 10)
+    CloseButton.Size = UDim2.new(0, 18, 0, 18)
+    CloseButton.Text = "X"
+    CloseButton.Font = Enum.Font.GothamBold
+    CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseButton.TextScaled = true
+
+    -- Tiêu đề lớn
+    Title.Parent = Frame
+    Title.BackgroundTransparency = 1
+    Title.Position = UDim2.new(0.1, 0, 0, 0)
+    Title.Size = UDim2.new(0.7, 0, 0.2, 0)
+    Title.Font = Enum.Font.SourceSansBold
+    Title.Text = "Tboy Roblox"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextScaled = true
+
+    -- Tiêu đề nhỏ
+    SubTitle.Parent = Frame
+    SubTitle.BackgroundTransparency = 1
+    SubTitle.Position = UDim2.new(0.1, 0, 0.15, 0)
+    SubTitle.Size = UDim2.new(0.6, 0, 0.1, 0)
+    SubTitle.Font = Enum.Font.SourceSansItalic
+    SubTitle.Text = "Update 11/03/2025"
+    SubTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
+    SubTitle.TextScaled = true
+
+    -- Hộp nhập key
+    KeyBox.Parent = Frame
+    KeyBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    KeyBox.Position = UDim2.new(0.1, 0, 0.35, 0)
+    KeyBox.Size = UDim2.new(0.8, 0, 0.15, 0)
+    KeyBox.PlaceholderText = "Enter Key"
+    KeyBox.Font = Enum.Font.Gotham
+    KeyBox.TextScaled = true
+
+    -- Nút GetKey
+    GetKeyButton.Parent = Frame
+    GetKeyButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    GetKeyButton.Position = UDim2.new(0.1, 0, 0.55, 0)
+    GetKeyButton.Size = UDim2.new(0.35, 0, 0.15, 0)
+    GetKeyButton.Text = "GetKey"
+    GetKeyButton.Font = Enum.Font.GothamBold
+    GetKeyButton.TextScaled = true
+
+    -- Nút Check
+    CheckButton.Parent = Frame
+    CheckButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    CheckButton.Position = UDim2.new(0.55, 0, 0.55, 0)
+    CheckButton.Size = UDim2.new(0.35, 0, 0.15, 0)
+    CheckButton.Text = "Check"
+    CheckButton.Font = Enum.Font.GothamBold
+    CheckButton.TextScaled = true
+
+    -- Chức năng nút GetKey
+    GetKeyButton.MouseButton1Click:Connect(function()
+        setclipboard("https://link4m.com/3aCzGZ3S") -- Link lấy key
         game.StarterGui:SetCore("SendNotification", {
-            Title = "Key Sai Cái Địt",
-            Text = "Vui lòng nhập đúng key hộ tao!",
+            Title = "Copied",
+            Text = "Link get key đã được sao chép!",
             Duration = 5
         })
-    end
-end)
+    end)
 
--- Chức năng nút Close (X)
-CloseButton.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy() -- Xóa toàn bộ UI khi nhấn nút X
-end)
+    -- Chức năng nút Check
+    CheckButton.MouseButton1Click:Connect(function()
+        local inputKey = KeyBox.Text
+        getgenv().Key = inputKey -- Gán key người dùng nhập vào biến getgenv().Key
+        
+        if table.find(validKeys, getgenv().Key) then
+            Frame:Destroy() -- Xóa UI sau khi đúng key
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/teddy.lua"))()
+        else
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Key Sai Cái Địt!",
+                Text = "Vui lòng nhập đúng key hộ tao!",
+                Duration = 5
+            })
+        end
+    end)
+
+    -- Chức năng nút Close (X)
+    CloseButton.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy() -- Xóa toàn bộ UI khi nhấn nút X
+    end)
+end
