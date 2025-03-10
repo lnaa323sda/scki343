@@ -1,5 +1,5 @@
 
-local Fluent = loadstring(game:HttpGet("https://raw.githubusercontent.com/daucobonhi/UiRedzV5/refs/heads/main/DemoUi.lua"))()
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local Window = Fluent:CreateWindow({
     Title="Zush [Beta]",
     SubTitle=" https://discord.gg/ADZ7H2rwk7", 
