@@ -25,7 +25,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V2
 local v0 =
     MakeWindow(
     {
-        Hub = {Title = "Zush [Pro]", Animation = "Welcome Zush Pro"},
+        Hub = {Title = "TBoy Roblox Hub [Pro]", Animation = "Welcome Tboy Roblox Hub"},
         Key = {
             KeySystem = false,
             Title = "Get Key",
@@ -43,7 +43,7 @@ local v0 =
 )
 MinimizeButton(
     {
-        Image = "http://www.roblox.com/asset/?id=102829205572656",
+        Image = "http://www.roblox.com/asset/?id=83190276951914",
         Size = {45, 45},
         Color = Color3.fromRGB(10, 10, 10),
         Corner = true,
