@@ -34,7 +34,7 @@ local Window =
 )
 
 local Tabs = {
-    Sever = Window:AddTab({Title = "Status And Server", Icon = "loader"}),
+    Sever = Window:AddTab({Title = "Tab Status", Icon = "loader"}),
     Main = Window:AddTab({Title = "Tab Farm", Icon = "home"}),
     Setting = Window:AddTab({Title = "Tab Settings", Icon = "sliders"}),
     Player = Window:AddTab({Title = "Tab PvP", Icon = "shield"}),
