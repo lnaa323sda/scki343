@@ -21,16 +21,6 @@ elseif (game.PlaceId == 4442272183) then
 elseif (game.PlaceId == 7449423635) then
     World3 = true
 end
-spawn(function()
-    -- Load mã từ URL
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"))()
-    
-    -- Vòng lặp task liên tục
-    while task.wait() do
-        -- Click với tốc độ cực nhanh
-        Click(0.000000000000000000000000000000004)
-    end
-end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V2/refs/heads/main/UiREDzV2.lua"))()
 local v0 =
     MakeWindow(
@@ -431,6 +421,12 @@ spawn(
         end
     end
 )
+spawn(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"))()
+    while task.wait() do
+        Click(0.000000000000000000000000000000004)
+    end
+end)
 function AutoHaki()
     if not game:GetService("Players").LocalPlayer.Character:FindFirstChild("HasBuso") then
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
