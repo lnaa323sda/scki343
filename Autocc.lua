@@ -7146,6 +7146,31 @@ spawn(
         )
         Options.ToggleQuanSat:SetValue(false)
 
+        local ResetPlayersButton = Tabs.Player:AddButton("ResetPlayersButton", {Title = "Reset Player List"})
+        ResetPlayersButton:OnPressed(
+             function()
+                 pcall(
+                    function()
+                     -- Làm mới danh sách người chơi trong server
+                       local Players = game:GetService("Players")
+                       local playerList = {}
+                
+                -- Duyệt qua tất cả người chơi trong server và thêm vào danh sách
+                       for _, player in pairs(Players:GetPlayers()) do
+                           table.insert(playerList, player.Name)
+                       end
+                
+                -- Ví dụ: hiển thị danh sách người chơi
+                       print("Player List has been reset:")
+                       for _, playerName in ipairs(playerList) do
+                           print(playerName)
+                       end
+                    end
+                )
+            end
+        )
+
+
         local Teleport = Tabs.Player:AddSection("PVP")
 
         local ToggleAimBotSkill = Tabs.Player:AddToggle("ToggleAimBotSkill", {Title = "Aimbot Skill", Default = false})
