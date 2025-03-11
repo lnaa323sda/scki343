@@ -7146,9 +7146,9 @@ spawn(
         )
         Options.ToggleQuanSat:SetValue(false)
 
-        local ResetPlayersButton = Tabs.Player:AddButton("ResetPlayersButton", {Title = "Reset Player List"})
-        ResetPlayersButton:OnPressed(
-             function()
+        local ToggleResetPlayers = Tabs.Player:AddToggle("ToggleResetPlayers", {Title = "Reset Player List",  Default = false})
+        ToggleResetPlayers:OnChanged(
+             function(Value)
                  pcall(
                     function()
                      -- Làm mới danh sách người chơi trong server
@@ -7169,7 +7169,6 @@ spawn(
                 )
             end
         )
-
 
         local Teleport = Tabs.Player:AddSection("PVP")
 
