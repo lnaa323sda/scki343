@@ -1,0 +1,141 @@
+-- Add a config at the top
+local config = {
+    autoKey = "Key_scripttonghop213456789", -- Set your key here
+    autoStart = true -- Set this to true to start without UI
+}
+
+-- Check if the key is correct
+local function checkKey(key)
+    if key == "Key_scripttonghop213456789" then
+        print("[+]: Key đúng!!!")
+        -- Run the additional code if the key is correct
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/hoppremium"))()
+        return true
+    else
+        print("[+]: Key Sai!!!")
+        return false
+    end
+end
+
+-- If autoStart is enabled, check the key from config
+if config.autoStart then
+    if checkKey(config.autoKey) then
+        return -- Exit the script if the key is correct, skip showing the UI
+    end
+end
+
+-- If key is incorrect or autoStart is disabled, show the UI (No change to the UI)
+local viewportSize = game:GetService("Workspace").Camera.ViewportSize
+local UI = {}
+
+-- // StarterGui.ScreenGui \\ -- 
+UI["1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
+UI["1"].Name = "Code By Khanh"
+UI["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling
+
+-- // StarterGui.ScreenGui.Frame \\ --
+UI["2"] = Instance.new("Frame", UI["1"])
+UI["2"]["BorderSizePixel"] = 0
+UI["2"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+UI["2"]["Size"] = UDim2.new(0, 1262, 0, 826)
+UI["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+UI["2"]["BackgroundTransparency"] = 1
+local Frame = UI["2"]
+Frame.Position = UDim2.new(0, viewportSize.X/2 - Frame.Size.X.Offset/2, 0, viewportSize.Y/2 - Frame.Size.Y.Offset/2)
+
+-- // StarterGui.ScreenGui.Frame.Frame \\ --
+UI["3"] = Instance.new("Frame", UI["2"])
+UI["3"]["BorderSizePixel"] = 0
+UI["3"]["BackgroundColor3"] = Color3.fromRGB(242, 236, 255)
+UI["3"]["AnchorPoint"] = Vector2.new(0.5, 0.5)
+UI["3"]["Size"] = UDim2.new(0, 410, 0, 197)
+UI["3"]["Position"] = UDim2.new(0.5, 0, 0.49939, 0)
+UI["3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+
+-- // StarterGui.ScreenGui.Frame.Frame.UICorner \\ --
+UI["4"] = Instance.new("UICorner", UI["3"])
+
+-- // StarterGui.ScreenGui.Frame.Frame.UIStroke \\ --
+UI["5"] = Instance.new("UIStroke", UI["3"])
+UI["5"]["Thickness"] = 2
+
+-- // StarterGui.ScreenGui.Frame.Frame.TextLabel \\ --
+UI["6"] = Instance.new("TextLabel", UI["3"])
+UI["6"]["BorderSizePixel"] = 0
+UI["6"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+UI["6"]["TextSize"] = 28
+UI["6"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+UI["6"]["TextColor3"] = Color3.fromRGB(0, 0, 0)
+UI["6"]["BackgroundTransparency"] = 1
+UI["6"]["Size"] = UDim2.new(0, 410, 0, 50)
+UI["6"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+UI["6"]["Text"] = [[Ủng hộ tôi bằng cách vượt link]]
+
+-- // StarterGui.ScreenGui.Frame.Frame.TextBox \\ --
+UI["7"] = Instance.new("TextBox", UI["3"])
+UI["7"]["CursorPosition"] = -1
+UI["7"]["TextColor3"] = Color3.fromRGB(0, 0, 0)
+UI["7"]["BorderSizePixel"] = 0
+UI["7"]["TextSize"] = 14
+UI["7"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+UI["7"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+UI["7"]["Size"] = UDim2.new(0, 325, 0, 79)
+UI["7"]["Position"] = UDim2.new(0.11463, 0, 0.25381, 0)
+UI["7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+UI["7"]["Text"] = [[]]
+UI["7"]["PlaceholderText"] = "Nhập key ở đây"
+UI["7"]["BackgroundTransparency"] = 0.55
+
+-- // StarterGui.ScreenGui.Frame.Frame.TextBox.UICorner \\ --
+UI["8"] = Instance.new("UICorner", UI["7"])
+
+-- // StarterGui.ScreenGui.Frame.Frame.submitkey \\ --
+UI["9"] = Instance.new("TextButton", UI["3"])
+UI["9"]["BorderSizePixel"] = 0
+UI["9"]["TextSize"] = 14
+UI["9"]["TextColor3"] = Color3.fromRGB(0, 0, 0)
+UI["9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+UI["9"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+UI["9"]["Size"] = UDim2.new(0, 200, 0, 50)
+UI["9"]["Name"] = [[submitkey]]
+UI["9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+UI["9"]["Text"] = [[Submit Key]]
+UI["9"]["Position"] = UDim2.new(0.03659, 0, 0.69543, 0)
+
+-- // StarterGui.ScreenGui.Frame.Frame.submitkey.UICorner \\ --
+UI["a"] = Instance.new("UICorner", UI["9"])
+
+-- // StarterGui.ScreenGui.Frame.Frame.getlink \\ --
+UI["b"] = Instance.new("TextButton", UI["3"])
+UI["b"]["BorderSizePixel"] = 0
+UI["b"]["TextSize"] = 14
+UI["b"]["TextColor3"] = Color3.fromRGB(0, 0, 0)
+UI["b"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+UI["b"]["FontFace"] = Font.new([[rbxasset://fonts/families/ComicNeueAngular.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+UI["b"]["Size"] = UDim2.new(0, 159, 0, 50)
+UI["b"]["Name"] = [[getlink]]
+UI["b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+UI["b"]["Text"] = [[Get Link]]
+UI["b"]["Position"] = UDim2.new(0.57073, 0, 0.69543, 0)
+
+UI["c"] = Instance.new("UICorner", UI["b"])
+
+local b1 = UI["b"]
+local submit = UI["9"]
+b1.MouseButton1Down:Connect(function()
+    setclipboard("https://yeumoney.com/WMytfqY")
+end)
+submit.MouseButton1Down:Connect(function()
+    local gg = UI["7"].Text
+    if checkKey(gg) then
+        UI["7"].Text = "Key Đúng!"
+        wait(3)
+        UI["1"]:Destroy()
+    else
+        UI["7"].Text = "Key Sai!! vui lòng nhập lại"
+        spawn(function()
+            wait(1)
+            UI["7"].Text = ""
+        end)
+    end
+end)
