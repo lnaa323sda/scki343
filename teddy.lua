@@ -25,7 +25,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V2
 local v0 =
     MakeWindow(
     {
-        Hub = {Title = "Tboy Roblox Hub", Animation = "Welcome Tboy Roblox"},
+        Hub = {Title = "Zush Hub", Animation = "Welcome Zush Hub"},
         Key = {
             KeySystem = false,
             Title = "Get Key",
@@ -490,7 +490,7 @@ Dis = AddParagraph(v1, {"Join Discord Update Script", ""})
 AddButton(
     v1,
     {Name = "Discord", Callback = function()
-            setclipboard("https://discord.gg/rSWEGGrHZP")
+            setclipboard("https://discord.gg/ADZ7H2rwk7")
         end}
 )
 AddButton(
