@@ -3,12 +3,10 @@ repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
 getgenv().Team = "Marines"          -- Pirates or Marines
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Phatdepzaicrystal/phatsadboizbuonba/refs/heads/main/Main/Test.lua"))()
 ]] --
-spawn(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"))()
-    while task.wait() do
-        Click(0.000000000000000000000000000000004)
-    end
-end)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"))()
+while task.wait() do
+   Click(0.000000000000000000000000000000004)
+end
 if getgenv().Team == "Pirates" then
     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
 elseif getgenv().Team == "Marines" then
