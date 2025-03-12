@@ -546,13 +546,13 @@ AddButton(
 AddButton(
     v2,
     {Name = "Auto Hop Rip Indra", Callback = function()
-           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))()
+           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/rip%20indra.luau.txt"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Dough King", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/dough%20king.luau.txt"))()
         end}
 )
 AddButton(
@@ -724,7 +724,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"
+                                        "https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/rip%20indra.luau.txt"
                                     )
                                 )()
                             end
@@ -780,7 +780,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"
+                                        "https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/dough%20king.luau.txt"
                                     )
                                 )()
                             end
@@ -823,7 +823,7 @@ SF = AddSection(v3, {"Hop Server"})
 AddButton(
     v3,
     {Name = "Auto Hop Full Moon", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/FullMon.txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/fullmoon.lua%20(1).txt"))()
         end}
 )
 AddButton(
@@ -835,7 +835,7 @@ AddButton(
 AddButton(
     v3,
     {Name = "Auto Hop Mirage", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Mirage.txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/mirage.luau.txt"))()
         end}
 )
 SF = AddSection(v3, {"Pull Lever"})
