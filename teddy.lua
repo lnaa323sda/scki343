@@ -54,7 +54,6 @@ MinimizeButton(
 local v1 = MakeTab({Name = "Tab Info"})
 local v2 = MakeTab({Name = "Tab Boss"})
 local v3 = MakeTab({Name = "Tab Mirage"})
-local v4 = MakeTab({Name = "Tab Sword"})
 function CheckNearestTeleporter(v5)
     local v6 = game.Players.LocalPlayer.Data.Level.Value
     local v7 = v5.Position
@@ -522,6 +521,24 @@ AddButton(
 SF = AddSection(v2, {"Farm Boss & Hop"})
 AddButton(
     v2,
+    {Name = "Auto Hop Saishi", Callback = function()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Saisi.txt"))()
+        end}
+)
+AddButton(
+    v2,
+    {Name = "Auto Hop Shizu", Callback = function()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Shizu.txt"))()
+        end}
+)
+AddButton(
+    v2,
+    {Name = "Auto Hop Oroshi", Callback = function()
+         wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Oroshi.txt"))()
+        end}
+)
+AddButton(
+    v2,
     {Name = "Auto Hop Blackbeard", Callback = function()
            wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()
         end}
@@ -707,7 +724,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"
+                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"
                                     )
                                 )()
                             end
@@ -763,7 +780,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/dough%20king.luau.txt"
+                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"
                                     )
                                 )()
                             end
@@ -774,39 +791,40 @@ spawn(
         end
     end
 )
-Toggle = 
+Toggle =
     AddToggle(
     v2,
-    {Name = "Auto Buy Sword Legendary", Default = false, Callback = function(state)
-        _G.BuyLegendarySword = state
-        if not state then
-            StopTween(_G.BuyLegendarySword)
-        end
-    end}
+    {Name = "Auto Buy Sword Legendary", Default = false, Callback = function(v38)
+            _G.BuyLegendarySword = v38
+        end}
 )
--- Spawn thread to auto-buy Legendary Sword
-spawn(function() 
-    while wait() do 
-        if _G.BuyLegendarySword then 
-            pcall(function()
-                local v4={[1]="LegendarySwordDealer",[2]="1"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
-                local v4={[1]="LegendarySwordDealer",[2]="2"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
-                local v4={[1]="LegendarySwordDealer",[2]="3"};game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v4))
-                
-                -- Hop server after buying sword in World2
-                if (_G.BuyLegendarySword_Hop and _G.BuyLegendarySword and World2) then
-                    wait(10)
-                    Hop() -- function to hop server
-                end 
-            end)
-        end 
-    end 
-end)
+spawn(
+    function()
+        while wait() do
+            if _G.BuyLegendarySword then
+                pcall(
+                    function()
+                        local v86 = {[1] = "LegendarySwordDealer", [2] = "1"}
+                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v86))
+                        local v86 = {[1] = "LegendarySwordDealer", [2] = "2"}
+                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v86))
+                        local v86 = {[1] = "LegendarySwordDealer", [2] = "3"}
+                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v86))
+                        if (_G.BuyLegendarySword_Hop and _G.BuyLegendarySword and World2) then
+                            wait(10)
+                            Hop()
+                        end
+                    end
+                )
+            end
+        end
+    end
+)
 SF = AddSection(v3, {"Hop Server"})
 AddButton(
     v3,
     {Name = "Auto Hop Full Moon", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/fullmoon.lua%20(1).txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/FullMon.txt"))()
         end}
 )
 AddButton(
@@ -818,7 +836,7 @@ AddButton(
 AddButton(
     v3,
     {Name = "Auto Hop Mirage", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/mirage.luau.txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Mirage.txt"))()
         end}
 )
 SF = AddSection(v3, {"Pull Lever"})
@@ -999,52 +1017,4 @@ Toggle =
             Tween2(CFrame.new(28575.181640625, 14936.6279296875, 72.31636810302734))
         end
     end}
-)
-SF = AddSection(v4, {"Hop Sword Legendary"})
-AddButton(
-    v4,
-    {Name = "Auto Hop Saishi", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Saisi.txt"))()
-        end}
-)
-AddButton(
-    v4,
-    {Name = "Auto Hop Shizu", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Shizu.txt"))()
-        end}
-)
-AddButton(
-    v4,
-    {Name = "Auto Hop Oroshi", Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Oroshi.txt"))()
-        end}
-)
-Toggle =
-    AddToggle(
-    v4,
-    {Name = "Auto Buy Sword", Default = false, Callback = function(v38)
-            _G.BuyLegendarySword = v38
-        end}
-)
-spawn(
-    function()
-        while wait() do
-            if _G.BuyLegendarySword then
-                pcall(
-                    function()
-                        local v86 = {[1] = "LegendarySwordDealer", [2] = "1"}
-                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v86))
-                        local v86 = {[1] = "LegendarySwordDealer", [2] = "2"}
-                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v86))
-                        local v86 = {[1] = "LegendarySwordDealer", [2] = "3"}
-                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v86))
-                        if (_G.BuyLegendarySword_Hop and _G.BuyLegendarySword and World2) then
-                            wait(10)
-                            Hop()
-                        end
-                    end
-                )
-            end
-        end
-    end
 )
