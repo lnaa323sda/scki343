@@ -11,8 +11,35 @@ local function isValidKey(key)
     return false
 end
 
+local function createNotification(message, duration)
+    local ScreenGui = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+    local TextLabel = Instance.new("TextLabel")
+
+    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    Frame.Parent = ScreenGui
+    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BackgroundTransparency = 0.5
+    Frame.BorderSizePixel = 0
+    Frame.Position = UDim2.new(0, 10, 1, -50) -- Góc dưới trái màn hình
+    Frame.Size = UDim2.new(0, 300, 0, 50)
+
+    TextLabel.Parent = Frame
+    TextLabel.Text = message
+    TextLabel.Size = UDim2.new(1, 0, 1, 0)
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.TextScaled = true
+    TextLabel.Font = Enum.Font.SourceSans
+
+    wait(duration)
+    ScreenGui:Destroy()
+end
+
 if isValidKey(getgenv().Key) then
+    createNotification("Key đúng! Đang tải...", 3) -- Thông báo loading khi nhập đúng key
+    wait(3) -- Thời gian chờ thông báo trước khi chạy script
     loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/hoppremium"))()
 else
-    game.Players.LocalPlayer:Kick("Nhận key free tại zalo.me/0765520260")
+    game.Players.LocalPlayer:Kick("Key không hợp lệ!")
 end
