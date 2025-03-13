@@ -25,7 +25,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V2
 local v0 =
     MakeWindow(
     {
-        Hub = {Title = "Zush Hub", Animation = "Welcome Zush Hub"},
+        Hub = {Title = "Zush Hub V1", Animation = "Welcome Zush Hub"},
         Key = {
             KeySystem = false,
             Title = "Get Key",
@@ -540,19 +540,19 @@ AddButton(
 AddButton(
     v2,
     {Name = "Auto Hop Blackbeard", Callback = function()
-           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()
+           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Rip Indra", Callback = function()
-           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))()
+           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Dough King", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"))()
         end}
 )
 AddButton(
@@ -668,7 +668,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"
+                                        "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark"
                                     )
                                 )()
                             end
@@ -724,7 +724,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"
+                                        "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip"
                                     )
                                 )()
                             end
@@ -780,7 +780,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"
+                                        "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"
                                     )
                                 )()
                             end
@@ -824,7 +824,7 @@ SF = AddSection(v3, {"Hop Server"})
 AddButton(
     v3,
     {Name = "Auto Hop Full Moon", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://hostserver.porry.store/bloxfruit/bot/JobId/fullmoon"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/fullmoon"))()
         end}
 )
 AddButton(
@@ -836,7 +836,7 @@ AddButton(
 AddButton(
     v3,
     {Name = "Auto Hop Mirage", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Mirage.txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/mirage"))()
         end}
 )
 SF = AddSection(v3, {"Pull Lever"})
