@@ -43,7 +43,7 @@ local v0 =
 )
 MinimizeButton(
     {
-        Image = "http://www.roblox.com/asset/?id=83190276951914",
+        Image = "http://www.roblox.com/asset/?id=102829205572656",
         Size = {45, 45},
         Color = Color3.fromRGB(10, 10, 10),
         Corner = true,
