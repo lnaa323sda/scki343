@@ -540,19 +540,19 @@ AddButton(
 AddButton(
     v2,
     {Name = "Auto Hop Blackbeard", Callback = function()
-           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark"))()
+           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Rip Indra", Callback = function()
-           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip"))()
+           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Dough King", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))()
         end}
 )
 AddButton(
@@ -668,7 +668,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark"
+                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"
                                     )
                                 )()
                             end
@@ -724,7 +724,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip"
+                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"
                                     )
                                 )()
                             end
@@ -780,7 +780,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"
+                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"
                                     )
                                 )()
                             end
