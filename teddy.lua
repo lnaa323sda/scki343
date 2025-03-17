@@ -540,19 +540,19 @@ AddButton(
 AddButton(
     v2,
     {Name = "Auto Hop Blackbeard", Callback = function()
-           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()
+           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Rip Indra", Callback = function()
-           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))()
+           wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Dough King", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"))()
         end}
 )
 AddButton(
@@ -668,7 +668,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"
+                                        "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark"
                                     )
                                 )()
                             end
@@ -724,7 +724,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"
+                                        "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip"
                                     )
                                 )()
                             end
@@ -780,7 +780,7 @@ spawn(
                                 wait(3)
                                 loadstring(
                                     game:HttpGet(
-                                        "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"
+                                        "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"
                                     )
                                 )()
                             end
@@ -830,7 +830,7 @@ AddButton(
 AddButton(
     v3,
     {Name = "Auto Hop Near Full Moon", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/near-fullmoon.lua%20(1).txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/fullmoon"))()
         end}
 )
 AddButton(
