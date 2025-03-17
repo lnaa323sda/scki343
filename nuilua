@@ -1,0 +1,27 @@
+local function findServerWithFewPlayers()
+    -- Tạo một API giả định để tìm các server ít người
+    -- (Thực tế trong game, việc này sẽ phụ thuộc vào API mà Blox Fruits cung cấp, nhưng ở đây tôi sẽ giả lập)
+    local servers = game:GetService("GameServer"):GetAvailableServers()
+    local targetServer = nil
+
+    for _, server in ipairs(servers) do
+        if server.PlayerCount < 5 then  -- Giả sử tìm server có ít hơn 5 người chơi
+            -- Nếu server có tỷ lệ spawn đảo núi lửa cao, chọn nó
+            if server:HasVolcanoIsland() then
+                targetServer = server
+                break
+            end
+        end
+    end
+
+    if targetServer then
+        -- Di chuyển người chơi đến server tìm được
+        game:GetService("TeleportService"):TeleportToPlaceInstance(targetServer.PlaceId, targetServer.InstanceId)
+        print("Đang chuyển đến server có đảo núi lửa.")
+    else
+        print("Không tìm thấy server có đảo.")
+    end
+end
+
+-- Gọi hàm để bắt đầu tìm kiếm server
+findServerWithFewPlayers()
