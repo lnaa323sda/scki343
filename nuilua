@@ -1,10 +1,15 @@
+-- Hàm đổi server (spawn hop)
 function Hop()
     local teleportService = game:GetService("TeleportService")
     local placeId = game.PlaceId  -- Lấy ID của trò chơi hiện tại
-
+    
     -- Teleport đến một server ngẫu nhiên (nếu có sẵn)
     teleportService:Teleport(placeId)
 end
 
--- Gọi hàm Hop để đổi server
-Hop()
+-- Tự động gọi hàm Hop liên tục để đổi server
+while true do
+    -- Gọi hàm Hop để đổi server
+    Hop()
+    wait(3)  -- Đợi 3 giây trước khi thử lại vào server mới
+end
