@@ -522,19 +522,19 @@ SF = AddSection(v2, {"Farm Boss & Hop"})
 AddButton(
     v2,
     {Name = "Auto Hop Saishi", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Saisi.txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/notify"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Shizu", Callback = function()
-          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Shizu.txt"))()
+          wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/notify"))()
         end}
 )
 AddButton(
     v2,
     {Name = "Auto Hop Oroshi", Callback = function()
-         wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Oroshi.txt"))()
+         wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/notify"))()
         end}
 )
 AddButton(
