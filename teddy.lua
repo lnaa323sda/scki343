@@ -31,7 +31,7 @@ local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao1
 
 -- Tạo cửa sổ chính
 local Window = redzlib:MakeWindow({
-  Title = "Zush Hub [Free]",
+  Title = "Zush Hub [Pro]",
   SubTitle = "by stuckez999",
   SaveFolder = "testando | redz lib v5.lua"
 })
@@ -49,7 +49,42 @@ local Tab3 = Window:MakeTab({"Tab Mirage", "batterycharging"})
 local Tab4 = Window:MakeTab({"Tab Sword", "bitcoin"})
 local Tab5 = Window:MakeTab({"Tab Farm", "cake"})
 local Tab6 = Window:MakeTab({"Tab Misc", "cookie"})
-local Tab7 = Window:MakeTab({"Tab Draco", ""})
+local Tab7 = Window:MakeTab({"Tab Draco", "cloudy"})
+-- Hàm tự động chọn và trang bị Melee
+local function autoSelectMelee()
+    task.spawn(
+        function()
+            while wait() do
+                pcall(
+                    function()
+                        -- Duyệt qua các công cụ trong Backpack
+                        for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                            -- Kiểm tra nếu ToolTip là Melee
+                            if v.ToolTip == "Melee" then
+                                -- Kiểm tra nếu vũ khí Melee tồn tại trong Backpack
+                                if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v.Name)) then
+                                    -- Chọn và trang bị vũ khí Melee
+                                    SelectWeapon = v.Name
+                                    game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+                                    break -- Dừng sau khi đã trang bị Melee
+                                end
+                            end
+                        end
+                    end
+                )
+            end
+        end
+    )
+end
+
+-- Gọi hàm autoSelectMelee khi nhân vật xuất hiện lại sau khi chết
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    -- Gọi autoSelectMelee mỗi khi nhân vật được tái sinh
+    autoSelectMelee()
+end)
+
+autoSelectMelee()
+
 function CheckNearestTeleporter(v6)
     local v7 = game.Players.LocalPlayer.Data.Level.Value
     local v8 = v6.Position
@@ -541,7 +576,7 @@ local Paragraph = Tab2:AddParagraph({"Thông báo", "Nếu hop nào bị lỗi t
 Tab2:AddButton({
     Name = "Hop Boss Blackbeard",
     Callback = function()
-        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark"))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/darkbeard.luau"))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -569,7 +604,7 @@ Tab2:AddButton({
 Tab2:AddButton({
     Name = "Hop Boss Dough King",
     Callback = function()
-        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark"))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/dough%20king.luau.txt"))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -1105,6 +1140,28 @@ spawn(function()
         end
     end
 end)
+function AUTOHAKI()
+    if not game.Players.LocalPlayer.Character:FindFirstChild("HasBuso") then
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
+    end
+end
+
+Tab6:AddToggle({
+    Name = "Auto Haki",
+    Default = true,  -- Trạng thái mặc định của Toggle
+    Callback = function(state)  -- 'state' là giá trị của Toggle (true/false)
+        _G.AUTOHAKI = state  
+    end
+})
+
+spawn(function()
+    while true do
+        wait(0.1)  -- Điều chỉnh thời gian chờ nếu cần
+        if _G.AUTOHAKI then 
+            AUTOHAKI() -- Gọi hàm AutoHaki liên tục nếu Toggle đang bật
+        end
+    end
+end)
 Tab6:AddToggle({
     Name = "Anti AFK",
     Default = true,
@@ -1138,25 +1195,25 @@ task.spawn(function()
         end
     end
 end)
-local Section = Settings:AddSection({"Thông tin"})
-local Paragraph = Settings:AddParagraph({"Thông báo", "Chan đê!!"})
+local Section = Tab4:AddSection({"Thông tin"})
+local Paragraph = Tab4:AddParagraph({"Thông báo", "Chan đê!!"})
 local Section = Tab4:AddSection({"Hop Sword Legendary"})
 Tab4:AddButton({
-    Name = "Auto Hop Saishi",
+    Name = "Auto Hop Oroshi",
     Callback = function()
-          -- Link Discord invite của bạn
+        wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Oroshi.txt"))()
     end}
 )
 Tab4:AddButton({
     Name = "Auto Hop Shizu",
     Callback = function()
-          -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Shizu.txt"))()
     end}
 )
 Tab4:AddButton({
-    Name = "Auto Hop Oroshi",
+    Name = "Auto Hop Saishi",
     Callback = function()
-          -- Link Discord invite của bạn
+        wait(1)  loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Saisi.txt"))()
     end}
 )
 Tab4:AddToggle({Name = "Auto Buy Sword Legendary", Default = false, Callback = function(v38) 
@@ -1499,3 +1556,5 @@ spawn(function()
         end
     end
 end)
+local Section = Tab7:AddSection({"Thông báo"})
+local Paragraph = Tab7:AddParagraph({"Yêu cầu", "Buy key premium để sử dụng chức năng này\nVà ngoài ra còn thêm nhiều hop khác và chức năng vip"})
