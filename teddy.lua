@@ -31,7 +31,7 @@ local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao1
 
 -- Tạo cửa sổ chính
 local Window = redzlib:MakeWindow({
-  Title = "Zush Hub [Pro]",
+  Title = "Zush Hub [Free]",
   SubTitle = "by stuckez999",
   SaveFolder = "testando | redz lib v5.lua"
 })
@@ -49,7 +49,6 @@ local Tab3 = Window:MakeTab({"Tab Mirage", "batterycharging"})
 local Tab4 = Window:MakeTab({"Tab Sword", "bitcoin"})
 local Tab5 = Window:MakeTab({"Tab Farm", "cake"})
 local Tab6 = Window:MakeTab({"Tab Misc", "cookie"})
-local Tab7 = Window:MakeTab({"Tab Draco", "cloudy"})
 -- Hàm tự động chọn và trang bị Melee
 local function autoSelectMelee()
     task.spawn(
@@ -1556,5 +1555,3 @@ spawn(function()
         end
     end
 end)
-local Section = Tab7:AddSection({"Thông báo"})
-local Paragraph = Tab7:AddParagraph({"Yêu cầu", "Buy key premium để sử dụng chức năng này\nVà ngoài ra còn thêm nhiều hop khác và chức năng vip"})
