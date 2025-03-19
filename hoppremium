@@ -1570,5 +1570,183 @@ spawn(function()
         end
     end
 end)
-local Section = Tab7:AddSection({"Thông báo"})
-local Paragraph = Tab7:AddParagraph({"Yêu cầu", "Buy key premium để sử dụng chức năng này\nVà ngoài ra còn thêm nhiều hop khác và chức năng vip"})
+local placeId = game.PlaceId
+local jobId = game.JobId
+
+local sea1 = 2753915549
+local sea2 = 4442272183
+local sea3 = 7449423635
+
+local CheckSea
+if placeId == sea1 then
+	CheckSea = "Sea 1"
+elseif placeId == sea2 then
+	CheckSea = "Sea 2"
+elseif placeId == sea3 then
+	CheckSea = "Sea 3"
+else
+	CheckSea = "unknown sea"
+end
+
+local Players = game:GetService("Players")
+local playerCount = #game:GetService("Players"):GetPlayers()
+
+local hwid = game:GetService("RbxAnalyticsService"):GetClientId()
+local ExecutorUsing = identifyexecutor()
+local HttpService = game:GetService("HttpService")
+
+-- Check Moon Phase
+local moonPhase = "Unknown"
+local moonId = game:GetService("Lighting").Sky.MoonTextureId
+if moonId == "http://www.roblox.com/asset/?id=9709149431" then
+    moonPhase = "🌕: Full Moon 100%"
+elseif moonId == "http://www.roblox.com/asset/?id=9709149052" then
+    moonPhase = "🌖: Full Moon 75%"
+elseif moonId == "http://www.roblox.com/asset/?id=9709143733" then
+    moonPhase = "🌗: Full Moon 50%"
+elseif moonId == "http://www.roblox.com/asset/?id=9709150401" then
+    moonPhase = "🌘: Full Moon 25%"
+elseif moonId == "http://www.roblox.com/asset/?id=9709149680" then
+    moonPhase = "🌘: Full Moon 15%"
+else
+    moonPhase = "Wait For Moon"
+end
+
+-- Check Kitsune Island
+local kitsuneIslandStatus = "❌"
+if game.Workspace.Map:FindFirstChild("KitsuneIsland") then
+	kitsuneIslandStatus = "✅"
+end
+
+local MirageIslandStatus = "❌"
+if game.Workspace._WorldOrigin.Locations:FindFirstChild('Mirage Island') then
+    MirageIslandStatus = "🟢"
+end
+
+local FrozenIslandStatus = "❌"
+if game.Workspace._WorldOrigin.Locations:FindFirstChild('Frozen Dimension') then
+    FrozenIslandStatus = "Spawning 🟢"
+end
+
+local SwordStatus = "Không có kiếm"
+if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("LegendarySwordDealer", "1") then
+    SwordStatus = "Shisui"
+elseif game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("LegendarySwordDealer", "2") then
+    SwordStatus = "Wando"
+elseif game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("LegendarySwordDealer", "3") then
+    SwordStatus = "Saddi"
+end
+
+local KatakuriStatus = "❌"
+spawn(function()
+    while wait() do
+        pcall(function()
+            local result = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner")
+
+            if string.len(result) == 88 then
+                KatakuriStatus = "Kill: " .. string.sub(result, 39, 41)
+                BuonNaoDauAiThau:SetDesc(KatakuriStatus)
+            elseif string.len(result) == 87 then
+                KatakuriStatus = "Kill: " .. string.sub(result, 39, 40)
+                BuonNaoDauAiThau:SetDesc(KatakuriStatus)
+            elseif string.len(result) == 86 then
+                KatakuriStatus = "Kill: " .. string.sub(result, 39, 39)
+                BuonNaoDauAiThau:SetDesc(KatakuriStatus)
+            else
+                KatakuriStatus = "🟢"
+                BuonNaoDauAiThau:SetDesc(KatakuriStatus)
+            end
+        end)
+    end
+end)
+
+local Data =
+{
+	["embeds"] = {
+		{
+			["title"] = "Thông Tin | Zush Hub Pro",
+			["url"] = "https://www.roblox.com/users/" .. game.Players.LocalPlayer.UserId,
+			["description"] = "```" .. game.Players.LocalPlayer.DisplayName .. " ```",
+			["color"] = tonumber("0xf7c74b"),
+			["thumbnail"] = {
+				["url"] = "https://cdn.discordapp.com/attachments/1277112182743629969/1277337544463224898/Picsart_24-08-26_01-42-34-420.png?ex=66ccccca&is=66cb7b4a&hm=80a0165401d2357f1386cfa88da35a3df2427c1186b0e8b7955272f6c5f6ead9&"
+			},
+			["fields"] = {
+				{
+					["name"] = "Execute:",
+					["value"] = "```" .. ExecutorUsing .. "```",
+					["inline"] = true
+				},
+				{
+					["name"] = "Hwid:",
+					["value"] = hwid,
+					["inline"] = true
+				},
+				{
+					["name"] = "Sea:",
+					["value"] = "```" .. CheckSea .. "```",
+					["inline"] = true
+				},
+				{
+					["name"] = "Job ID:",
+					["value"] = " " .. jobId,
+					["inline"] = true
+				},
+				{
+					["name"] = "Script Teleport:",
+					["value"] = "\n" .. 'game:GetService("TeleportService"):TeleportToPlaceInstance(' .. placeId .. ', "' .. jobId .. '", game.Players.LocalPlayer)' .. "\n",
+					["inline"] = true
+				},
+				{
+					["name"] = "Moon Phase:",
+					["value"] = moonPhase,
+					["inline"] = true
+				},
+				{
+					["name"] = "🏝️ Kitsune Island:",
+					["value"] = "```" .. kitsuneIslandStatus .. "```",
+					["inline"] = true
+				},
+                                {
+					["name"] = "🏝️ Mirage Island:",
+					["value"] = "```" .. MirageIslandStatus .. "```",
+					["inline"] = true
+				},
+                                {
+					["name"] = "🏝️ Frozen Dimension:",
+					["value"] = "```" .. FrozenIslandStatus .. "```",
+					["inline"] = true
+				},
+				{
+					["name"] = "⚔️ Legend Swords:",
+					["value"] = "```" .. SwordStatus .. "```",
+					["inline"] = true
+				},
+				{
+					["name"] = "🦅 Katakuri Status:",
+					["value"] = "```" .. KatakuriStatus .. "```",
+					["inline"] = true
+				},
+				{
+					["name"] = "Ty For Use:",
+					["value"] = "**__Zush Hub Phiên Bản Pro__**",
+					["inline"] = true
+				}
+			}
+		}
+	}
+}
+
+local Headers = {
+	["Content-Type"] = "application/json"
+}
+local Encoded = HttpService:JSONEncode(Data)
+
+local Request = http_request or request or HttpPost or syn.request
+local Final = {
+	Url = "https://discord.com/api/webhooks/1351093026524500019/K63buQJZV5JirirqjZQjyOyBqgVEyOEz1pJ6J2cIID-PoLIIO5BxTtMaB1PaUNMBm3bE",
+	Body = Encoded,
+	Method = "POST",
+	Headers = Headers
+}
+Request(Final)
