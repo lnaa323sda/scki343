@@ -527,7 +527,7 @@ Settings:AddDiscordInvite({
     end
 })
 local Section = Settings:AddSection({"Cập nhật"})
-local Paragraph = Settings:AddParagraph({"Thông báo", "Tất cả các script tôi sẽ update liên tục\nNên là ít cũng phải 3 lít nhiều thì 3 củ\nThông tin bank : MBBANK - 0765520260 - NGUYEN MINH DUC"})
+local Paragraph = Settings:AddParagraph({"Thông báo", "Phiên bản này là Free nên sẽ update chậm\nNên vip hơn thì mua bản pro hoặc premium\nThông tin bank : MBBANK - 0765520260 - NGUYEN MINH DUC"})
 
 game.StarterGui:SetCore(
             "SendNotification",
