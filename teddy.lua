@@ -49,7 +49,6 @@ local Tab3 = Window:MakeTab({"Tab Mirage", "batterycharging"})
 local Tab4 = Window:MakeTab({"Tab Sword", "bitcoin"})
 local Tab5 = Window:MakeTab({"Tab Farm", "cake"})
 local Tab6 = Window:MakeTab({"Tab Misc", "cookie"})
-local Tab7 = Window:MakeTab({"Tab Sea Event", "cloudy"})
 -- Hàm tự động chọn và trang bị Melee
 local function autoSelectMelee()
     task.spawn(
@@ -1520,69 +1519,6 @@ spawn(function()
         end
     end
 end)
-Tab5:AddToggle({Name = "Farm Elite (Beta)", Default = false, Callback = function(state)
-    EliteHunter.Toggle(state)
- end}
-)
-local EliteHunter = {}
-
-EliteHunter.Settings = {
-    Enabled = false,
-    HopEnabled = true,  -- Bật chức năng hop server
-    SelectWeapon = "YourWeaponHere"  -- Thay thế bằng vũ khí bạn muốn dùng
-}
-
--- Hàm kích hoạt hoặc tắt Elite Hunter
-function EliteHunter.Toggle(state)
-    EliteHunter.Settings.Enabled = state
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
-    StopTween(EliteHunter.Settings.Enabled)
-    if state then
-        EliteHunter.Start()
-    end
-end
-
--- Bắt đầu farm Elite Hunter
-function EliteHunter.Start()
-    spawn(function()
-        while wait() do
-            if EliteHunter.Settings.Enabled then
-                pcall(function()
-                    local QuestGui = game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest
-                    if QuestGui.Visible then
-                        local QuestTitle = QuestGui.Container.QuestTitle.Title.Text
-                        -- Kiểm tra nếu đang có nhiệm vụ Elite Hunter và tìm boss
-                        if string.find(QuestTitle, "Diablo") or string.find(QuestTitle, "Deandre") or string.find(QuestTitle, "Urban") then
-                            local Enemies = game:GetService("Workspace").Enemies
-                            for _, v in pairs(Enemies:GetChildren()) do
-                                if v.Name == "Diablo" or v.Name == "Deandre" or v.Name == "Urban" then
-                                    if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
-                                        repeat
-                                            wait()
-                                            EquipWeapon(EliteHunter.Settings.SelectWeapon)
-                                            v.HumanoidRootPart.CanCollide = false
-                                            v.Humanoid.WalkSpeed = 0
-                                            -- Di chuyển đến boss
-                                            TP2(v.HumanoidRootPart.CFrame * CFrame.new(2, 20, 2))
-                                            sethiddenproperty(game:GetService("Players").LocalPlayer, "SimulationRadius", math.huge)
-                                        until not EliteHunter.Settings.Enabled or v.Humanoid.Health <= 0 or not v.Parent
-                                    end
-                                end
-                            end
-                        end
-                    else
-                        -- Nhận nhiệm vụ Elite Hunter
-                        local Response = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("EliteHunter")
-                        -- Nếu không có boss, hop server
-                        if EliteHunter.Settings.HopEnabled and Response == "I don't have anything for you right now. Come back later." then
-                            hop()
-                        end
-                    end
-                end)
-            end
-        end
-    end)
-end
 
 local placeId = game.PlaceId
 local jobId = game.JobId
@@ -1773,4 +1709,3 @@ local Final = {
 	Headers = Headers
 }
 Request(Final)
-
