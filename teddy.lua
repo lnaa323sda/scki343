@@ -49,6 +49,7 @@ local Tab3 = Window:MakeTab({"Tab Mirage", "batterycharging"})
 local Tab4 = Window:MakeTab({"Tab Sword", "bitcoin"})
 local Tab5 = Window:MakeTab({"Tab Farm", "cake"})
 local Tab6 = Window:MakeTab({"Tab Misc", "cookie"})
+local Tab7 = Window:MakeTab({"Tab Sea Event", "cloudy"})
 -- Hàm tự động chọn và trang bị Melee
 local function autoSelectMelee()
     task.spawn(
@@ -527,7 +528,7 @@ Settings:AddDiscordInvite({
     end
 })
 local Section = Settings:AddSection({"Cập nhật"})
-local Paragraph = Settings:AddParagraph({"Thông báo", "Phiên bản này là Free nên sẽ update chậm\nNên vip hơn thì mua bản pro hoặc premium\nThông tin bank : MBBANK - 0765520260 - NGUYEN MINH DUC"})
+local Paragraph = Settings:AddParagraph({"Thông báo", "Tất cả các script tôi sẽ update liên tục\nNên là ít cũng phải 3 lít nhiều thì 3 củ\nThông tin bank : MBBANK - 0765520260 - NGUYEN MINH DUC"})
 
 game.StarterGui:SetCore(
             "SendNotification",
@@ -575,7 +576,7 @@ local Paragraph = Tab2:AddParagraph({"Thông báo", "Nếu hop nào bị lỗi t
 Tab2:AddButton({
     Name = "Hop Boss Blackbeard",
     Callback = function()
-        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/darkbeard.luau"))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -589,7 +590,7 @@ Tab2:AddButton({
 Tab2:AddButton({
     Name = "Hop Boss Rip Indra",
     Callback = function()
-        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet(""))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -603,7 +604,21 @@ Tab2:AddButton({
 Tab2:AddButton({
     Name = "Hop Boss Dough King",
     Callback = function()
-        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet(""))()  -- Link Discord invite của bạn
+        game.StarterGui:SetCore(
+            "SendNotification",
+            {
+                Title = "Zush Hub",
+                Text = "đợi xíu nào chàng trai",
+                Duration = 3
+            }
+        )
+    end
+})
+Tab2:AddButton({
+    Name = "Hop Boss Soul Reaper",
+    Callback = function()
+        wait(1) loadstring(game:HttpGet(""))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -809,6 +824,9 @@ task.spawn(function()
         end
     end
 end)
+Tab2:AddToggle({Name = "Farm Soul Reaper + Random Bone", Default = false, Callback = function() 
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/attack%20soul%20%2B%20random"))()
+end})
 Tab3:AddSection({"Hop Server"})
 Tab3:AddButton({Name = "Auto Hop Full Moon", Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/fullmoon"))()
@@ -1149,15 +1167,20 @@ Tab6:AddToggle({
     Name = "Auto Haki",
     Default = true,  -- Trạng thái mặc định của Toggle
     Callback = function(state)  -- 'state' là giá trị của Toggle (true/false)
-        _G.AUTOHAKI = state  
+        _G.AutoHaki = state  
     end
 })
+function AutoHaki()
+    if not game.Players.LocalPlayer.Character:FindFirstChild("HasBuso") then
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
+    end
+end
 
 spawn(function()
     while true do
         wait(0.1)  -- Điều chỉnh thời gian chờ nếu cần
-        if _G.AUTOHAKI then 
-            AUTOHAKI() -- Gọi hàm AutoHaki liên tục nếu Toggle đang bật
+        if _G.AutoHaki then 
+            AutoHaki() -- Gọi hàm AutoHaki liên tục nếu Toggle đang bật
         end
     end
 end)
@@ -1352,70 +1375,13 @@ function Tween2(CFgo)
     return tweenfunc
 end
 
--- Chức năng Farm Bone với gom quái và tấn công
-local function ToggleFarmBone(state)
-    _G.Bone = state
-    local BoneCFrame = CFrame.new(-9515.75, 174.852, 6079.406) -- Vị trí nhận nhiệm vụ farm bone
-    local GATHER_RADIUS = 10 -- Bán kính gom quái xung quanh nhân vật
-
-    if state then
-        spawn(function()
-            while _G.Bone do
-                pcall(function()
-                    -- Kiểm tra xem đã nhận nhiệm vụ chưa
-                    local QuestTitle = game.Players.LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text
-                    if not string.find(QuestTitle, "Demonic Soul") then
-                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
-                    end
-
-                    -- Lấy nhiệm vụ nếu chưa có
-                    if not game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible then
-                        Tween2(BoneCFrame) -- Bay đến vị trí nhận nhiệm vụ
-                        if (BoneCFrame.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 then
-                            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest", "HauntedQuest2", 1)
-                        end
-                    else
-                        -- Tìm quái trong phạm vi bán kính GATHER_RADIUS
-                        local enemies = {}
-                        for _, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
-                            if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
-                                local distance = (v.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-                                if distance <= GATHER_RADIUS and 
-                                   (v.Name == "Reborn Skeleton" or v.Name == "Living Zombie" or v.Name == "Demonic Soul" or v.Name == "Posessed Mummy") then
-                                    table.insert(enemies, v) -- Thêm quái vào danh sách nếu ở trong phạm vi gom
-                                end
-                            end
-                        end
-
-                        -- Gom tất cả quái lại một điểm (vị trí của quái đầu tiên)
-                        if #enemies > 0 then
-                            local gatherPosition = enemies[1].HumanoidRootPart.CFrame -- Lấy vị trí của quái đầu tiên để gom
-                            for _, v in pairs(enemies) do
-                                v.HumanoidRootPart.CanCollide = false
-                                v.Humanoid.WalkSpeed = 0
-                                v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
-                                v.HumanoidRootPart.CFrame = gatherPosition -- Gom tất cả về cùng một vị trí
-                            end
-
-                            -- Tấn công tất cả quái đã gom
-                            for _, v in pairs(enemies) do
-                                repeat
-                                    wait(0.1) -- Tùy chỉnh delay
-                                    EquipTool("YourWeapon") -- Trang bị vũ khí của bạn
-                                    AutoHaki() -- Kích hoạt Haki tự động
-                                    AttackNoCoolDown() -- Tấn công quái
-                                until v.Humanoid.Health <= 0 or not v.Parent or not game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible
-                            end
-                        end
-                    end
-                end)
-                wait(1) -- Chờ 1 giây trước khi tiếp tục
-            end
-        end)
-    end
-end
-Tab5:AddToggle({Name = "Farm Bones", Default = false, Callback = function(state)
-    ToggleFarmBone(state)
+Tab5:AddToggle({Name = "Farm Bones", Default = false, Callback = function()
+local Notification = require(game:GetService("ReplicatedStorage").Notification)
+Notification.new("<Color=Cyan>wait update<Color=/>"):Display()
+wait(0.5)
+repeat
+    wait()
+until game.Players.LocalPlayer
 end}
 )
 -- Cấu hình cơ bản
@@ -1482,7 +1448,6 @@ function FindBoss()
     return nil
 end
 
--- Hàm tìm quái tại đảo bánh
 function FindMonster()
     for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
         if v:IsA("Model") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
@@ -1555,6 +1520,70 @@ spawn(function()
         end
     end
 end)
+Tab5:AddToggle({Name = "Farm Elite (Beta)", Default = false, Callback = function(state)
+    EliteHunter.Toggle(state)
+ end}
+)
+local EliteHunter = {}
+
+EliteHunter.Settings = {
+    Enabled = false,
+    HopEnabled = true,  -- Bật chức năng hop server
+    SelectWeapon = "YourWeaponHere"  -- Thay thế bằng vũ khí bạn muốn dùng
+}
+
+-- Hàm kích hoạt hoặc tắt Elite Hunter
+function EliteHunter.Toggle(state)
+    EliteHunter.Settings.Enabled = state
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
+    StopTween(EliteHunter.Settings.Enabled)
+    if state then
+        EliteHunter.Start()
+    end
+end
+
+-- Bắt đầu farm Elite Hunter
+function EliteHunter.Start()
+    spawn(function()
+        while wait() do
+            if EliteHunter.Settings.Enabled then
+                pcall(function()
+                    local QuestGui = game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest
+                    if QuestGui.Visible then
+                        local QuestTitle = QuestGui.Container.QuestTitle.Title.Text
+                        -- Kiểm tra nếu đang có nhiệm vụ Elite Hunter và tìm boss
+                        if string.find(QuestTitle, "Diablo") or string.find(QuestTitle, "Deandre") or string.find(QuestTitle, "Urban") then
+                            local Enemies = game:GetService("Workspace").Enemies
+                            for _, v in pairs(Enemies:GetChildren()) do
+                                if v.Name == "Diablo" or v.Name == "Deandre" or v.Name == "Urban" then
+                                    if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+                                        repeat
+                                            wait()
+                                            EquipWeapon(EliteHunter.Settings.SelectWeapon)
+                                            v.HumanoidRootPart.CanCollide = false
+                                            v.Humanoid.WalkSpeed = 0
+                                            -- Di chuyển đến boss
+                                            TP2(v.HumanoidRootPart.CFrame * CFrame.new(2, 20, 2))
+                                            sethiddenproperty(game:GetService("Players").LocalPlayer, "SimulationRadius", math.huge)
+                                        until not EliteHunter.Settings.Enabled or v.Humanoid.Health <= 0 or not v.Parent
+                                    end
+                                end
+                            end
+                        end
+                    else
+                        -- Nhận nhiệm vụ Elite Hunter
+                        local Response = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("EliteHunter")
+                        -- Nếu không có boss, hop server
+                        if EliteHunter.Settings.HopEnabled and Response == "I don't have anything for you right now. Come back later." then
+                            hop()
+                        end
+                    end
+                end)
+            end
+        end
+    end)
+end
+
 local placeId = game.PlaceId
 local jobId = game.JobId
 
@@ -1596,14 +1625,12 @@ elseif moonId == "http://www.roblox.com/asset/?id=9709149680" then
 else
     moonPhase = "Wait For Moon"
 end
-
--- Check Devil Fruit (Trái ác quỷ) in server
+-- Check Kitsune Island
 local devilFruitStatus = "❌"
 if game.Workspace:FindFirstChild("DevilFruit") then
 	devilFruitStatus = "🟢"
 end
 
--- Check Kitsune Island
 local kitsuneIslandStatus = "❌"
 if game.Workspace.Map:FindFirstChild("KitsuneIsland") then
 	kitsuneIslandStatus = "✅"
@@ -1655,7 +1682,7 @@ local Data =
 {
 	["embeds"] = {
 		{
-			["title"] = "Thông Tin | Zush Hub",
+			["title"] = "Thông Tin | Zush Hub Pro",
 			["url"] = "https://www.roblox.com/users/" .. game.Players.LocalPlayer.UserId,
 			["description"] = "```" .. game.Players.LocalPlayer.DisplayName .. " ```",
 			["color"] = tonumber("0xf7c74b"),
@@ -1698,12 +1725,12 @@ local Data =
 					["value"] = "```" .. kitsuneIslandStatus .. "```",
 					["inline"] = true
 				},
-                {
+                                {
 					["name"] = "🏝️ Mirage Island:",
 					["value"] = "```" .. MirageIslandStatus .. "```",
 					["inline"] = true
 				},
-                {
+                                {
 					["name"] = "🏝️ Frozen Dimension:",
 					["value"] = "```" .. FrozenIslandStatus .. "```",
 					["inline"] = true
@@ -1718,7 +1745,7 @@ local Data =
 					["value"] = "```" .. KatakuriStatus .. "```",
 					["inline"] = true
 				},
-				{
+                {
 					["name"] = "Devil Fruit in Server:",
 					["value"] = "```" .. devilFruitStatus .. "```",
 					["inline"] = true
@@ -1746,3 +1773,4 @@ local Final = {
 	Headers = Headers
 }
 Request(Final)
+
