@@ -1040,7 +1040,7 @@ Tab3:AddToggle({Name = "Bay đến bia đá", Default = false, Callback = functi
 local targetPosition = CFrame.new(2947.556884765625, 2281.630615234375, -7213.54931640625)
 local character = game.Players.LocalPlayer.Character
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-local speed = 350 -- Tốc độ di chuyển
+local speed = 250 -- Tốc độ di chuyển
 
 -- Hàm di chuyển mượt mà
 local function moveToTarget(targetCFrame)
