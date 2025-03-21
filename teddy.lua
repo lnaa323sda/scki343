@@ -575,7 +575,7 @@ local Paragraph = Tab2:AddParagraph({"Thông báo", "Nếu hop nào bị lỗi t
 Tab2:AddButton({
     Name = "Hop Boss Blackbeard",
     Callback = function()
-        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/darkbeard.luau"))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark"))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -589,7 +589,7 @@ Tab2:AddButton({
 Tab2:AddButton({
     Name = "Hop Boss Rip Indra",
     Callback = function()
-        wait(1) loadstring(game:HttpGet(""))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip"))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -603,7 +603,7 @@ Tab2:AddButton({
 Tab2:AddButton({
     Name = "Hop Boss Dough King",
     Callback = function()
-        wait(1) loadstring(game:HttpGet(""))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -617,7 +617,7 @@ Tab2:AddButton({
 Tab2:AddButton({
     Name = "Hop Boss Soul Reaper",
     Callback = function()
-        wait(1) loadstring(game:HttpGet(""))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/soulreaper.lua%20(1).txt"))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
