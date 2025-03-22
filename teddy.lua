@@ -1102,6 +1102,16 @@ Tab6:AddButton({
         game:GetService("Players").LocalPlayer.PlayerGui.Main.FruitInventory.Visible = true
     end
 })
+Tab6:AddToggle({Name = "Đi trên nước", Default = true, Callback = function(state)
+    if state then
+            -- Khi bật Toggle, tự động chạy script từ URL
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/kaitundoughking/refs/heads/main/%C4%91i%20tr%C3%AAn%20nuwocs"))()
+        else
+            -- Khi tắt Toggle, có thể dừng hoặc không làm gì
+            print("Đã chạy đc trên nc")
+        end
+end
+})
 Tab6:AddButton({
     Name = "Title Name",
     Callback = function()
