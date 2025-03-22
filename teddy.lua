@@ -1112,6 +1112,56 @@ Tab6:AddToggle({Name = "Đi trên nước", Default = true, Callback = function(
         end
 end
 })
+-- Hàm bật No Clip cho nhân vật và thuyền
+local function EnableNoClip()
+    -- No Clip cho nhân vật
+    for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+    -- No Clip cho thuyền (nếu có)
+    for _, ship in pairs(workspace:GetDescendants()) do
+        if ship:IsA("Model") and ship:FindFirstChild("VehicleSeat") then -- Tìm thuyền bằng cách kiểm tra có "VehicleSeat"
+            for _, part in pairs(ship:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false  -- Vô hiệu hóa va chạm cho từng phần của thuyền
+                end
+            end
+        end
+    end
+end
+-- Hàm tắt No Clip cho nhân vật và thuyền
+local function DisableNoClip()
+    -- Khôi phục CanCollide cho nhân vật
+    for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = true
+        end
+    end
+    -- Khôi phục CanCollide cho thuyền (nếu có)
+    for _, ship in pairs(workspace:GetDescendants()) do
+        if ship:IsA("Model") and ship:FindFirstChild("VehicleSeat") then
+            for _, part in pairs(ship:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = true  -- Khôi phục va chạm cho từng phần của thuyền
+                end
+            end
+        end
+    end
+end
+-- Toggle No Clip trong UI
+Tab6:AddToggle({
+    Name = "Đi Xuyên Tường",
+    Default = false, -- Mặc định là tắt
+    Callback = function(state)
+        if state then
+            EnableNoClip() -- Bật No Clip cho nhân vật và thuyền
+        else
+            DisableNoClip() -- Tắt No Clip cho nhân vật và thuyền
+        end
+    end
+})
 Tab6:AddButton({
     Name = "Title Name",
     Callback = function()
