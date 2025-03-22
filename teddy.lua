@@ -575,7 +575,7 @@ local Paragraph = Tab2:AddParagraph({"Thông báo", "Nếu hop nào bị lỗi t
 Tab2:AddButton({
     Name = "Hop Boss Blackbeard",
     Callback = function()
-        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/darkbeard.luau"))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -589,7 +589,7 @@ Tab2:AddButton({
 Tab2:AddButton({
     Name = "Hop Boss Rip Indra",
     Callback = function()
-        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip"))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -603,7 +603,7 @@ Tab2:AddButton({
 Tab2:AddButton({
     Name = "Hop Boss Dough King",
     Callback = function()
-        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"))()  -- Link Discord invite của bạn
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))()  -- Link Discord invite của bạn
         game.StarterGui:SetCore(
             "SendNotification",
             {
@@ -734,7 +734,7 @@ task.spawn(function()
                         topos(darkbeard.HumanoidRootPart.CFrame * CFrame.new(5, 10, 7))
                     else
                         task.wait(3)
-                        loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark"))()
+                        loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()
                     end
                 end
             end)
@@ -775,7 +775,7 @@ task.spawn(function()
                         topos(rip_indra.HumanoidRootPart.CFrame * CFrame.new(5, 10, 7))
                     else
                         task.wait(3)
-                        loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip"))()
+                        loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt"))()
                     end
                 end
             end)
@@ -816,7 +816,7 @@ task.spawn(function()
                         topos(dough_king.HumanoidRootPart.CFrame * CFrame.new(5, 10, 7))
                     else
                         task.wait(3)
-                        loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"))()
+                        loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"))()
                     end
                 end
             end)
@@ -828,12 +828,12 @@ Tab2:AddToggle({Name = "Farm Soul Reaper + Random Bone", Default = false, Callba
 end})
 Tab3:AddSection({"Hop Server"})
 Tab3:AddButton({Name = "Auto Hop Full Moon", Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/fullmoon"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/FullMon.txt"))()
     end
 })
 
 Tab3:AddButton({Name = "Auto Hop Mirage", Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/mirage"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Mirage.txt"))()
     end
 })
 
