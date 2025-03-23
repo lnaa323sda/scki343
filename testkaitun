@@ -3,7 +3,7 @@ if getgenv().Team == "Pirates" then
 elseif getgenv().Team == "Marines" then
     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines")
 end
-wait(2)
+wait(1)
 hookfunction(
     require(game:GetService("ReplicatedStorage").Effect.Container.Death),
     function()
