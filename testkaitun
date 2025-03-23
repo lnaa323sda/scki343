@@ -1,0 +1,542 @@
+if getgenv().Team == "Pirates" then
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
+elseif getgenv().Team == "Marines" then
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines")
+end
+wait(2)
+hookfunction(
+    require(game:GetService("ReplicatedStorage").Effect.Container.Death),
+    function()
+    end
+)
+hookfunction(
+    require(game:GetService("ReplicatedStorage").Effect.Container.Respawn),
+    function()
+    end
+)
+hookfunction(
+    require(game:GetService("ReplicatedStorage"):WaitForChild("GuideModule")).ChangeDisplayedNPC,
+    function()
+    end
+)
+require(game.ReplicatedStorage.Util.CameraShaker):Stop()
+if (game.PlaceId == 2753915549) then
+    World1 = true
+elseif (game.PlaceId == 4442272183) then
+    World2 = true
+elseif (game.PlaceId == 7449423635) then
+    World3 = true
+end
+local function autoSelectMelee()
+    task.spawn(
+        function()
+            while wait() do
+                pcall(
+                    function()
+                        -- Duyệt qua các công cụ trong Backpack
+                        for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                            -- Kiểm tra nếu ToolTip là Melee
+                            if v.ToolTip == "Melee" then
+                                -- Kiểm tra nếu vũ khí Melee tồn tại trong Backpack
+                                if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v.Name)) then
+                                    -- Chọn và trang bị vũ khí Melee
+                                    SelectWeapon = v.Name
+                                    game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+                                    break -- Dừng sau khi đã trang bị Melee
+                                end
+                            end
+                        end
+                    end
+                )
+            end
+        end
+    )
+end
+
+-- Gọi hàm autoSelectMelee khi nhân vật xuất hiện lại sau khi chết
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    -- Gọi autoSelectMelee mỗi khi nhân vật được tái sinh
+    autoSelectMelee()
+end)
+
+autoSelectMelee()
+
+function CheckNearestTeleporter(v6)
+    local v7 = game.Players.LocalPlayer.Data.Level.Value
+    local v8 = v6.Position
+    local v9 = math.huge
+    local v10 = math.huge
+    local v11 = game.PlaceId
+    local v12, v13, v14
+    if (v11 == 2753915549) then
+        v12 = true
+    elseif (v11 == 4442272183) then
+        v13 = true
+    elseif (v11 == 7449423635) then
+        v14 = true
+    end
+    local v15 = {}
+    if v14 then
+        v15 = {
+            Mansion = Vector3.new(-12471, 374, -7551),
+            Hydra = Vector3.new(5659, 1013, -341),
+            ["Caslte On The Sea"] = Vector3.new(-5092, 315, -3130),
+            ["Floating Turtle"] = Vector3.new(-12001, 332, -8861),
+            ["Beautiful Pirate"] = Vector3.new(5319, 23, -93),
+            ["Temple Of Time"] = Vector3.new(28286, 14897, 103)
+        }
+    elseif v13 then
+        v15 = {
+            ["Flamingo Mansion"] = Vector3.new(-317, 331, 597),
+            ["Flamingo Room"] = Vector3.new(2283, 15, 867),
+            ["Cursed Ship"] = Vector3.new(923, 125, 32853),
+            ["Zombie Island"] = Vector3.new(-6509, 83, -133)
+        }
+    elseif v12 then
+        v15 = {
+            ["Sky Island 1"] = Vector3.new(-4652, 873, -1754),
+            ["Sky Island 2"] = Vector3.new(-7895, 5547, -380),
+            ["Under Water Island"] = Vector3.new(61164, 5, 1820),
+            ["Under Water Island Entrace"] = Vector3.new(3865, 5, -1926)
+        }
+    end
+    local v16 = {}
+    for v39, v40 in pairs(v15) do
+        v16[v39] = (v40 - v8).Magnitude
+    end
+    for v43, v44 in pairs(v16) do
+        if (v44 < v9) then
+            v9 = v44
+            v10 = v44
+        end
+    end
+    local v17
+    for v45, v46 in pairs(v16) do
+        if (v46 <= v9) then
+            v17 = v15[v45]
+        end
+    end
+    local v18 = (v8 - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+    if (v10 <= v18) then
+        return v17
+    end
+end
+function requestEntrance(v19)
+    local v20 = {"requestEntrance", v19}
+    game.ReplicatedStorage.Remotes.CommF_:InvokeServer(unpack(v20))
+    local v21 = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+    local v22 = game.Players.LocalPlayer.Character.HumanoidRootPart
+    v22.CFrame = CFrame.new(v21.X, v21.Y + 50, v21.Z)
+    task.wait(0.5)
+end
+function topos(v24)
+    pcall(
+        function()
+            if
+                (game:GetService("Players").LocalPlayer and game:GetService("Players").LocalPlayer.Character and
+                    game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid") and
+                    game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and
+                    (game:GetService("Players").LocalPlayer.Character.Humanoid.Health > 0) and
+                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart)
+             then
+                if not TweenSpeed then
+                    TweenSpeed = 350
+                end
+                DefualtY = v24.Y
+                TargetY = v24.Y
+                targetCFrameWithDefualtY = CFrame.new(v24.X, DefualtY, v24.Z)
+                targetPos = v24.Position
+                oldcframe = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+                Distance =
+                    (targetPos -
+                    game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
+                if (Distance <= 300) then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v24
+                end
+                local v70 = CheckNearestTeleporter(v24)
+                if v70 then
+                    pcall(
+                        function()
+                            tween:Cancel()
+                        end
+                    )
+                    requestEntrance(v70)
+                end
+                b1 =
+                    CFrame.new(
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,
+                    DefualtY,
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z
+                )
+                IngoreY = true
+                if (IngoreY and ((b1.Position - targetCFrameWithDefualtY.Position).Magnitude > 5)) then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                        CFrame.new(
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,
+                        DefualtY,
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z
+                    )
+                    local v89 = {}
+                    local v90 = game:GetService("TweenService")
+                    local v91 =
+                        TweenInfo.new(
+                        (targetPos -
+                            game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude /
+                            TweenSpeed,
+                        Enum.EasingStyle.Linear
+                    )
+                    tween =
+                        v90:Create(
+                        game:GetService("Players").LocalPlayer.Character["HumanoidRootPart"],
+                        v91,
+                        {CFrame = targetCFrameWithDefualtY}
+                    )
+                    tween:Play()
+                    v89.Stop = function(v104)
+                        tween:Cancel()
+                    end
+                    tween.Completed:Wait()
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                        CFrame.new(
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,
+                        TargetY,
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z
+                    )
+                else
+                    local v93 = {}
+                    local v94 = game:GetService("TweenService")
+                    local v95 =
+                        TweenInfo.new(
+                        (targetPos -
+                            game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude /
+                            TweenSpeed,
+                        Enum.EasingStyle.Linear
+                    )
+                    tween =
+                        v94:Create(
+                        game:GetService("Players").LocalPlayer.Character["HumanoidRootPart"],
+                        v95,
+                        {CFrame = v24}
+                    )
+                    tween:Play()
+                    v93.Stop = function(v105)
+                        tween:Cancel()
+                    end
+                    tween.Completed:Wait()
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                        CFrame.new(
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,
+                        TargetY,
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z
+                    )
+                end
+                if not tween then
+                    return tween
+                end
+                return tweenfunc
+            end
+        end
+    )
+end
+function StopTween(v25)
+    if not v25 then
+        _G.StopTween = true
+        wait()
+        topos(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
+        wait()
+        if game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
+            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip"):Destroy()
+        end
+        _G.StopTween = false
+        _G.Clip = false
+    end
+    if game.Players.LocalPlayer.Character:FindFirstChild("Highlight") then
+        game.Players.LocalPlayer.Character:FindFirstChild("Highlight"):Destroy()
+    end
+end
+spawn(
+    function()
+        pcall(
+            function()
+                while wait() do
+                    if
+                        (_G.FarmBoss or _G.DarkFull or _G.DoughFull or _G.RipFull or _G.MysticIsland or _G.Miragenpc or
+                            _G.TweenMGear)
+                     then
+                        if
+                            not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild(
+                                "BodyClip"
+                            )
+                         then
+                            local v106 = Instance.new("BodyVelocity")
+                            v106.Name = "BodyClip"
+                            v106.Parent = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+                            v106.MaxForce = Vector3.new(100000, 100000, 100000)
+                            v106.Velocity = Vector3.new(0, 0, 0)
+                        end
+                    end
+                end
+            end
+        )
+    end
+)
+spawn(
+    function()
+        pcall(
+            function()
+                game:GetService("RunService").Stepped:Connect(
+                    function()
+                        if
+                            (_G.FarmBoss or _G.DarkFull or _G.DoughFull or _G.RipFull or _G.MysticIsland or _G.Miragenpc or
+                                _G.TweenMGear)
+                         then
+                            for v98, v99 in pairs(game:GetService("Players").LocalPlayer.Character:GetDescendants()) do
+                                if v99:IsA("BasePart") then
+                                    v99.CanCollide = false
+                                end
+                            end
+                        end
+                    end
+                )
+            end
+        )
+    end
+)
+PosY = 25
+Type = 1
+spawn(
+    function()
+        while wait() do
+            if (Type == 1) then
+                Pos = CFrame.new(0, PosY, -19)
+            elseif (Type == 2) then
+                Pos = CFrame.new(19, PosY, 0)
+            elseif (Type == 3) then
+                Pos = CFrame.new(0, PosY, 19)
+            elseif (Type == 4) then
+                Pos = CFrame.new(-19, PosY, 0)
+            end
+        end
+    end
+)
+spawn(
+    function()
+        while wait(0.1) do
+            Type = 1
+            wait(0.2)
+            Type = 2
+            wait(0.2)
+            Type = 3
+            wait(0.2)
+            Type = 4
+            wait(0.2)
+        end
+    end
+)
+local v5 = game.Players.LocalPlayer
+function AttackNoCoolDown()
+    local v26 = v5.Character
+    if not v26 then
+        return
+    end
+    local v27 = nil
+    for v47, v48 in ipairs(v26:GetChildren()) do
+        if v48:IsA("Tool") then
+            v27 = v48
+            break
+        end
+    end
+    if not v27 then
+        return
+    end
+    local function v28(v49)
+        return v49 and v49:FindFirstChild("Humanoid") and (v49.Humanoid.Health > 0)
+    end
+    local function v29(v50)
+        local v51 = game:GetService("Workspace").Enemies:GetChildren()
+        local v52 = {}
+        local v53 = v26:GetPivot().Position
+        for v56, v57 in ipairs(v51) do
+            local v58 = v57:FindFirstChild("HumanoidRootPart")
+            if (v58 and v28(v57) and ((v58.Position - v53).Magnitude <= v50)) then
+                table.insert(v52, v57)
+            end
+        end
+        return v52
+    end
+    if v27:FindFirstChild("LeftClickRemote") then
+        local v59 = 1
+        local v60 = v29(60)
+        for v71, v72 in ipairs(v60) do
+            local v73 = (v72.HumanoidRootPart.Position - v26:GetPivot().Position).Unit
+            pcall(
+                function()
+                    v27.LeftClickRemote:FireServer(v73, v59)
+                end
+            )
+            v59 = v59 + 1
+            if (v59 > 1000000000) then
+                v59 = 1
+            end
+        end
+    else
+        local v61 = {}
+        local v62 = game:GetService("Workspace").Enemies:GetChildren()
+        local v63 = v26:GetPivot().Position
+        local v64 = nil
+        for v74, v75 in ipairs(v62) do
+            if (not v75:GetAttribute("IsBoat") and v28(v75)) then
+                local v100 = v75:FindFirstChild("Head")
+                if (v100 and ((v63 - v100.Position).Magnitude <= 60)) then
+                    table.insert(v61, {v75, v100})
+                    v64 = v100
+                end
+            end
+        end
+        if not v64 then
+            return
+        end
+        pcall(
+            function()
+                local v76 = game:GetService("ReplicatedStorage")
+                local v77 = v76:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterAttack")
+                local v78 = v76:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterHit")
+                if (#v61 > 0) then
+                    v77:FireServer(1e-9)
+                    v78:FireServer(v64, v61)
+                else
+                    task.wait(1e-9)
+                end
+            end
+        )
+    end
+end
+_G.FastAttack = true
+spawn(
+    function()
+        while wait(0.1) do
+            if _G.FastAttack then
+                pcall(
+                    function()
+                        repeat
+                            task.wait(0.1)
+                            AttackNoCoolDown()
+                        until not _G.FastAttack
+                    end
+                )
+            end
+        end
+    end
+)
+spawn(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"))()
+    while task.wait() do
+        Click(0.000000000000000000000000000000004)
+    end
+end)
+function AutoHaki()
+    if not game:GetService("Players").LocalPlayer.Character:FindFirstChild("HasBuso") then
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
+    end
+end
+function EquipWeapon(v30)
+    if not Nill then
+        if game.Players.LocalPlayer.Backpack:FindFirstChild(v30) then
+            Tool = game.Players.LocalPlayer.Backpack:FindFirstChild(v30)
+            wait(0.1)
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(Tool)
+        end
+    end
+end
+_G.SelectWeapon = "Melee"
+task.spawn(
+    function()
+        while wait() do
+            pcall(
+                function()
+                    if (_G.SelectWeapon == "Melee") then
+                        for v101, v102 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                            if (v102.ToolTip == "Melee") then
+                                if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v102.Name)) then
+                                    _G.SelectWeapon = v102.Name
+                                end
+                            end
+                        end
+                    elseif (_G.SelectWeapon == "Sword") then
+                        for v116, v117 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                            if (v117.ToolTip == "Sword") then
+                                if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v117.Name)) then
+                                    _G.SelectWeapon = v117.Name
+                                end
+                            end
+                        end
+                    elseif (_G.SelectWeapon == "Gun") then
+                        for v140, v141 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                            if (v141.ToolTip == "Gun") then
+                                if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v141.Name)) then
+                                    _G.SelectWeapon = v141.Name
+                                end
+                            end
+                        end
+                    elseif (_G.SelectWeapon == "Fruit") then
+                        for v143, v144 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                            if (v144.ToolTip == "Blox Fruit") then
+                                if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v144.Name)) then
+                                    _G.SelectWeapon = v144.Name
+                                end
+                            end
+                        end
+                    end
+                end
+            )
+        end
+    end
+)
+-- Hàm gọi Boss tương ứng
+function SummonBoss(name)
+    local urls = {
+        ["Darkbeard"] = "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark",
+        ["rip_indra True Form"] = "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip",
+        ["Dough King"] = "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"
+    }
+    if urls[name] then
+        loadstring(game:HttpGet(urls[name]))()
+    end
+end
+
+-- Farm Boss chung
+task.spawn(function()
+    while task.wait() do
+        if _G.FarmBoss and getgenv().Boss ~= nil and not BypassTP then
+            pcall(function()
+                local BossName = getgenv().Boss
+                local enemies = game:GetService("Workspace").Enemies
+                local replicatedBoss = game:GetService("ReplicatedStorage"):FindFirstChild(BossName)
+
+                -- Boss đang spawn
+                if enemies:FindFirstChild(BossName) then
+                    for _, enemy in pairs(enemies:GetChildren()) do
+                        if enemy.Name == BossName and enemy:FindFirstChild("Humanoid") and enemy:FindFirstChild("HumanoidRootPart") and enemy.Humanoid.Health > 0 then
+                            repeat
+                                task.wait()
+                                AutoHaki()
+                                EquipWeapon(_G.SelectWeapon)
+                                enemy.HumanoidRootPart.CanCollide = false
+                                enemy.Humanoid.WalkSpeed = 0
+                                topos(enemy.HumanoidRootPart.CFrame * Pos)
+                                sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                            until not _G.FarmBoss or not enemy.Parent or enemy.Humanoid.Health <= 0
+                        end
+                    end
+                -- Boss ở ReplicatedStorage
+                elseif replicatedBoss and replicatedBoss:FindFirstChild("HumanoidRootPart") then
+                    topos(replicatedBoss.HumanoidRootPart.CFrame * CFrame.new(5, 10, 7))
+                -- Boss chưa spawn → summon
+                else
+                    task.wait(3)
+                    SummonBoss(BossName)
+                end
+            end)
+        end
+    end
+end)
