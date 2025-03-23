@@ -110,7 +110,7 @@ v3.Window = function(v110, v111)
     v132.Name = "BtnStroke"
     v132.Parent = v123
     v132.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    v132.Color = Color3.fromRGB(0, 205, 0)
+    v132.Color = Color3.fromRGB(255, 205, 255)
     v132.LineJoinMode = Enum.LineJoinMode.Round
     v132.Thickness = 1.7
     v132.Transparency = 0.5
@@ -125,7 +125,7 @@ v3.Window = function(v110, v111)
     v146.BackgroundTransparency = 4.1
     v146.Position = UDim2.new(0.400426834, 0, 0.075000003, 0)
     v146.Size = UDim2.new(0, 263, 0, 325)
-    v146.Image = "http://www.roblox.com/asset/?id=" .. tostring(102829205572656)
+    v146.Image = "http://www.roblox.com/asset/?id=" .. tostring(84917902056698)
     local v154 = Instance.new("UICorner")
     v154.Name = "MCNR"
     v154.Parent = v123
@@ -153,9 +153,9 @@ v3.Window = function(v110, v111)
     v173.Position = UDim2.new(0, 30, 0.05, 0)
     v173.Size = UDim2.new(0, 255, 0.05, 25)
     v173.Font = Enum.Font.SourceSansBold
-    v173.Text = "Zush Hub"
+    v173.Text = "Zush Hub V2"
     v173.TextSize = 17
-    v173.TextColor3 = Color3.fromRGB(75, 188, 6)
+    v173.TextColor3 = Color3.fromRGB(255, 188, 255)
     v173.TextXAlignment = Enum.TextXAlignment.Left
     local v187 = Instance.new("TextLabel")
     v187.Name = "patch"
@@ -721,7 +721,7 @@ v3.Window = function(v110, v111)
             local v1106 = Instance.new("UICorner")
             v1099.Name = "Textbox"
             v1099.Parent = v665
-            v1099.BackgroundColor3 = Color3.new(0, 205, 0)
+            v1099.BackgroundColor3 = Color3.new(255, 205, 255)
             v1099.BackgroundTransparency = 0.5
             v1099.Size = UDim2.new(0, 379, 0, 31)
             v1100.CornerRadius = UDim.new(0, 5)
@@ -834,7 +834,7 @@ v3.Window = function(v110, v111)
             local v1214 = Instance.new("UICorner")
             v1207.Name = "Textbox"
             v1207.Parent = v665
-            v1207.BackgroundColor3 = Color3.new(0, 205, 0)
+            v1207.BackgroundColor3 = Color3.new(255, 205, 255)
             v1207.BackgroundTransparency = 0.5
             v1207.Size = UDim2.new(0, 379, 0, 31)
             v1208.CornerRadius = UDim.new(0, 5)
@@ -4312,7 +4312,7 @@ spawn(
     end
 )
 v33:Toggle(
-    "Farm Chest Bypass (Anti Reset)",
+    "Farm Chest Bypass",
     false,
     function(v316)
         _G.ChestBypass = v316
@@ -15454,9 +15454,3 @@ game:GetService("StarterGui"):SetCore(
         Duration = 10
     }
 )
-spawn(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"))()
-    while task.wait() do
-        Click(0.000000000000000000000000000000004)
-    end
-end)
