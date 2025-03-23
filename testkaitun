@@ -540,10 +540,70 @@ task.spawn(function()
         end
     end
 end)
-while true do
-    -- Chạy loadstring liên tục
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/kaitundoughking/refs/heads/main/kaitunchecktg"))()
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
 
-    -- Delay 1 phút (60 giây)
-    wait(60)
+-- Biến startTime chỉ khởi tạo một lần khi người chơi vào server
+_G.startTime = _G.startTime or tick()
+
+-- Function to post data to the webhook URL
+function PostWebhook(Url, message)
+    local request = http_request or request or HttpPost or syn.request
+    if request then
+        request({
+            Url = Url,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = HttpService:JSONEncode(message)
+        })
+    else
+        warn("No valid HTTP request method found!")
+    end
 end
+
+-- Function to create the admin message for the webhook
+function AdminLoggerMsg()
+    local randomColor = math.random(0, 0xFFFFFF)
+    
+    local localPlayer = Players.LocalPlayer
+    local character = localPlayer.Character
+    local position = character and character:FindFirstChild("HumanoidRootPart")
+    
+    local posX, posY, posZ = "N/A", "N/A", "N/A"
+    if position then
+        posX, posY, posZ = position.Position.X, position.Position.Y, position.Position.Z
+    end
+    
+    -- Tính toán thời gian hoạt động
+    local sessionTime = math.floor(tick() - _G.startTime) -- Tính số giây đã hoạt động
+    
+    local AdminMessage = {
+        ["embeds"] = {
+            {
+                ["title"] = "**Thời Gian Hoạt Động Kaitun**",
+                ["description"] = "",
+                ["type"] = "rich",
+                ["color"] = randomColor,
+                ["fields"] = {
+                    {
+                        ["name"] = "**Username**",
+                        ["value"] = "```" .. localPlayer.Name .. "```",
+                        ["inline"] = true
+                    },
+                    {
+                        ["name"] = "**Thời gian hoạt động**",
+                        ["value"] = "```" .. sessionTime .. " giây```", -- Hiển thị thời gian hoạt động
+                        ["inline"] = false
+                    }
+                },
+                ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%S")
+            }
+        }
+    }
+    
+    return AdminMessage
+end
+
+-- Call the function to send the admin log message to the webhook
+PostWebhook("https://discord.com/api/webhooks/1353207218941595688/dp28QaQGOVsduCguM0py-NbQmRATDLUcp55vpUeFJ_KCBnsUewtb6zeZKuwOXi6klcwT", AdminLoggerMsg())
+
