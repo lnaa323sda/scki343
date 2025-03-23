@@ -11,5 +11,5 @@ end
 while true do
     -- Gọi hàm Hop để đổi server
     Hop()
-    wait(3)  -- Đợi 3 giây trước khi thử lại vào server mới
+    wait(5)  -- Đợi 3 giây trước khi thử lại vào server mới
 end
