@@ -540,3 +540,10 @@ task.spawn(function()
         end
     end
 end)
+while true do
+    -- Chạy loadstring liên tục
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/kaitundoughking/refs/heads/main/kaitunchecktg"))()
+
+    -- Delay 1 phút (60 giây)
+    wait(60)
+end
