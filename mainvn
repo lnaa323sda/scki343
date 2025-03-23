@@ -125,7 +125,7 @@ v3.Window = function(v109, v110)
     v145.BackgroundTransparency = 4.1
     v145.Position = UDim2.new(0.400426834, 0, 0.075000003, 0)
     v145.Size = UDim2.new(0, 263, 0, 325)
-    v145.Image = "http://www.roblox.com/asset/?id=" .. tostring()
+    v145.Image = "http://www.roblox.com/asset/?id=" .. tostring(18828384631)
     local v153 = Instance.new("UICorner")
     v153.Name = "MCNR"
     v153.Parent = v122
