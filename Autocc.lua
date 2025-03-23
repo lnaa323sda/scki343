@@ -1,14 +1,8 @@
 local function chooseTeam()
     if getgenv().Team == "Marines" then
-        local team = game.Teams:FindFirstChild("Marines")
-        if team then
-            game.Players.LocalPlayer.Team = team
-        end
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines")
     elseif getgenv().Team == "Pirates" then
-        local team = game.Teams:FindFirstChild("Pirates")
-        if team then
-            game.Players.LocalPlayer.Team = team
-        end
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
     end
 end
 
