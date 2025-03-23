@@ -3614,7 +3614,7 @@ local v42 = v31:T("Tab Shop", "rbxassetid://10734952479")
 local v43 = v31:T("Devil Fruit", "rbxassetid://10709761889")
 local v44 = v31:T("Miscellaneous", "rbxassetid://10709782582")
 v32:Seperator("Join Discord")
-v32:Label("Everyone Goes Into Socialize")
+v32:Label("Tham gia để cập nhật tình hình")
 v32:Button(
     "Copy Discord Link",
     function()
