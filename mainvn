@@ -125,7 +125,7 @@ v3.Window = function(v110, v111)
     v146.BackgroundTransparency = 4.1
     v146.Position = UDim2.new(0.400426834, 0, 0.075000003, 0)
     v146.Size = UDim2.new(0, 263, 0, 325)
-    v146.Image = "http://www.roblox.com/asset/?id=" .. tostring(84917902056698)
+    v146.Image = "http://www.roblox.com/asset/?id=" .. tostring()
     local v154 = Instance.new("UICorner")
     v154.Name = "MCNR"
     v154.Parent = v123
@@ -155,7 +155,7 @@ v3.Window = function(v110, v111)
     v173.Font = Enum.Font.SourceSansBold
     v173.Text = "Zush Hub V2"
     v173.TextSize = 17
-    v173.TextColor3 = Color3.fromRGB(255, 188, 255)
+    v173.TextColor3 = Color3.fromRGB(255, 255, 255)
     v173.TextXAlignment = Enum.TextXAlignment.Left
     local v187 = Instance.new("TextLabel")
     v187.Name = "patch"
@@ -15454,3 +15454,9 @@ game:GetService("StarterGui"):SetCore(
         Duration = 10
     }
 )
+spawn(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"))()
+    while task.wait() do
+        Click(0.000000000000000000000000000000004)
+    end
+end)
