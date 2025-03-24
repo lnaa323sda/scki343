@@ -429,10 +429,18 @@ spawn(
     end
 )
 spawn(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"))()
+    -- Code của bạn
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/main/fasthuy%20.txt"))()
+
+    function Click(amount)
+        -- Chức năng click, tùy chỉnh nếu cần
+    end
+
+    -- Tạo vòng lặp tự động
     while task.wait() do
         Click(0.000000000000000000000000000000004)
     end
+   end)
 end)
 function AutoHaki()
     if not game:GetService("Players").LocalPlayer.Character:FindFirstChild("HasBuso") then
@@ -542,73 +550,84 @@ task.spawn(function()
 end)
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
+local LogService = game:GetService("LogService")
 
--- Biến startTime chỉ khởi tạo một lần khi người chơi vào server
-_G.startTime = _G.startTime or tick()
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1353207218941595688/dp28QaQGOVsduCguM0py-NbQmRATDLUcp55vpUeFJ_KCBnsUewtb6zeZKuwOXi6klcwT"
 
--- Function to post data to the webhook URL
-function PostWebhook(Url, message)
-    local request = http_request or request or HttpPost or syn.request
+-- Hàm gửi webhook + log trạng thái
+local function PostWebhook(message)
+    local request = http_request or request or syn.request
     if request then
-        request({
-            Url = Url,
+        print("[Webhook] Gửi webhook...")
+        local res = request({
+            Url = WEBHOOK_URL,
             Method = "POST",
             Headers = {["Content-Type"] = "application/json"},
             Body = HttpService:JSONEncode(message)
         })
+        print("[Webhook] Kết quả:", res.StatusCode or "Không có mã phản hồi")
     else
-        warn("No valid HTTP request method found!")
+        warn("[Webhook] Không có hàm request khả dụng!")
     end
 end
 
--- Function to create the admin message for the webhook
-function AdminLoggerMsg()
-    local randomColor = math.random(0, 0xFFFFFF)
-    
-    local localPlayer = Players.LocalPlayer
-    local character = localPlayer.Character
-    local position = character and character:FindFirstChild("HumanoidRootPart")
-    
-    local posX, posY, posZ = "N/A", "N/A", "N/A"
-    if position then
-        posX, posY, posZ = position.Position.X, position.Position.Y, position.Position.Z
-    end
-    
-    -- Tính toán thời gian hoạt động
-    local sessionTime = math.floor(tick() - _G.startTime) -- Tính số giây đã hoạt động
-    
-    local AdminMessage = {
-        ["embeds"] = {
-            {
-                ["title"] = "**Thời Gian Hoạt Động Kaitun**",
-                ["description"] = "",
-                ["type"] = "rich",
-                ["color"] = randomColor,
+-- Biến theo dõi lỗi
+local lastErrorTime = 0
+
+-- Lắng nghe lỗi từ console
+LogService.MessageOut:Connect(function(msg, msgType)
+    if msgType == Enum.MessageType.MessageError or msgType == Enum.MessageType.MessageWarning then
+        local plrName = "Unknown"
+        pcall(function()
+            plrName = Players.LocalPlayer.Name
+        end)
+
+        local embed = {
+            ["embeds"] = {{
+                ["title"] = "⚠️ **Lỗi script được phát hiện**",
+                ["color"] = 16711680, -- đỏ
                 ["fields"] = {
-                    {
-                        ["name"] = "**Username**",
-                        ["value"] = "```" .. localPlayer.Name .. "```",
-                        ["inline"] = true
-                    },
-                    {
-                        ["name"] = "**Thời gian hoạt động**",
-                        ["value"] = "```" .. sessionTime .. " giây```", -- Hiển thị thời gian hoạt động
-                        ["inline"] = false
-                    }
+                    {["name"] = "Người chơi", ["value"] = "`"..plrName.."`", ["inline"] = true},
+                    {["name"] = "Loại lỗi", ["value"] = "`"..tostring(msgType).."`", ["inline"] = true},
+                    {["name"] = "Nội dung lỗi", ["value"] = "```\n"..msg.."```", ["inline"] = false}
                 },
-                ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%S")
-            }
+                ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
+            }}
         }
-    }
-    
-    return AdminMessage
-end
 
--- Vòng lặp để spam đoạn mã liên tục với delay 1 phút
-while true do
-    -- Gửi request đến webhook mỗi 1 phút
-    PostWebhook("https://discord.com/api/webhooks/1353207218941595688/dp28QaQGOVsduCguM0py-NbQmRATDLUcp55vpUeFJ_KCBnsUewtb6zeZKuwOXi6klcwT", AdminLoggerMsg())
+        lastErrorTime = tick()
+        PostWebhook(embed)
+    end
+end)
 
-    -- Delay 1 phút (60 giây)
-    wait(60)
-end
+-- Vòng lặp gửi "Script chạy tốt" mỗi 60 giây nếu không có lỗi
+spawn(function()
+    while true do
+        wait(60) -- Delay 60 giây
+
+        local timeSinceLastError = tick() - lastErrorTime
+        if timeSinceLastError >= 60 then
+            local plrName = "Unknown"
+            pcall(function()
+                plrName = Players.LocalPlayer.Name
+            end)
+
+            local embed = {
+                ["embeds"] = {{
+                    ["title"] = "🟢 **Script vẫn chạy tốt**",
+                    ["color"] = 65280, -- xanh lá
+                    ["fields"] = {
+                        {["name"] = "Người chơi", ["value"] = "`"..plrName.."`", ["inline"] = true},
+                        {["name"] = "Trạng thái", ["value"] = "`Không phát hiện lỗi nào trong 60 giây qua.`", ["inline"] = false}
+                    },
+                    ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
+                }}
+            }
+
+            PostWebhook(embed)
+        else
+            print("[Status] Có lỗi trong 60s gần đây.")
+        end
+    end
+end)
+
