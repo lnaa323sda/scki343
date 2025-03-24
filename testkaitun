@@ -1,5 +1,3 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/kaitundoughking/refs/heads/main/uiload"))()
-wait(3)
 if getgenv().Team == "Pirates" then
     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
 elseif getgenv().Team == "Marines" then
@@ -414,36 +412,144 @@ function AttackNoCoolDown()
     end
 end
 _G.FastAttack = true
-spawn(
-    function()
-        while wait(0.1) do
-            if _G.FastAttack then
-                pcall(
-                    function()
-                        repeat
-                            task.wait(0.1)
-                            AttackNoCoolDown()
-                        until not _G.FastAttack
-                    end
-                )
+if _G.FastAttack then
+    local _ENV = (getgenv or getrenv or getfenv)()
+    local function v5(v36, v37)
+        local v38, v39 =
+            pcall(
+            function()
+                return v36:WaitForChild(v37)
+            end
+        )
+        if (not v38 or not v39) then
+            warn("noooooo: " .. v37)
+        end
+        return v39
+    end
+    local function v6(v40, ...)
+        local v41 = v40
+        for v51, v52 in {...} do
+            v41 = v41:FindFirstChild(v52) or v5(v41, v52)
+            if not v41 then
+                break
             end
         end
+        return v41
     end
-)
-spawn(function()
-    -- Code của bạn
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/main/fasthuy%20.txt"))()
-
-    function Click(amount)
-        -- Chức năng click, tùy chỉnh nếu cần
+    local v7 = game:GetService("VirtualInputManager")
+    local v8 = game:GetService("CollectionService")
+    local v9 = game:GetService("ReplicatedStorage")
+    local v10 = game:GetService("TeleportService")
+    local v11 = game:GetService("RunService")
+    local v12 = game:GetService("Players")
+    local v13 = v12.LocalPlayer
+    if not v13 then
+        warn("Không tìm thấy người chơi cục bộ.")
+        return
     end
-
-    -- Tạo vòng lặp tự động
-    while task.wait() do
-        Click(0.000000000000000000000000000000004)
+    local v14 = v5(v9, "Remotes")
+    if not v14 then
+        return
     end
-   end)
-end)
+    local v15 = v5(v14, "Validator")
+    local v16 = v5(v14, "CommF_")
+    local v17 = v5(v14, "CommE")
+    local v18 = v5(workspace, "ChestModels")
+    local v19 = v5(workspace, "_WorldOrigin")
+    local v20 = v5(workspace, "Characters")
+    local v21 = v5(workspace, "Enemies")
+    local v22 = v5(workspace, "Map")
+    local v23 = v5(v19, "EnemySpawns")
+    local v24 = v5(v19, "Locations")
+    local v25 = v11.RenderStepped
+    local v26 = v11.Heartbeat
+    local v27 = v11.Stepped
+    local v28 = v5(v9, "Modules")
+    local v29 = v5(v28, "Net")
+    local v30 = sethiddenproperty or function(...)
+            return ...
+        end
+    local v31 = setupvalue or (debug and debug.setupvalue)
+    local v32 = getupvalue or (debug and debug.getupvalue)
+    local v33 = {AutoClick = true, ClickDelay = 0}
+    local v34 = {}
+    v34.FastAttack =
+        (function()
+        if _ENV.rz_FastAttack then
+            return _ENV.rz_FastAttack
+        end
+        local v42 = {Distance = 100, attackMobs = true, attackPlayers = true, Equipped = nil}
+        local v43 = v5(v29, "RE/RegisterAttack")
+        local v44 = v5(v29, "RE/RegisterHit")
+        local function v45(v53)
+            return v53 and v53:FindFirstChild("Humanoid") and (v53.Humanoid.Health > 0)
+        end
+        local function v46(v54, v55)
+            local v56 = nil
+            for v68, v69 in v55:GetChildren() do
+                local v70 = v69:FindFirstChild("Head")
+                if (v70 and v45(v69) and (v13:DistanceFromCharacter(v70.Position) < v42.Distance)) then
+                    if (v69 ~= v13.Character) then
+                        table.insert(v54, {v69, v70})
+                        v56 = v70
+                    end
+                end
+            end
+            return v56
+        end
+        v42.Attack = function(v57, v58, v59)
+            if (not v58 or (#v59 == 0)) then
+                return
+            end
+            v43:FireServer(v33.ClickDelay or 0)
+            v44:FireServer(v58, v59)
+        end
+        v42.AttackNearest = function(v60)
+            local v61 = {}
+            local v62 = v46(v61, v21)
+            local v63 = v46(v61, v20)
+            local v64 = v13.Character
+            if not v64 then
+                return
+            end
+            local v65 = v64:FindFirstChildOfClass("Tool")
+            if (v65 and v65:FindFirstChild("LeftClickRemote")) then
+                for v73, v74 in ipairs(v61) do
+                    local v75 = v74[1]
+                    local v76 = (v75.HumanoidRootPart.Position - v64:GetPivot().Position).Unit
+                    pcall(
+                        function()
+                            v65.LeftClickRemote:FireServer(v76, 1)
+                        end
+                    )
+                end
+            elseif (#v61 > 0) then
+                v60:Attack(v62 or v63, v61)
+            else
+                task.wait(0)
+            end
+        end
+        v42.BladeHits = function(v66)
+            local v67 = v45(v13.Character) and v13.Character:FindFirstChildOfClass("Tool")
+            if (v67 and (v67.ToolTip ~= "Gun")) then
+                v66:AttackNearest()
+            else
+                task.wait(0)
+            end
+        end
+        task.spawn(
+            function()
+                while task.wait(v33.ClickDelay) do
+                    if v33.AutoClick then
+                        v42:BladeHits()
+                    end
+                end
+            end
+        )
+        _ENV.rz_FastAttack = v42
+        return v42
+    end)()
+end
 function AutoHaki()
     if not game:GetService("Players").LocalPlayer.Character:FindFirstChild("HasBuso") then
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
@@ -550,86 +656,3 @@ task.spawn(function()
         end
     end
 end)
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-local LogService = game:GetService("LogService")
-
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1353207218941595688/dp28QaQGOVsduCguM0py-NbQmRATDLUcp55vpUeFJ_KCBnsUewtb6zeZKuwOXi6klcwT"
-
--- Hàm gửi webhook + log trạng thái
-local function PostWebhook(message)
-    local request = http_request or request or syn.request
-    if request then
-        print("[Webhook] Gửi webhook...")
-        local res = request({
-            Url = WEBHOOK_URL,
-            Method = "POST",
-            Headers = {["Content-Type"] = "application/json"},
-            Body = HttpService:JSONEncode(message)
-        })
-        print("[Webhook] Kết quả:", res.StatusCode or "Không có mã phản hồi")
-    else
-        warn("[Webhook] Không có hàm request khả dụng!")
-    end
-end
-
--- Biến theo dõi lỗi
-local lastErrorTime = 0
-
--- Lắng nghe lỗi từ console
-LogService.MessageOut:Connect(function(msg, msgType)
-    if msgType == Enum.MessageType.MessageError or msgType == Enum.MessageType.MessageWarning then
-        local plrName = "Unknown"
-        pcall(function()
-            plrName = Players.LocalPlayer.Name
-        end)
-
-        local embed = {
-            ["embeds"] = {{
-                ["title"] = "⚠️ **Lỗi script được phát hiện**",
-                ["color"] = 16711680, -- đỏ
-                ["fields"] = {
-                    {["name"] = "Người chơi", ["value"] = "`"..plrName.."`", ["inline"] = true},
-                    {["name"] = "Loại lỗi", ["value"] = "`"..tostring(msgType).."`", ["inline"] = true},
-                    {["name"] = "Nội dung lỗi", ["value"] = "```\n"..msg.."```", ["inline"] = false}
-                },
-                ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
-            }}
-        }
-
-        lastErrorTime = tick()
-        PostWebhook(embed)
-    end
-end)
-
--- Vòng lặp gửi "Script chạy tốt" mỗi 60 giây nếu không có lỗi
-spawn(function()
-    while true do
-        wait(60) -- Delay 60 giây
-
-        local timeSinceLastError = tick() - lastErrorTime
-        if timeSinceLastError >= 60 then
-            local plrName = "Unknown"
-            pcall(function()
-                plrName = Players.LocalPlayer.Name
-            end)
-
-            local embed = {
-                ["embeds"] = {{
-                    ["title"] = "🟢 **Script vẫn chạy tốt**",
-                    ["color"] = 65280, -- xanh lá
-                    ["fields"] = {
-                        {["name"] = "Người chơi", ["value"] = "`"..plrName.."`", ["inline"] = true},
-                        {["name"] = "Trạng thái", ["value"] = "`Không phát hiện lỗi nào trong 60 giây qua.`", ["inline"] = false}
-                    },
-                    ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
-                }}
-            }
-
-            PostWebhook(embed)
-        else
-            print("[Status] Có lỗi trong 60s gần đây.")
-        end
-    end
-end)
-
