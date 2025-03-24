@@ -4,7 +4,7 @@ local function scrapeAPI()
     local req = (syn and syn.request) or (http and http.request) or request
     local success, response = pcall(function()
         return req({
-            Url = "https://hostserver.porry.store/bloxfruit/bot/JobId/mirage",
+            Url = "http://deka.pylex.software:10632/JobId/mirage",
             Method = "GET"
         })
     end)
