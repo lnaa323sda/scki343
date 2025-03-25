@@ -687,7 +687,7 @@ task.spawn(function()
     local chatEvent = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")
     while true do
         chatEvent:FireServer("Zush Hub – Make by Duck 🐥", "All")
-        wait(10) -- Gửi mỗi 10 giây
+        wait(60) -- Gửi mỗi 10 giây
     end
 end)
 
