@@ -611,9 +611,9 @@ task.spawn(
 -- Hàm gọi Boss tương ứng
 function SummonBoss(name)
     local urls = {
-        ["Darkbeard"] = "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt",
-        ["rip_indra True Form"] = "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt",
-        ["Dough King"] = "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"
+        ["Darkbeard"] = "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark",
+        ["rip_indra True Form"] = "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip",
+        ["Dough King"] = "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"
     }
     if urls[name] then
         loadstring(game:HttpGet(urls[name]))()
@@ -653,6 +653,47 @@ task.spawn(function()
                     SummonBoss(BossName)
                 end
             end)
+-- Đặt giá trị mặc định cho biến Attack
+getgenv().Attack = true
+-- Hàm Click
+function Click(delayTime)
+    while task.wait(delayTime) do
+        if getgenv().Attack then  -- Chỉ chạy nếu Attack là true
+            print("Clicking...")  -- Hoặc thay bằng hành động click thực sự
+        else
+            print("Attack is off, stopping clicks...")
+            break  -- Thoát khỏi vòng lặp nếu Attack là false
+        end
+    end
+end
+-- Tải script từ URL và thực thi
+local url = "https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"
+local success, scriptContent = pcall(function()
+    return game:HttpGet(url)
+end)
+
+if success then
+    local runScript = loadstring(scriptContent)
+    if runScript then
+        runScript()  -- Thực thi script
+        print("Script executed successfully!")
+    else
+        warn("Failed to load script.")
+    end
+else
+    warn("Failed to fetch script from URL:", scriptContent)
+end
+
+-- Vòng lặp kiểm tra biến Attack
+task.spawn(function()
+    while task.wait() do
+        if getgenv().Attack then
+            Click(0.000000000000000000000000000000004)  -- Thực hiện hành động click với delay
+        else
+            print("Attack is off, skipping clicks.")
+        end
+    end
+end)
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
