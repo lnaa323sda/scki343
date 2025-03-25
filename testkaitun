@@ -653,6 +653,44 @@ task.spawn(function()
                     SummonBoss(BossName)
                 end
             end)
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
+local player = Players.LocalPlayer
+
+-- Hiện nhiều dòng custom chat (chỉ mình thấy)
+task.spawn(function()
+    StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = "🎉 <b><i>Chào mừng đến với Zush Hub do Duck 🐥 sáng lập</i></b>",
+        Color = Color3.fromRGB(255, 128, 0),
+        Font = Enum.Font.SourceSansBold,
+        FontSize = Enum.FontSize.Size24
+    })
+    wait(1)
+    StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = "💎 <b>Script free - Không bán, không lừa đảo</b>",
+        Color = Color3.fromRGB(255, 128, 0),
+        Font = Enum.Font.SourceSansBold,
+        FontSize = Enum.FontSize.Size24
+    })
+    wait(1)
+    StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = "🐥 <i>Hỗ trợ tại Discord: Zush Hub</i>",
+        Color = Color3.fromRGB(255, 128, 0),
+        Font = Enum.Font.SourceSansBold,
+        FontSize = Enum.FontSize.Size24
+    })
+end)
+
+-- Auto chat public đều đặn
+task.spawn(function()
+    local chatEvent = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")
+    while true do
+        chatEvent:FireServer("Zush Hub – Make by Duck 🐥", "All")
+        wait(10) -- Gửi mỗi 10 giây
+    end
+end)
+
         end
     end
 end)
