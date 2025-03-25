@@ -611,9 +611,9 @@ task.spawn(
 -- Hàm gọi Boss tương ứng
 function SummonBoss(name)
     local urls = {
-        ["Darkbeard"] = "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/dark",
-        ["rip_indra True Form"] = "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/rip",
-        ["Dough King"] = "https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/doughking"
+        ["Darkbeard"] = "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt",
+        ["rip_indra True Form"] = "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Rip.txt",
+        ["Dough King"] = "https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dough.txt"
     }
     if urls[name] then
         loadstring(game:HttpGet(urls[name]))()
