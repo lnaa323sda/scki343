@@ -1,12 +1,5 @@
-if getgenv().Team == "Pirates" then
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
-elseif getgenv().Team == "Marines" then
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines")
-end
-wait(1)
-
 local HttpService = game:GetService("HttpService")
-local apiURL = "https://ducdesigner.site/api/key.php?key=" -- URL API kiểm tra key
+local apiURL = "https://ducdesigner.site/api/key.php?key="
 
 -- Hàm kiểm tra key thông qua API
 local function checkKeyAPI(key)
@@ -17,17 +10,29 @@ local function checkKeyAPI(key)
 
     if success then
         print("Response từ API: " .. response) -- In kết quả trả về từ API để kiểm tra
-        local result = HttpService:JSONDecode(response)
-        return result.valid -- Giả sử API trả về { "valid": true } nếu key hợp lệ
+        
+        -- Giải mã phản hồi JSON
+        local result
+        local decodeSuccess, decodeErr = pcall(function()
+            result = HttpService:JSONDecode(response)
+        end)
+        
+        if decodeSuccess and result.valid then
+            print(result.message) -- In thông báo key hợp lệ
+            return true -- Trả về true nếu key hợp lệ và IP khớp
+        else
+            print("Key không hợp lệ hoặc không khớp IP: " .. (result.message or decodeErr))
+            return false
+        end
     else
         print("Lỗi khi gọi API: " .. err) -- In lỗi nếu có
         return false
     end
 end
 
--- Kiểm tra key từ API
+-- Kiểm tra nếu key đúng thì bỏ qua UI
 if checkKeyAPI(getgenv().Key) then
-    -- Key đúng, chạy script luôn và không hiện UI
+    -- Key đúng, chạy script luôn
     loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/teddy.lua"))()
 else
     -- Nếu key chưa đúng, tạo UI yêu cầu nhập key
