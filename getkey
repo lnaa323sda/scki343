@@ -1,7 +1,94 @@
+local HttpService = game:GetService("HttpService")
+
 getgenv().Config = {
-     ["Chat"] = "Gay quá hai ơi", -- nhập text hoặc ko
+     ["Select Join"] = "Pirates" -- Pirates hoặc Marines
+     ["Auto Farm"] = true,
+     ["White screen"] = false,
+     ["RedeemCode"] = 9,
+     ["Fragment"] = 25000,
+     ["AutoCdk"] = true,
+     ["AutoSgt"] = true,
+     ["Buy Legendary Sword"] = true,
+     ["Buy Haki Color"] = true,
+     ["Berry Colect"] = true,
+     ["Chat"] = "", -- nhập text hoặc ko
      ["Chat Delay"] = 60, -- delay bằng giây
+     ["Link Webhook"] = "",
+     ["Start Webhook"] = true,
+     ["Webhook Minute"] = 30, -- phút nha
+     ["name player"] = true,
+     ["Send Webhook"] = true 
 }
+
+-- Kiểm tra nếu chưa nhập webhook thì dừng lại
+if Config["Link Webhook"] == "" then
+    warn("❌ không sài hả")
+    return
+end
+
+-- Hàm chọn team
+local function SelectTeam()
+    local team = Config["Select Join"]
+    if team == "Pirates" or team == "Marines" then
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", team)
+        print("✅ Đã chọn team: " .. team)
+    else
+        warn("❌ Cấu hình team như cứt")
+    end
+end
+
+-- Hàm gửi Webhook
+local function SendToWebhook()
+    if not Config["Send Webhook"] or not Config["Start Webhook"] then return end
+
+    local PlayerName = Config["name player"] and game.Players.LocalPlayer.Name or "Ẩn danh"
+
+    local data = {
+        ["username"] = "Kaitun Zush hub", -- Tên bot hiển thị trên Discord
+        ["embeds"] = {
+            {
+                ["title"] = "📢 Notification",
+                ["description"] = "Thông tin người chơi",
+                ["color"] = 16711680, -- Màu đỏ
+                ["fields"] = {
+                    {
+                        ["name"] = "👤 Player Name",
+                        ["value"] = PlayerName,
+                        ["inline"] = true
+                    },
+                    {
+                        ["name"] = "🏴 Team Selected",
+                        ["value"] = Config["Select Join"],
+                        ["inline"] = true
+                    },
+                    {
+                        ["name"] = "⏳ Time Sent",
+                        ["value"] = os.date("%Y-%m-%d %H:%M:%S"),
+                        ["inline"] = true
+                    }
+                }
+            }
+        }
+    }
+
+    local jsonData = HttpService:JSONEncode(data)
+
+    -- Gửi request lên Discord Webhook
+    HttpService:PostAsync(Config["Link Webhook"], jsonData, Enum.HttpContentType.ApplicationJson)
+
+    print("✅ Đã gửi webhook thành công")
+end
+
+-- Chọn team ngay khi chạy script
+SelectTeam()
+
+-- Nếu Start Webhook = true thì chạy auto gửi mỗi X phút
+if Config["Start Webhook"] then
+    while true do
+        task.wait(Config["Webhook Minute"] * 60) -- Chờ X phút rồi gửi
+        SendToWebhook()
+    end
+end
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -32,9 +119,56 @@ task.spawn(function()
     })
 end)
 
+local function whitescreen()
+    -- Ẩn toàn bộ hiệu ứng và ánh sáng
+    game:GetService("Lighting"):ClearAllChildren()
+    sethiddenproperty(game.Lighting, "Technology", Enum.Technology.Compatibility)
+
+    -- Xóa tất cả ParticleEffects
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") or v:IsA("Smoke") or v:IsA("Fire") then
+            v:Destroy()
+        end
+    end
+
+    -- Xóa mọi âm thanh (nếu muốn)
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("Sound") then
+            v:Destroy()
+        end
+    end
+
+    -- Ẩn các Object không cần thiết (Cây, đá, hiệu ứng trang trí)
+    local objectsToRemove = {"Grass", "Tree", "Bush", "Flower", "Rock", "Cloud", "Effect"}
+    for _, obj in ipairs(objectsToRemove) do
+        for _, v in pairs(game:GetDescendants()) do
+            if v:IsA("BasePart") and string.find(v.Name, obj) then
+                v:Destroy()
+            end
+        end
+    end
+
+    -- Tắt bóng
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+
+    -- Giảm LOD để tối ưu hiển thị
+    game:GetService("RunService"):Set3dRenderingEnabled(false)
+
+    print("🔧 FPS Boost bật 🎮")
+end
+
+-- Kiểm tra cấu hình tối ưu FPS
+if config["White screen"] then
+    whitescreen()
+end
+
 wait(1) 
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/script/refs/heads/main/kaitun%20royx"))()
+if config["Auto Farm"] then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/script/refs/heads/main/kaitun%20royx"))()
+else
+    print("chà được đấy")
+end
 
 task.spawn(function()
     while true do
@@ -51,6 +185,7 @@ task.spawn(function()
 end)
 
 wait(3)
+
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Zush Hub",
     Text = "Bắt đầu chạy",
