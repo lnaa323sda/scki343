@@ -1,5 +1,5 @@
 getgenv().Config = {
-     ["Chat"] = "", -- nhập text hoặc ko
+     ["Chat"] = "Gay quá hai ơi", -- nhập text hoặc ko
      ["Chat Delay"] = 60, -- delay bằng giây
 }
 
@@ -49,3 +49,10 @@ task.spawn(function()
         wait(getgenv().Config["Chat Delay"])
     end
 end)
+
+wait(4)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Zush Hub",
+    Text = "Bắt đầu chạy",
+    Duration = 3
+})
