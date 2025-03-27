@@ -1,5 +1,5 @@
 getgenv().Config = {
-     ["Chat"] = "Gay quá hai ơi", -- nhập text hoặc ko
+     ["Chat"] = "", -- nhập text hoặc ko
      ["Chat Delay"] = 60, -- delay bằng giây
 }
 
