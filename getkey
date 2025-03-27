@@ -50,7 +50,7 @@ task.spawn(function()
     end
 end)
 
-wait(4)
+wait(3)
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Zush Hub",
     Text = "Bắt đầu chạy",
