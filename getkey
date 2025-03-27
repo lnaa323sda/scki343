@@ -21,11 +21,6 @@ getgenv().Config = {
      ["Send Webhook"] = true
 }
 
-if Config["Link Webhook"] == "" then
-    warn("❌ Link Webhook bị thiếu!")
-    return
-end
-
 -- Hàm chọn team
 local function SelectTeam()
     local team = Config["Select Join"]
@@ -35,6 +30,13 @@ local function SelectTeam()
     else
         warn("❌ Cấu hình team như cứt")
     end
+end
+
+SelectTeam()
+
+if Config["Link Webhook"] == "" then
+    warn("❌ Link Webhook bị thiếu!")
+    return
 end
 
 local function SendToWebhook()
@@ -64,8 +66,6 @@ local function SendToWebhook()
     HttpService:PostAsync(Config["Link Webhook"], jsonData, Enum.HttpContentType.ApplicationJson)
     print("✅ Đã gửi webhook thành công")
 end
-
-SelectTeam()
 
 task.spawn(function()
     while Config["Start Webhook"] do
