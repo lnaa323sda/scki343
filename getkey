@@ -1,7 +1,7 @@
 local HttpService = game:GetService("HttpService")
 
 getgenv().Config = {
-     ["Select Join"] = "Pirates" -- Pirates hoặc Marines
+     ["Select Join"] = "Pirates", -- Pirates hoặc Marines
      ["Auto Farm"] = true,
      ["White screen"] = false,
      ["RedeemCode"] = 9,
@@ -158,13 +158,13 @@ local function whitescreen()
 end
 
 -- Kiểm tra cấu hình tối ưu FPS
-if config["White screen"] then
+if Config["White screen"] then
     whitescreen()
 end
 
 wait(1) 
 
-if config["Auto Farm"] then
+if Config["Auto Farm"] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/script/refs/heads/main/kaitun%20royx"))()
 else
     print("chà được đấy")
