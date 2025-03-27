@@ -1,60 +1,170 @@
+print("🔍 Script đã bắt đầu chạy...")
+
+local HttpService = game:GetService("HttpService")
+
 getgenv().Config = {
-    ["Select Join"] = "Pirates", -- Pirates hoặc Marines
-    ["Auto Farm"] = true,
-    ["White screen"] = false,
-    ["RedeemCode"] = 9,
-    ["Fragment"] = 25000,
-    ["AutoCdk"] = true,
-    ["AutoSgt"] = true,
-    ["Buy Legendary Sword"] = true,
-    ["Buy Haki Color"] = true,
-    ["Berry Colect"] = true,
-    ["Chat"] = "", -- nhập text hoặc ko
-    ["Chat Delay"] = 60, -- delay bằng giây
+     ["Select Join"] = "Pirates", -- Pirates hoặc Marines
+     ["White screen"] = false,
+     ["RedeemCode"] = 9,
+     ["Fragment"] = 25000,
+     ["AutoCdk"] = true,
+     ["AutoSgt"] = true,
+     ["Buy Legendary Sword"] = true,
+     ["Buy Haki Color"] = true,
+     ["Berry Colect"] = true,
+     ["Chat"] = "", -- nhập text hoặc ko
+     ["Chat Delay"] = 60, -- delay bằng giây
+     ["Link Webhook"] = "",
+     ["Start Webhook"] = true,
+     ["Webhook Minute"] = 30,
+     ["name player"] = true,
+     ["Send Webhook"] = true
 }
 
+if Config["Link Webhook"] == "" then
+    warn("❌ Link Webhook bị thiếu!")
+    return
+end
+
+-- Hàm chọn team
 local function SelectTeam()
     local team = Config["Select Join"]
     if team == "Pirates" or team == "Marines" then
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", team)
         print("✅ Đã chọn team: " .. team)
     else
-        warn("❌ Cấu hình team sai, vui lòng chọn 'Pirates' hoặc 'Marines'")
+        warn("❌ Cấu hình team như cứt")
     end
+end
+
+local function SendToWebhook()
+    if not Config["Send Webhook"] or not Config["Start Webhook"] then return end
+
+    print("🔗 Webhook: " .. Config["Link Webhook"])
+
+    local data = {
+        ["username"] = "Kaitun Zush hub",
+        ["embeds"] = {
+            {
+                ["title"] = "📢 Notification",
+                ["description"] = "Thông tin người chơi",
+                ["color"] = 16711680,
+                ["fields"] = {
+                    {["name"] = "👤 Player Name", ["value"] = game.Players.LocalPlayer.Name, ["inline"] = true},
+                    {["name"] = "🏴 Team Selected", ["value"] = Config["Select Join"], ["inline"] = true},
+                    {["name"] = "⏳ Time Sent", ["value"] = os.date("%Y-%m-%d %H:%M:%S"), ["inline"] = true}
+                }
+            }
+        }
+    }
+
+    local jsonData = HttpService:JSONEncode(data)
+    print("📝 JSON Data: " .. jsonData)
+
+    HttpService:PostAsync(Config["Link Webhook"], jsonData, Enum.HttpContentType.ApplicationJson)
+    print("✅ Đã gửi webhook thành công")
 end
 
 SelectTeam()
 
-if Config["White screen"] then
-    game:GetService("Lighting").Brightness = 0
-    game:GetService("Lighting").FogEnd = 9e9
-    game:GetService("Lighting").GlobalShadows = false
-    game:GetService("Lighting").OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+task.spawn(function()
+    while Config["Start Webhook"] do
+        task.wait(Config["Webhook Minute"] * 60)
+        SendToWebhook()
+    end
+end)
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
+local player = Players.LocalPlayer
+
+-- Hiện nhiều dòng custom chat (chỉ mình thấy)
+task.spawn(function()
+    StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = "🎉 <b><i>Chào mừng đến với Zush Hub do Duck 🐥 sáng lập</i></b>",
+        Color = Color3.fromRGB(255, 128, 0),
+        Font = Enum.Font.SourceSansBold,
+        FontSize = Enum.FontSize.Size24
+    })
+    wait(1)
+    StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = "💎 <b>Script free - Không bán, không lừa đảo</b>",
+        Color = Color3.fromRGB(255, 128, 0),
+        Font = Enum.Font.SourceSansBold,
+        FontSize = Enum.FontSize.Size24
+    })
+    wait(1)
+    StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = "🐥 <i>Hỗ trợ tại Discord: Zush Hub</i>",
+        Color = Color3.fromRGB(255, 128, 0),
+        Font = Enum.Font.SourceSansBold,
+        FontSize = Enum.FontSize.Size24
+    })
+end)
+
+local function whitescreen()
+    -- Ẩn toàn bộ hiệu ứng và ánh sáng
+    game:GetService("Lighting"):ClearAllChildren()
+    sethiddenproperty(game.Lighting, "Technology", Enum.Technology.Compatibility)
+
+    -- Xóa tất cả ParticleEffects
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") or v:IsA("Smoke") or v:IsA("Fire") then
+            v:Destroy()
+        end
+    end
+
+    -- Xóa mọi âm thanh (nếu muốn)
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("Sound") then
+            v:Destroy()
+        end
+    end
+
+    -- Ẩn các Object không cần thiết (Cây, đá, hiệu ứng trang trí)
+    local objectsToRemove = {"Grass", "Tree", "Bush", "Flower", "Rock", "Cloud", "Effect"}
+    for _, obj in ipairs(objectsToRemove) do
+        for _, v in pairs(game:GetDescendants()) do
+            if v:IsA("BasePart") and string.find(v.Name, obj) then
+                v:Destroy()
+            end
+        end
+    end
+
+    -- Tắt bóng
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+
+    -- Giảm LOD để tối ưu hiển thị
+    game:GetService("RunService"):Set3dRenderingEnabled(false)
+
     print("🔧 FPS Boost bật 🎮")
 end
 
-if Config["Auto Farm"] then
-    local success, err = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/script/refs/heads/main/kaitun%20royx"))()
-    end)
-    if not success then
-        warn("❌ Auto Farm bị lỗi:", err)
-    end
-else
-    print("Auto Farm không bật")
+-- Kiểm tra cấu hình tối ưu FPS
+if Config["White screen"] then
+    whitescreen()
 end
+
+wait(1) 
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/script/refs/heads/main/kaitun%20royx"))()
 
 task.spawn(function()
     while true do
-        if Config["Chat"] ~= "" then
+        if getgenv().Config["Chat"] ~= "" then
+            -- Gửi tin nhắn vào chat
             game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(
-                Config["Chat"], 
+                getgenv().Config["Chat"], 
                 "All"
             )
         end
-        wait(Config["Chat Delay"])
+        -- Đợi theo thời gian delay đã cấu hình
+        wait(getgenv().Config["Chat Delay"])
     end
 end)
+
+wait(3)
 
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Zush Hub",
