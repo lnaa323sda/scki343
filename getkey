@@ -1,5 +1,3 @@
-local HttpService = game:GetService("HttpService")
-
 getgenv().Config = {
     ["Select Join"] = "Pirates", -- Pirates hoặc Marines
     ["Auto Farm"] = true,
@@ -13,17 +11,7 @@ getgenv().Config = {
     ["Berry Colect"] = true,
     ["Chat"] = "", -- nhập text hoặc ko
     ["Chat Delay"] = 60, -- delay bằng giây
-    ["Link Webhook"] = "",
-    ["Start Webhook"] = true,
-    ["Webhook Minute"] = 30, -- phút nha
-    ["name player"] = true,
-    ["Send Webhook"] = true
 }
-
-if Config["Link Webhook"] == "" then
-    warn("❌ không sài hả")
-    return
-end
 
 local function SelectTeam()
     local team = Config["Select Join"]
@@ -35,40 +23,7 @@ local function SelectTeam()
     end
 end
 
-local function SendToWebhook()
-    if not Config["Send Webhook"] or not Config["Start Webhook"] then return end
-
-    local PlayerName = Config["name player"] and game.Players.LocalPlayer.Name or "Ẩn danh"
-
-    local data = {
-        ["username"] = "Kaitun Zush hub",
-        ["embeds"] = {
-            {
-                ["title"] = "📢 Notification",
-                ["description"] = "Thông tin người chơi",
-                ["color"] = 16711680,
-                ["fields"] = {
-                    {["name"] = "👤 Player Name", ["value"] = PlayerName, ["inline"] = true},
-                    {["name"] = "🏴 Team Selected", ["value"] = Config["Select Join"], ["inline"] = true},
-                    {["name"] = "⏳ Time Sent", ["value"] = os.date("%Y-%m-%d %H:%M:%S"), ["inline"] = true}
-                }
-            }
-        }
-    }
-
-    local jsonData = HttpService:JSONEncode(data)
-    HttpService:PostAsync(Config["Link Webhook"], jsonData, Enum.HttpContentType.ApplicationJson)
-    print("✅ Đã gửi webhook thành công")
-end
-
 SelectTeam()
-
-task.spawn(function()
-    while Config["Start Webhook"] do
-        task.wait(Config["Webhook Minute"] * 60)
-        SendToWebhook()
-    end
-end)
 
 if Config["White screen"] then
     game:GetService("Lighting").Brightness = 0
