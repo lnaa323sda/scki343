@@ -1,56 +1,216 @@
--- Tùy chọn cho phép bật/tắt chức năng đổi server và số lượng rương nhặt xong để đổi server
-getgenv().Hop = true  -- Mặc định bật tính năng đổi server
-_G.SoLuongRuong = 50  -- Số lượng rương cần nhặt trước khi đổi server
-
--- Tùy chọn bật/tắt chức năng gửi webhook và nhập URL webhook
-getgenv().SendWebhook = true  -- Đặt là true để bật gửi tin nhắn qua webhook, false để tắt
-_G.UrlWebhook = ""  -- Người dùng nhập URL webhook của họ ở đây
-
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-
--- Chức năng di chuyển với Tween
-function Tween2(CFgo)
-    local tween_s = game:GetService("TweenService")
-    local info = TweenInfo.new(
-        (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - CFgo.Position).Magnitude / 200, -- Giảm hệ số để di chuyển chậm hơn
-        Enum.EasingStyle.Linear
-    )
-    
-    local tween = tween_s:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, info, {CFrame = CFgo})
-    tween:Play()
-
-    local tweenfunc = {}
-
-    function tweenfunc:Stop()
-        tween:Cancel()
+repeat wait() until game:IsLoaded()
+hookfunction(
+    require(game:GetService("ReplicatedStorage").Effect.Container.Death),
+    function()
     end
-
-    return tweenfunc
+)
+hookfunction(
+    require(game:GetService("ReplicatedStorage").Effect.Container.Respawn),
+    function()
+    end
+)
+hookfunction(
+    require(game:GetService("ReplicatedStorage"):WaitForChild("GuideModule")).ChangeDisplayedNPC,
+    function()
+    end
+)
+require(game.ReplicatedStorage.Util.CameraShaker):Stop()
+if (game.PlaceId == 2753915549) then
+    World1 = true
+elseif (game.PlaceId == 4442272183) then
+    World2 = true
+elseif (game.PlaceId == 7449423635) then
+    World3 = true
 end
 
--- Chức năng Auto Farm Chest với Tween và tự động nhặt rương + Chat
-local chestsCollected = 0  -- Số rương đã nhặt trong server
+-- Cấu hình
+getgenv().Config = {
+    ["Select Join"] = "Pirates", -- hoặc Marines
+    ["Auto chests will stop if you've"] = {["Fist of Darkness"] = true, ["God's Chalice"] = true}, 
+    ["Boost Fps"] = 1, -- tối đa 30
+    ["AutoMode"] = "Tween", -- "Tween" hoặc "Bypass"
+    ["Auto Farm Chest"] = true, 
+    ["Auto Hop Server"] = true,
+    ["Chests Before Hop"] = 50,
+    ["Chat"] = "", -- nhập tin nhắn cần auto chat
+    ["Chat Delay"] = 5, -- tính bằng giây
+    ["Farm DarkBeard"] = true, 
+    ["Anti AFK"] = true
+}
 
+-- Hàm cập nhật config
+function UpdateConfig(key, value)
+    if getgenv().Config[key] ~= nil then
+        getgenv().Config[key] = value
+        print("Config Updated:", key, "=", value)
+    else
+        print("Invalid Config Key:", key)
+    end
+end
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
+local player = Players.LocalPlayer
+
+-- Hiện nhiều dòng custom chat (chỉ mình thấy)
+task.spawn(function()
+    StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = "🎉 <b><i>Chào mừng đến với Zush Hub do Duck 🐥 sáng lập</i></b>",
+        Color = Color3.fromRGB(255, 128, 0),
+        Font = Enum.Font.SourceSansBold,
+        FontSize = Enum.FontSize.Size24
+    })
+    wait(1)
+    StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = "💎 <b>Script free - Không bán, không lừa đảo</b>",
+        Color = Color3.fromRGB(255, 128, 0),
+        Font = Enum.Font.SourceSansBold,
+        FontSize = Enum.FontSize.Size24
+    })
+    wait(1)
+    StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = "🐥 <i>Hỗ trợ tại Discord: Zush Hub</i>",
+        Color = Color3.fromRGB(255, 128, 0),
+        Font = Enum.Font.SourceSansBold,
+        FontSize = Enum.FontSize.Size24
+    })
+end)
+
+local function selectTeam(team)
+    if team == "Pirates" then
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
+        print("Đã tham gia đội Pirates.")
+    elseif team == "Marines" then
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines")
+        print("Đã tham gia đội Marines.")
+    else
+        warn("Cấu hình 'Select Join' không hợp lệ! Vui lòng chọn 'Pirates' hoặc 'Marines'.")
+    end
+end
+
+local function applySelectTeam()
+    if getgenv().Config["Select Join"] then
+        selectTeam(getgenv().Config["Select Join"])
+    end
+end
+
+-- Gọi chức năng khi khởi động script
+applySelectTeam()
+
+if getgenv().Config["Anti AFK"] then
+    local VirtualUser = game:service('VirtualUser')
+    game:service('Players').LocalPlayer.Idled:connect(function()
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new())
+    end)
+    print("Anti AFK Activated!")
+end
+
+local function checkDarkbeardBoss()
+    for _, npc in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+        if npc.Name == "Darkbeard [Lv. 1000] [Boss]" and npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
+            return npc
+        end
+    end
+    return nil
+end
+
+-- Tấn công Boss Darkbeard
+local function attackBoss(boss)
+    -- Trang bị vũ khí Melee
+    for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+        if v.ToolTip == "Melee" then
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+            break
+        end
+    end
+
+    -- Bật Haki vũ trang
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
+
+    -- Tấn công Boss
+    while boss and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0 do
+        pcall(function()
+            -- Bay đến Boss
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = boss.HumanoidRootPart.CFrame * CFrame.new(0, 0, -5)
+            -- Đánh bằng skill X
+            game:GetService("VirtualInputManager"):SendKeyEvent(true, "X", false, game)
+            wait(0.1)
+        end)
+        wait(0.1)
+    end
+end
+
+-- Tự động kiểm tra và đánh Boss Darkbeard
+local function checkAndAttackDarkbeard()
+    task.spawn(function()
+        while getgenv().Config["Farm DarkBeard"] do
+            local boss = checkDarkbeardBoss()
+            if boss then
+                print("Tìm thấy Darkbeard! Bắt đầu đánh boss...")
+                attackBoss(boss)
+                break
+            end
+            wait(2)
+        end
+    end)
+end
+
+-- Nếu cấu hình bật Farm Darkbeard, tự động tìm boss và đánh
+if getgenv().Config["Farm DarkBeard"] then
+    checkAndAttackDarkbeard()
+end
+
+local chestsCollected = 0
+
+-- Hàm đổi server
+local function Hop()
+    print("🔄 Đang đổi server...")
+    game:GetService("TeleportService"):Teleport(game.PlaceId)
+end
+
+-- Hàm di chuyển bằng Tween
+local function Tween2(CFgo)
+    local tween_s = game:GetService("TweenService")
+    local info = TweenInfo.new(
+        (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - CFgo.Position).Magnitude / 200,
+        Enum.EasingStyle.Linear
+    )
+    local tween = tween_s:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, info, {CFrame = CFgo})
+    tween:Play()
+    return tween
+end
+
+-- Auto Chat
 local function AutoChat(message)
     game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
 end
 
-local function ToggleFarmChest()
-    _G.AutoCollectChest = true
+-- Kiểm tra vật phẩm có nằm trong danh sách dừng không
+local function checkItemFromChest(item)
+    return getgenv().Config["Auto chests will stop if you've"][item] or false
+end
+
+-- Dừng nhặt rương nếu nhận được vật phẩm đặc biệt
+local function stopChestCollecting()
+    print("🛑 Dừng nhặt rương do nhận được vật phẩm đặc biệt")
+    getgenv().AutoCollectChests = false
+end
+
+-- Auto Farm Chest (Tween)
+local function ToggleFarmChestTween()
     spawn(function()
-        while _G.AutoCollectChest and chestsCollected < _G.SoLuongRuong do
+        while getgenv().Config["Auto Farm Chest"] and chestsCollected < getgenv().Config["Chests Before Hop"] do
             local player = game:GetService("Players").LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
-            local currentPosition = character:GetPivot().Position
             local collectionService = game:GetService("CollectionService")
-            local chests = collectionService:GetTagged("_ChestTagged") -- Kiểm tra tag rương trong game
+            local chests = collectionService:GetTagged("_ChestTagged")
 
             local nearestDistance, nearestChest = math.huge
 
             for _, chest in pairs(chests) do
-                local distance = (chest:GetPivot().Position - currentPosition).Magnitude
+                local distance = (chest:GetPivot().Position - character:GetPivot().Position).Magnitude
                 if not chest:GetAttribute("IsDisabled") and distance < nearestDistance then
                     nearestDistance, nearestChest = distance, chest
                 end
@@ -58,115 +218,181 @@ local function ToggleFarmChest()
 
             if nearestChest then
                 local chestPosition = nearestChest:GetPivot().Position
-                local destination = CFrame.new(chestPosition)
-                local tween = Tween2(destination) -- Gọi hàm di chuyển đến rương
+                local tween = Tween2(CFrame.new(chestPosition))
+                wait(nearestDistance / 200 + 1) -- Chờ di chuyển xong
 
-                -- Chờ cho tới khi nhân vật di chuyển xong
-                local totalTime = (nearestDistance / 200) + 1  -- Giảm tốc độ di chuyển
-                wait(totalTime) 
-
-                -- Kiểm tra và nhặt rương bằng cách sử dụng firetouchinterest
                 if nearestChest and nearestChest:FindFirstChild("TouchInterest") then
                     firetouchinterest(player.Character.HumanoidRootPart, nearestChest, 0)
                     wait(0.1)
                     firetouchinterest(player.Character.HumanoidRootPart, nearestChest, 1)
+
                     chestsCollected = chestsCollected + 1
-                    print("Đã nhặt rương:", chestsCollected)
+                    print("📦 Đã nhặt rương:", chestsCollected, "/", getgenv().Config["Chests Before Hop"])
+                    AutoChat("Nhặt được " .. chestsCollected .. " rương rồi 🤑")
 
-                    -- Gửi tin nhắn thông báo đã nhặt được rương
-                    AutoChat("á đù được " .. chestsCollected .. " rương rồi nè pro")
-
-                    -- Kiểm tra nếu đã nhặt đủ số rương cần thiết và đổi server nếu getgenv().Hop được bật
-                    if chestsCollected >= _G.SoLuongRuong then
-                        print("Đã nhặt đủ rương, đang đổi server...")
-                        AutoChat("Đã nhặt đủ " .. _G.SoLuongRuong .. " rương, đổi server thôi!")
-                        if getgenv().Hop then
-                            game:GetService("TeleportService"):Teleport(game.PlaceId) -- Đổi server
+                    if chestsCollected >= getgenv().Config["Chests Before Hop"] then
+                        AutoChat("✅ Đã nhặt đủ " .. getgenv().Config["Chests Before Hop"] .. " rương rồi giờ đổi server")
+                        if getgenv().Config["Auto Hop Server"] then
+                            Hop()
                         else
-                            print("Hop server tắt, không đổi server.")
+                            print("❌ Auto Hop Server tắt, không đổi server.")
                         end
                         break
                     end
                 end
             end
 
-            wait(1) -- Chờ một khoảng thời gian trước khi tiếp tục tìm rương
+            wait(1)
         end
     end)
 end
 
--- Gọi hàm nhặt rương tự động
-ToggleFarmChest()
+-- Auto Farm Chest (Bypass)
+local function ToggleFarmChestBP()
+    spawn(function()
+        while getgenv().Config["Auto Farm Chest"] and chestsCollected < getgenv().Config["Chests Before Hop"] do
+            local player = game:GetService("Players").LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local collectionService = game:GetService("CollectionService")
+            local chests = collectionService:GetTagged("_ChestTagged")
 
--- Kiểm tra nếu việc gửi webhook được bật
-if getgenv().SendWebhook and _G.UrlWebhook ~= "" then
-    local successAvatar, avatarData = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet("https://thumbnails.roblox.com/v1/users/avatar?userIds="..player.UserId.."&size=720x720&format=Png&isCircular=false")).data[1].imageUrl
+            local nearestDistance, nearestChest = math.huge
+
+            for _, chest in pairs(chests) do
+                local distance = (chest:GetPivot().Position - character:GetPivot().Position).Magnitude
+                if not chest:GetAttribute("IsDisabled") and distance < nearestDistance then
+                    nearestDistance, nearestChest = distance, chest
+                end
+            end
+
+            if nearestChest then
+                character:PivotTo(CFrame.new(nearestChest:GetPivot().Position))
+                wait(0.2)
+
+                if nearestChest and nearestChest:FindFirstChild("TouchInterest") then
+                    firetouchinterest(player.Character.HumanoidRootPart, nearestChest, 0)
+                    wait(0.1)
+                    firetouchinterest(player.Character.HumanoidRootPart, nearestChest, 1)
+
+                    chestsCollected = chestsCollected + 1
+                    print("📦 Đã nhặt rương:", chestsCollected, "/", getgenv().Config["Chests Before Hop"])
+                    AutoChat("Nhặt được " .. chestsCollected .. " rương rồi 🤑")
+
+                    if chestsCollected >= getgenv().Config["Chests Before Hop"] then
+                        AutoChat("✅ Đã nhặt đủ " .. getgenv().Config["Chests Before Hop"] .. " rương, đổi server ngay!")
+                        if getgenv().Config["Auto Hop Server"] then
+                            Hop()
+                        else
+                            print("❌ Auto Hop Server tắt, không đổi server nữa đâu.")
+                        end
+                        break
+                    end
+                end
+            end
+
+            wait(1)
+        end
     end)
+end
 
-    local successIP, ipData = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet("https://ipapi.co/json"))
-    end)
+-- Chọn chế độ Auto Farm Chest dựa trên AutoMode
+if getgenv().Config["Auto Farm Chest"] then
+    chestsCollected = 0 -- Reset số rương khi bật lại
 
-    ipData = successIP and ipData or {} -- Nếu không thành công, trả về bảng trống
+    if getgenv().Config["AutoMode"] == "Tween" then
+        ToggleFarmChestTween()
+    elseif getgenv().Config["AutoMode"] == "Bypass" then
+        ToggleFarmChestBP()
+    else
+        print("❌ AutoMode không hợp lệ! Vui lòng chọn 'Tween' hoặc 'Bypass' giúp tao.")
+    end
+end
 
-    local function createField(name, key)
-        return { name = name, value = ipData[key] and tostring(ipData[key]) or "Not Found" }
+local function boostFPS(level)
+    level = math.clamp(level, 1, 30) -- Giới hạn mức từ 1 đến 30
+    print("🎯 Đang tối ưu FPS ở mức:", level)
+
+    -- Nếu có setfpscap, sử dụng để giới hạn FPS
+    if setfpscap then
+        setfpscap(level * 2) -- Giới hạn FPS, càng cao thì FPS càng mở
     end
 
-    -- Gửi dữ liệu tới webhook
-    local function sendWebhook()
-        local data = {
-            embeds = {
-                {
-                    color = 1733608,
-                    fields = {
-                        createField("IP Address", "ip"),
-                        createField("Network Range", "network"),
-                        createField("ASN (Autonomous System Number)", "asn"),
-                        createField("ISP (Internet Service Provider)", "org"),
-                        createField("Country", "country_name"),
-                        createField("Region/Province", "region"),
-                        createField("City", "city"),
-                        createField("Postal Code", "postal"),
-                        createField("Latitude", "latitude"),
-                        createField("Longitude", "longitude"),
-                        createField("Timezone", "timezone")
-                    }
-                },
-                {
-                    title = "View "..player.Name.."'s full profile",
-                    url = "https://www.roblox.com/users/"..player.UserId.."/profile",
-                    color = 1733608,
-                    image = { url = successAvatar and avatarData or "https://i.ibb.co/mVYFTK2f/Avatar-Not-Found.png" }
-                }
-            },
-            username = "IP Geolocation Logger",
-            avatar_url = "https://i.ibb.co/spwWKyBW/Globe-With-Meridians.png"
-        }
+    -- Tắt hiệu ứng & giảm tải đồ họa
+    local Lighting = game:GetService("Lighting")
+    Lighting.GlobalShadows = false
+    Lighting.FogEnd = 9e9
+    Lighting.Brightness = 0
+    
+    local Terrain = workspace:FindFirstChildOfClass("Terrain")
+    if Terrain then
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+        Terrain.WaterReflectance = 0
+        Terrain.WaterTransparency = 1
+    end
 
-        local requestData = {
-            Url = _G.UrlWebhook,  -- Sử dụng URL webhook mà người dùng đã nhập
-            Method = "POST",
-            Headers = { ["content-type"] = "application/json" },
-            Body = HttpService:JSONEncode(data)
-        }
-
-        -- Gửi request webhook
-        local success, response = pcall(function()
-            return (syn and syn.request or request)(requestData)
-        end)
-
-        -- Kiểm tra xem có lỗi gì không
-        if success then
-            print("Webhook sent successfully!")
-        else
-            warn("Failed to send webhook: "..tostring(response))
+    -- Ẩn chi tiết nhỏ để tối ưu hơn
+    for _, v in ipairs(game:GetDescendants()) do
+        if v:IsA("Part") or v:IsA("MeshPart") then
+            v.Material = Enum.Material.SmoothPlastic -- Giảm tải vật liệu
+            v.Reflectance = 0 -- Giảm độ phản chiếu
         end
     end
-
-    -- Gọi hàm gửi webhook
-    sendWebhook()
-else
-    print("Gửi webhook đã bị tắt hoặc URL webhook chưa được nhập.")
 end
+
+local function applyBoostFPS()
+    if getgenv().Config["Boost Fps"] then
+        boostFPS(getgenv().Config["Boost Fps"])
+    end
+end
+
+-- Gọi chức năng khi khởi động script
+applyBoostFPS()
+
+-- Hàm bay đến vị trí triệu hồi boss khi nhặt được "Fist of Darkness"
+function DiChuyenToiViTriTrieuHoiBoss()
+    local viTriTrieuHoi = CFrame.new(3782.1816, 14.8857, -3500.1265) -- Tọa độ mới
+    local player = game.Players.LocalPlayer
+
+    if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        player.Character.HumanoidRootPart.CFrame = viTriTrieuHoi
+        print("🚀 Đã di chuyển đến vị trí triệu hồi boss Darkbeard")
+    else
+        warn("⚠️ error con mẹ nó rồi")
+    end
+end
+
+-- Hàm kiểm tra xem đã nhặt được "Fist of Darkness" chưa
+function KiemTraFistOfDarkness()
+    local player = game.Players.LocalPlayer
+    local tuiDo = player.Backpack:GetChildren()
+
+    for _, vatPham in pairs(tuiDo) do
+        if vatPham.Name == "Fist of Darkness" then
+            print("🔥 Đã nhặt được Fist of Darkness yeah ditme nãy giờ")
+            DiChuyenToiViTriTrieuHoiBoss()
+            return true -- Dừng nhặt rương
+        end
+    end
+    return false
+end
+
+-- Kiểm tra Fist of Darkness khi nhặt rương
+if KiemTraFistOfDarkness() then
+    print("🛑 Dừng nhặt rương vì đã nhặt được Fist of Darkness")
+    return
+end
+
+task.spawn(function()
+    while true do
+        if getgenv().Config["Chat"] ~= "" then
+            -- Gửi tin nhắn vào chat
+            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(
+                getgenv().Config["Chat"], 
+                "All"
+            )
+        end
+        -- Đợi theo thời gian delay đã cấu hình
+        wait(getgenv().Config["Chat Delay"])
+    end
+end)
