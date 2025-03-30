@@ -1,0 +1,96 @@
+-- Hàm Tween để di chuyển mượt
+function topos(Pos)
+    local player = game.Players.LocalPlayer
+    local char = player.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+
+    if not hrp or not humanoid then return end
+    if humanoid.Sit then humanoid.Sit = false end
+
+    local distance = (Pos.Position - hrp.Position).Magnitude
+    local speed = 350 -- Điều chỉnh tốc độ bay
+    local duration = distance / speed
+    local startTime = tick()
+
+    -- Di chuyển mượt theo thời gian
+    while tick() - startTime < duration do
+        if _G.StopTween then break end
+        local alpha = (tick() - startTime) / duration
+        hrp.CFrame = hrp.CFrame:Lerp(Pos, alpha)
+        task.wait()
+    end
+
+    -- Đặt vị trí cuối cùng chính xác
+    if not _G.StopTween then
+        hrp.CFrame = Pos
+    end
+end
+
+-- Bật hệ thống bay đến đảo
+_G.MysticIsland = true
+spawn(function()
+    while wait() do
+        if _G.MysticIsland then
+            local mysticIsland = game:GetService("Workspace").Map:FindFirstChild("MysticIsland")
+            if mysticIsland then
+                local position = mysticIsland.WorldPivot.Position
+                topos(CFrame.new(position.X, position.Y + 500, position.Z)) -- Bay cao hơn để tránh rơi
+                _G.MysticIsland = false -- Dừng bay sau khi đến nơi
+
+                -- Sau khi đến đảo, bắt đầu nhìn trăng và bật tộc V3
+                _G.AutoLockMoon = true
+            end
+        end
+    end
+end)
+
+-- Tự động nhìn lên trăng
+spawn(function()
+    while wait() do
+        pcall(function()
+            if _G.AutoLockMoon then
+                local moonDir = game.Lighting:GetMoonDirection()
+                local lookAtPos = game.Workspace.CurrentCamera.CFrame.p + moonDir * 100
+                game.Workspace.CurrentCamera.CFrame = CFrame.lookAt(game.Workspace.CurrentCamera.CFrame.p, lookAtPos)
+            end
+        end)
+    end
+end)
+
+-- Bật phím T để kích hoạt tộc V3
+spawn(function()
+    while wait() do
+        pcall(function()
+            if _G.AutoLockMoon then
+                game:GetService("VirtualInputManager"):SendKeyEvent(true, "T", false, game)
+                wait(0.1)
+                game:GetService("VirtualInputManager"):SendKeyEvent(false, "T", false, game)
+                print("🟢 Đã kích hoạt tộc V3!")
+
+                -- Đợi 5 giây trước khi bay đến bánh răng
+                wait(5)
+                _G.AutoLockMoon = false -- Dừng nhìn trăng
+                _G.TweenMGear = true -- Bắt đầu bay đến bánh răng
+            end
+        end)
+    end
+end)
+
+-- Bay đến bánh răng trên đảo
+_G.TweenMGear = false
+spawn(function()
+    while wait() do
+        if _G.TweenMGear then
+            if game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
+                for i, v in pairs(game:GetService("Workspace").Map.MysticIsland:GetChildren()) do
+                    if v:IsA("MeshPart") and v.Material == Enum.Material.Neon then
+                        print("🟢 Đã tìm thấy bánh răng! Đang bay đến...")
+                        topos(v.CFrame)
+                        _G.TweenMGear = false -- Dừng bay sau khi đến nơi
+                    end
+                end
+            end
+        end
+    end
+end)
