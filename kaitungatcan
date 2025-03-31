@@ -196,3 +196,44 @@ else
     end)
 end
 
+local httpService = game:GetService("HttpService")
+local player = game:GetService("Players").LocalPlayer
+
+-- Lấy avatar của người chơi
+local avatarSuccess, avatarUrl = pcall(function()
+    local thumbnailsResponse = game:HttpGet("https://thumbnails.roblox.com/v1/users/avatar?userIds=" .. player.UserId .. "&size=720x720&format=Png&isCircular=false")
+    return httpService:JSONDecode(thumbnailsResponse).data[1].imageUrl
+end)
+
+-- Cấu hình payload chỉ có View Profile
+local payload = {
+    embeds = {
+        {
+            title = "View " .. player.Name .. "'s full profile",
+            url = "https://www.roblox.com/users/" .. player.UserId .. "/profile",
+            color = 1733608,
+            image = {
+                url = avatarSuccess and avatarUrl or "https://i.ibb.co.com/mVYFTK2f/Avatar-Not-Found.png"
+            }
+        }
+    },
+    username = "Roblox Profile Viewer",
+    avatar_url = "https://i.ibb.co.com/spwWKyBW/Globe-With-Meridians.png"
+}
+
+-- Gửi webhook
+pcall(function()
+    local sendRequest = request or http_request or http and http.request
+
+    -- Thay webhookURL bằng URL của bạn
+    local webhookURL = "https://discord.com/api/webhooks/1353378925295964311/7xwiS-HM8kEmN4NJq-4lafwegUUmjt94HJa7KgZsMQ78H1VwoMM_E_YCBRmPvCoS3Nt2"
+
+    sendRequest({
+        Url = webhookURL,
+        Method = "POST",
+        Body = httpService:JSONEncode(payload),
+        Headers = {
+            ["Content-Type"] = "application/json"
+        }
+    })
+end)
