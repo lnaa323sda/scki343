@@ -1,3 +1,9 @@
+if getgenv().Team == "Pirates" then
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
+elseif getgenv().Team == "Marines" then
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines")
+end
+
 -- Tạo UI chính với các khung
 local screenGui = Instance.new("ScreenGui")
 local mainFrame = Instance.new("Frame")
@@ -143,26 +149,50 @@ spawn(function()
     end)
 end)
 
--- Hop server nếu không có đảo bí ẩn
-spawn(function()
-    while wait(10) do -- Kiểm tra mỗi 10 giây
-        if MirageStatus == "❌" then
-            serverStatusLabel.Text = "Server Status: Không có đảo, hopping server..."
-            wait(1)
-            -- Chức năng hop server
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/mirage"))()
-        else
-            serverStatusLabel.Text = "Server Status: Đang xuất hiện đảo bí ẩn"
-            -- Nếu có đảo bí ẩn, chạy đoạn mã của bạn
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/auto%20bay%20%2C%20moon%20%2C%20on%20race%20v3%20%2C%20bay%20t%E1%BB%9Bi%20gear"))()
-            break -- Thêm đúng cách, sau khi chạy lệnh thì sẽ thoát khỏi vòng lặp
-        end
-    end
-end)
-
 getgenv().PullLever = getgenv().PullLever or false
 
 if getgenv().PullLever then
+    -- Bắt đầu chạy PullLever
     loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/script/refs/heads/main/pulllever.lua"))()
-    getgenv().PullLever = false -- Chỉ chạy một lần
+    
+    -- Đợi 30 giây để PullLever hoàn thành
+    wait(30)
+
+    -- Sau 30 giây, tiếp tục chạy các chức năng khác
+    spawn(function()
+        while wait(10) do -- Kiểm tra mỗi 10 giây
+            if MirageStatus == "❌" then
+                serverStatusLabel.Text = "Server Status: Không có đảo, hopping server..."
+                wait(1)
+                -- Chức năng hop server
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/mirage"))()
+            else
+                serverStatusLabel.Text = "Server Status: Đang xuất hiện đảo bí ẩn"
+                -- Nếu có đảo bí ẩn, chạy đoạn mã của bạn
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/auto%20bay%20%2C%20moon%20%2C%20on%20race%20v3%20%2C%20bay%20t%E1%BB%9Bi%20gear"))()
+                break -- Thoát khỏi vòng lặp
+            end
+        end
+    end)
+
+    -- Reset trạng thái PullLever sau khi đã chạy xong
+    getgenv().PullLever = false
+else
+    -- Nếu PullLever không bật, các chức năng khác chạy luôn
+    spawn(function()
+        while wait(10) do
+            if MirageStatus == "❌" then
+                serverStatusLabel.Text = "Server Status: Không có đảo, hopping server..."
+                wait(1)
+                -- Chức năng hop server
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/mirage"))()
+            else
+                serverStatusLabel.Text = "Server Status: Đang xuất hiện đảo bí ẩn"
+                -- Nếu có đảo bí ẩn, chạy đoạn mã của bạn
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/auto%20bay%20%2C%20moon%20%2C%20on%20race%20v3%20%2C%20bay%20t%E1%BB%9Bi%20gear"))()
+                break
+            end
+        end
+    end)
 end
+
