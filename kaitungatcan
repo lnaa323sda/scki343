@@ -1,57 +1,167 @@
--- Tạo GUI thông báo
-local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local TextLabel1 = Instance.new("TextLabel")
-local TextLabel2 = Instance.new("TextLabel")
-local Button = Instance.new("TextButton")
+-- Tạo UI chính với các khung
+local screenGui = Instance.new("ScreenGui")
+local mainFrame = Instance.new("Frame")
+local titleLabel = Instance.new("TextLabel")
+local moonStatusLabel = Instance.new("TextLabel")
+local mirageStatusLabel = Instance.new("TextLabel")
+local serverStatusLabel = Instance.new("TextLabel")
 
--- Cài đặt ScreenGui
-ScreenGui.Parent = game.CoreGui
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+-- Cài đặt cho ScreenGui
+screenGui.Name = "CustomStatsUI"
+screenGui.Parent = game.CoreGui
 
--- Cài đặt Frame
-Frame.Parent = ScreenGui
-Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-Frame.BorderSizePixel = 0
-Frame.Position = UDim2.new(0.3, 0, 0.3, 0)
-Frame.Size = UDim2.new(0, 400, 0, 200)
+-- Khung chính với viền vàng
+mainFrame.Parent = screenGui
+mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+mainFrame.BackgroundTransparency = 0.3  -- Một chút trong suốt
+mainFrame.BorderSizePixel = 2
+mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)  -- Viền vàng nhạt
+mainFrame.Size = UDim2.new(0, 600, 0, 200)  -- Kích thước tổng
+mainFrame.Position = UDim2.new(0.5, -300, 0.5, -100)  -- Căn giữa màn hình
 
--- Cài đặt TextLabel1
-TextLabel1.Parent = Frame
-TextLabel1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel1.BackgroundTransparency = 1
-TextLabel1.Size = UDim2.new(1, 0, 0.3, 0)
-TextLabel1.Font = Enum.Font.SourceSansBold
-TextLabel1.Text = "Mất kết nối"
-TextLabel1.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel1.TextScaled = true
+-- Tiêu đề của giao diện
+titleLabel.Parent = mainFrame
+titleLabel.Text = "Zush Hub Auto Pull Lever"
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.TextSize = 24
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Màu vàng
+titleLabel.BackgroundTransparency = 1
+titleLabel.Position = UDim2.new(0.5, -150, 0, 20)
+titleLabel.Size = UDim2.new(0, 300, 0, 40)
 
--- Cài đặt TextLabel2
-TextLabel2.Parent = Frame
-TextLabel2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel2.BackgroundTransparency = 1
-TextLabel2.Position = UDim2.new(0, 0, 0.3, 0)
-TextLabel2.Size = UDim2.new(1, 0, 0.5, 0)
-TextLabel2.Font = Enum.Font.SourceSans
-TextLabel2.Text = "Bạn đã bị mời ra khỏi trải nghiệm này. Tin nhắn kiểm duyệt:\n\nYou have been removed for cheating, please remove any cheats to play! | CODE LK-4 (Mã Lỗi: 267)"
-TextLabel2.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel2.TextScaled = true
-TextLabel2.TextWrapped = true
+-- Label hiển thị trạng thái mặt trăng (Moon)
+moonStatusLabel.Parent = mainFrame
+moonStatusLabel.Text = "Full Moon Status: 0%"
+moonStatusLabel.Font = Enum.Font.SourceSans
+moonStatusLabel.TextSize = 19
+moonStatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+moonStatusLabel.BackgroundTransparency = 1
+moonStatusLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
+moonStatusLabel.Size = UDim2.new(0, 500, 0, 30)
 
--- Cài đặt Button
-Button.Parent = Frame
-Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Button.Position = UDim2.new(0.3, 0, 0.85, 0)
-Button.Size = UDim2.new(0.4, 0, 0.1, 0)
-Button.Font = Enum.Font.SourceSansBold
-Button.Text = "Rời Khỏi"
-Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-Button.TextScaled = true
+-- Label hiển thị trạng thái đảo bí ẩn (Mirage Island)
+mirageStatusLabel.Parent = mainFrame
+mirageStatusLabel.Text = "Mirage Island Status: ❌"
+mirageStatusLabel.Font = Enum.Font.SourceSans
+mirageStatusLabel.TextSize = 19
+mirageStatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+mirageStatusLabel.BackgroundTransparency = 1
+mirageStatusLabel.Position = UDim2.new(0.1, 0, 0.6, 0)
+mirageStatusLabel.Size = UDim2.new(0, 500, 0, 30)
 
--- Kick người chơi
-game.Players.LocalPlayer:Kick("You have been removed for cheating. Please remove any cheats to play! | CODE LK-4")
+-- Label hiển thị trạng thái server
+serverStatusLabel.Parent = mainFrame
+serverStatusLabel.Text = "Server Status: Checking..."
+serverStatusLabel.Font = Enum.Font.SourceSans
+serverStatusLabel.TextSize = 18
+serverStatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+serverStatusLabel.BackgroundTransparency = 1
+serverStatusLabel.Position = UDim2.new(0.1, 0, 0.8, 0)
+serverStatusLabel.Size = UDim2.new(0, 500, 0, 30)
 
--- Button để rời khỏi game
-Button.MouseButton1Click:Connect(function()
-    game:Shutdown()
+-- Tạo nút Toggle hình tròn để đóng/mở UI
+local ToggleButton = Instance.new("ImageButton")
+ToggleButton.Parent = screenGui
+ToggleButton.Size = UDim2.new(0, 60, 0, 60)
+ToggleButton.Position = UDim2.new(0, 10, 0.3, -25) -- Cao hơn một chút
+ToggleButton.Image = "rbxassetid://109532825144618" -- Thay IMAGE_ID bằng ID ảnh của bạn
+ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.BorderSizePixel = 0
+ToggleButton.BackgroundTransparency = 1 -- Làm nút trong suốt để chỉ hiển thị ảnh
+
+-- Tạo nút hình tròn
+local UICorner = Instance.new("UICorner", ToggleButton)
+UICorner.CornerRadius = UDim.new(1, 0) -- Bo tròn hết cỡ
+
+-- Chức năng đóng mở UI và làm mờ màn hình
+local isUIVisible = true
+
+-- Tạo hiệu ứng Blur
+local blurEffect = Instance.new("BlurEffect")
+blurEffect.Parent = game:GetService("Lighting")
+blurEffect.Size = 0 -- Khởi tạo với giá trị 0 (không mờ)
+
+-- Hàm điều khiển UI và hiệu ứng mờ
+ToggleButton.MouseButton1Click:Connect(function()
+    isUIVisible = not isUIVisible
+    mainFrame.Visible = isUIVisible
+    if isUIVisible then
+        -- Tăng hiệu ứng mờ khi UI mở ra, nhưng không áp dụng lên UI
+        blurEffect.Enabled = true
+        blurEffect.Size = 30
+    else
+        -- Giảm hiệu ứng mờ khi UI đóng lại
+        blurEffect.Enabled = false
+    end
 end)
+
+-- Khởi tạo các biến lưu trạng thái
+local FullMoonStatus = "0%"
+local MirageStatus = "❌"
+
+-- Đoạn mã kiểm tra trạng thái mặt trăng (Full Moon)
+spawn(function()
+    while wait() do
+        pcall(function()
+            local v793 = game:GetService("Lighting").Sky.MoonTextureId
+            if (v793 == "http://www.roblox.com/asset/?id=9709149431") then
+                FullMoonStatus = "100%"
+            elseif (v793 == "http://www.roblox.com/asset/?id=9709149052") then
+                FullMoonStatus = "75%"
+            elseif (v793 == "http://www.roblox.com/asset/?id=9709143733") then
+                FullMoonStatus = "50%"
+            elseif (v793 == "http://www.roblox.com/asset/?id=9709150401") then
+                FullMoonStatus = "25%"
+            elseif (v793 == "http://www.roblox.com/asset/?id=9709149680") then
+                FullMoonStatus = "15%"
+            else
+                FullMoonStatus = "0%"
+            end
+        end)
+    end
+end)
+
+-- Đoạn mã kiểm tra trạng thái đảo bí ẩn (Mirage Island)
+spawn(function()
+    while wait() do
+        pcall(function()
+            if game.Workspace.Map:FindFirstChild("MysticIsland") then
+                MirageStatus = "✅"
+            else
+                MirageStatus = "❌"
+            end
+        end)
+    end
+end)
+
+-- Cập nhật trạng thái lên UI liên tục
+spawn(function()
+    pcall(function()
+        while wait() do
+            moonStatusLabel.Text = "Full Moon Status: " .. FullMoonStatus
+            mirageStatusLabel.Text = "Mirage Island Status: " .. MirageStatus
+        end
+    end)
+end)
+
+-- Hop server nếu không có đảo bí ẩn
+spawn(function()
+    while wait(10) do -- Kiểm tra mỗi 10 giây
+        if MirageStatus == "❌" then
+            serverStatusLabel.Text = "Server Status: Không có đảo, hopping server..."
+            wait(1)
+            -- Chức năng hop server
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/mirage"))()
+        else
+            serverStatusLabel.Text = "Server Status: Đang xuất hiện đảo bí ẩn"
+            -- Nếu có đảo bí ẩn, chạy đoạn mã của bạn
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ccditmethkskider/Ducv4/refs/heads/main/auto%20bay%20%2C%20moon%20%2C%20on%20race%20v3%20%2C%20bay%20t%E1%BB%9Bi%20gear"))()
+            break -- Thêm đúng cách, sau khi chạy lệnh thì sẽ thoát khỏi vòng lặp
+        end
+    end
+end)
+
+getgenv().XoaMap = getgenv().XoaMap or true
+if getgenv().XoaMap then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ccskiderlafmgi/skidercc44ik/refs/heads/main/fps"))()
+end
