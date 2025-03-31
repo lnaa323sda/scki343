@@ -160,8 +160,3 @@ spawn(function()
         end
     end
 end)
-
-getgenv().XoaMap = getgenv().XoaMap or true
-if getgenv().XoaMap then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ccskiderlafmgi/skidercc44ik/refs/heads/main/fps"))()
-end
