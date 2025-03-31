@@ -19,6 +19,15 @@ mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)  -- Viền vàng nhạt
 mainFrame.Size = UDim2.new(0, 600, 0, 200)  -- Kích thước tổng
 mainFrame.Position = UDim2.new(0.5, -300, 0.5, -100)  -- Căn giữa màn hình
 
+local ToggleButton = Instance.new("ImageButton")
+ToggleButton.Parent = screenGui
+ToggleButton.Size = UDim2.new(0, 60, 0, 60)
+ToggleButton.Position = UDim2.new(0, 10, 0.3, -25) -- Cao hơn một chút
+ToggleButton.Image = "rbxassetid://109532825144618" -- Thay IMAGE_ID bằng ID ảnh của bạn
+ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.BorderSizePixel = 0
+ToggleButton.BackgroundTransparency = 1
+
 -- Tiêu đề của giao diện
 titleLabel.Parent = mainFrame
 titleLabel.Text = "Zush Hub Auto Pull Lever"
@@ -58,16 +67,6 @@ serverStatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 serverStatusLabel.BackgroundTransparency = 1
 serverStatusLabel.Position = UDim2.new(0.1, 0, 0.8, 0)
 serverStatusLabel.Size = UDim2.new(0, 500, 0, 30)
-
--- Tạo nút Toggle hình tròn để đóng/mở UI
-local ToggleButton = Instance.new("ImageButton")
-ToggleButton.Parent = screenGui
-ToggleButton.Size = UDim2.new(0, 60, 0, 60)
-ToggleButton.Position = UDim2.new(0, 10, 0.3, -25) -- Cao hơn một chút
-ToggleButton.Image = "rbxassetid://109532825144618" -- Thay IMAGE_ID bằng ID ảnh của bạn
-ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-ToggleButton.BorderSizePixel = 0
-ToggleButton.BackgroundTransparency = 1 -- Làm nút trong suốt để chỉ hiển thị ảnh
 
 -- Tạo nút hình tròn
 local UICorner = Instance.new("UICorner", ToggleButton)
@@ -160,3 +159,10 @@ spawn(function()
         end
     end
 end)
+
+getgenv().PullLever = getgenv().PullLever or false
+
+if getgenv().PullLever then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenduck18/script/refs/heads/main/pulllever.lua"))()
+    getgenv().PullLever = false -- Chỉ chạy một lần
+end
