@@ -1,5 +1,7 @@
--- Hàm Tween để di chuyển mượt
-function topos(Pos)
+local TweenService = game:GetService("TweenService")
+
+-- Hàm Tween để bay mượt
+function topos(targetCFrame)
     local player = game.Players.LocalPlayer
     local char = player.Character
     local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -8,46 +10,39 @@ function topos(Pos)
     if not hrp or not humanoid then return end
     if humanoid.Sit then humanoid.Sit = false end
 
-    local distance = (Pos.Position - hrp.Position).Magnitude
-    local speed = 200 -- Điều chỉnh tốc độ bay
+    local distance = (targetCFrame.Position - hrp.Position).Magnitude
+    local speed = 100 -- Tốc độ bay chậm hơn để tránh văng
     local duration = distance / speed
-    local startTime = tick()
 
-    -- Di chuyển mượt theo thời gian
-    while tick() - startTime < duration do
-        if _G.StopTween then break end
-        local alpha = (tick() - startTime) / duration
-        hrp.CFrame = hrp.CFrame:Lerp(Pos, alpha)
-        task.wait()
-    end
+    -- Tween để di chuyển mượt
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+    local tween = TweenService:Create(hrp, tweenInfo, {CFrame = targetCFrame})
+    tween:Play()
 
-    -- Đặt vị trí cuối cùng chính xác
-    if not _G.StopTween then
-        hrp.CFrame = Pos
-    end
+    -- Chờ Tween chạy xong
+    tween.Completed:Wait()
 end
 
--- Bật hệ thống bay đến đảo
+-- Bay đến đảo
 _G.MysticIsland = true
 spawn(function()
-    while wait() do
+    while wait(1) do
         if _G.MysticIsland then
             local mysticIsland = game:GetService("Workspace").Map:FindFirstChild("MysticIsland")
             if mysticIsland then
                 local position = mysticIsland.WorldPivot.Position
-                topos(CFrame.new(position.X, position.Y + 500, position.Z)) -- Bay cao hơn để tránh rơi
-                _G.MysticIsland = false -- Dừng bay sau khi đến nơi
-
-                -- Sau khi đến đảo, bắt đầu nhìn trăng và bật tộc V3
+                topos(CFrame.new(position.X, position.Y + 100, position.Z)) -- Bay cao hơn tránh rớt
+                _G.MysticIsland = false
+                wait(2)
                 _G.AutoLockMoon = true
             end
         end
     end
 end)
 
--- Tự động nhìn lên trăng
+-- Tự động nhìn trăng
 spawn(function()
-    while wait() do
+    while wait(1) do
         pcall(function()
             if _G.AutoLockMoon then
                 local moonDir = game.Lighting:GetMoonDirection()
@@ -58,36 +53,35 @@ spawn(function()
     end
 end)
 
--- Bật phím T để kích hoạt tộc V3
+-- Bật tộc V3
 spawn(function()
-    while wait() do
+    while wait(1) do
         pcall(function()
             if _G.AutoLockMoon then
                 game:GetService("VirtualInputManager"):SendKeyEvent(true, "T", false, game)
                 wait(0.1)
                 game:GetService("VirtualInputManager"):SendKeyEvent(false, "T", false, game)
                 print("🟢 Đã kích hoạt tộc V3!")
-
-                -- Đợi 5 giây trước khi bay đến bánh răng
                 wait(5)
-                _G.AutoLockMoon = false -- Dừng nhìn trăng
-                _G.TweenMGear = true -- Bắt đầu bay đến bánh răng
+                _G.AutoLockMoon = false
+                _G.TweenMGear = true
             end
         end)
     end
 end)
 
--- Bay đến bánh răng trên đảo
+-- Bay đến bánh răng
 _G.TweenMGear = false
 spawn(function()
-    while wait() do
+    while wait(1) do
         if _G.TweenMGear then
-            if game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
-                for i, v in pairs(game:GetService("Workspace").Map.MysticIsland:GetChildren()) do
+            local mysticIsland = game:GetService("Workspace").Map:FindFirstChild("MysticIsland")
+            if mysticIsland then
+                for _, v in pairs(mysticIsland:GetChildren()) do
                     if v:IsA("MeshPart") and v.Material == Enum.Material.Neon then
                         print("🟢 Đã tìm thấy bánh răng! Đang bay đến...")
                         topos(v.CFrame)
-                        _G.TweenMGear = false -- Dừng bay sau khi đến nơi
+                        _G.TweenMGear = false
                     end
                 end
             end
