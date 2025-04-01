@@ -11,7 +11,7 @@ function topos(Pos)
     if humanoid.Sit then humanoid.Sit = false end
 
     local distance = (Pos.Position - hrp.Position).Magnitude
-    local speed = 100 -- Tốc độ bay chậm hơn để tránh văng
+    local speed = 300 -- Tốc độ bay chậm hơn để tránh văng
     local duration = distance / speed
 
     -- Kiểm tra nếu đang bay thì hủy tween cũ
@@ -87,7 +87,7 @@ spawn(function()
                 game:GetService("VirtualInputManager"):SendKeyEvent(true, "T", false, game)
                 wait(0.1)
                 game:GetService("VirtualInputManager"):SendKeyEvent(false, "T", false, game)
-                print("🟢 Đã kích hoạt tộc V3!")
+                print("🟢")
 
                 -- Đợi 5 giây trước khi bay đến bánh răng
                 wait(5)
@@ -107,7 +107,7 @@ spawn(function()
             if mysticIsland then
                 for _, v in pairs(mysticIsland:GetChildren()) do
                     if v:IsA("MeshPart") and v.Material == Enum.Material.Neon then
-                        print("🟢 Đã tìm thấy bánh răng! Đang bay đến...")
+                        print("🟢")
                         topos(v.CFrame)
                         _G.TweenMGear = false
                     end
