@@ -9,7 +9,7 @@ function topos(Pos)
     if humanoid.Sit then humanoid.Sit = false end
 
     local distance = (Pos.Position - hrp.Position).Magnitude
-    local speed = 350 -- Điều chỉnh tốc độ bay
+    local speed = 200 -- Điều chỉnh tốc độ bay
     local duration = distance / speed
     local startTime = tick()
 
