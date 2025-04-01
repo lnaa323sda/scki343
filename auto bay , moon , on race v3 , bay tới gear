@@ -1,7 +1,7 @@
 local TweenService = game:GetService("TweenService")
 
 -- Hàm Tween để bay mượt
-function topos(targetCFrame)
+function topos(Pos)
     local player = game.Players.LocalPlayer
     local char = player.Character
     local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -10,17 +10,43 @@ function topos(targetCFrame)
     if not hrp or not humanoid then return end
     if humanoid.Sit then humanoid.Sit = false end
 
-    local distance = (targetCFrame.Position - hrp.Position).Magnitude
+    local distance = (Pos.Position - hrp.Position).Magnitude
     local speed = 100 -- Tốc độ bay chậm hơn để tránh văng
     local duration = distance / speed
 
-    -- Tween để di chuyển mượt
+    -- Kiểm tra nếu đang bay thì hủy tween cũ
+    if _G.CurrentTween then
+        _G.CurrentTween:Cancel()
+    end
+
+    -- Tạo tween mới
     local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
-    local tween = TweenService:Create(hrp, tweenInfo, {CFrame = targetCFrame})
+    local tween = TweenService:Create(hrp, tweenInfo, {CFrame = Pos})
+    _G.CurrentTween = tween
+
+    -- Bắt đầu bay
     tween:Play()
 
-    -- Chờ Tween chạy xong
+    -- Giữ nhân vật không bị rớt
+    spawn(function()
+        while tween.PlaybackState == Enum.PlaybackState.Playing do
+            if _G.StopTween then
+                tween:Cancel()
+                _G.CurrentTween = nil
+                return
+            end
+
+            hrp.Velocity = Vector3.new(0, 50, 0) -- Duy trì độ cao
+
+            task.wait(0.1)
+        end
+    end)
+
+    -- Đảm bảo vị trí cuối cùng chính xác
     tween.Completed:Wait()
+    if not _G.StopTween then
+        hrp.CFrame = Pos
+    end
 end
 
 -- Bay đến đảo
@@ -40,7 +66,7 @@ spawn(function()
     end
 end)
 
--- Tự động nhìn trăng
+-- Tự động nhìn lên trăng
 spawn(function()
     while wait(1) do
         pcall(function()
@@ -53,7 +79,7 @@ spawn(function()
     end
 end)
 
--- Bật tộc V3
+-- Bật phím T để kích hoạt tộc V3
 spawn(function()
     while wait(1) do
         pcall(function()
@@ -62,6 +88,8 @@ spawn(function()
                 wait(0.1)
                 game:GetService("VirtualInputManager"):SendKeyEvent(false, "T", false, game)
                 print("🟢 Đã kích hoạt tộc V3!")
+
+                -- Đợi 5 giây trước khi bay đến bánh răng
                 wait(5)
                 _G.AutoLockMoon = false
                 _G.TweenMGear = true
@@ -70,7 +98,7 @@ spawn(function()
     end
 end)
 
--- Bay đến bánh răng
+-- Bay đến bánh răng trên đảo
 _G.TweenMGear = false
 spawn(function()
     while wait(1) do
