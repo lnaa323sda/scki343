@@ -9294,3 +9294,9 @@ v14:Notify({
     Content = "Đã Tải Xong",
     Duration = 5
 });
+spawn(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"))()
+    while task.wait() do
+        Click(0.000000000000000000000000000000004)
+    end
+end)
