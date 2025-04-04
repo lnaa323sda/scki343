@@ -8038,6 +8038,18 @@ HOPSERVER:AddButton({
     end
 })
 HOPSERVER:AddButton({
+    Title = "❥ Hop Server Cake Queen",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/darkz0823/Bigmom-Finder-Lua/refs/heads/main/hopfindbigmom.lua"))()
+        wait(1)
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Zush Hub",
+            Text = "Wait Hop Server .... ",
+            Duration = 3
+        })
+    end
+})
+HOPSERVER:AddButton({
     Title = "❥ Hop Server Full Moon",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/FullMon.txt"))()
