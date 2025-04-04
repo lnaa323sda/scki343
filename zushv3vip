@@ -1,3 +1,23 @@
+local KeyList = { -- Danh sách các key hợp lệ
+    "ZushHub-Mje9-OO02-Mje8",
+    "ZushHub-Nu9s-Cuu3-M8Bt",
+    "ZushHub-Bu8J-Bmj2-Ob93"
+}
+
+local function CheckKey(key)
+    for _, validKey in ipairs(KeyList) do
+        if key == validKey then
+            return true
+        end
+    end
+    return false
+end
+
+if not CheckKey(getgenv().Key) then
+    game.Players.LocalPlayer:Kick("Fuck you , Buy key Ib 0765520260")
+else
+    print("Done , wait run...")
+    -- Thêm code của bạn ở đây
 -- Đặt giá trị mặc định cho biến Attack
 getgenv().FixAttack = true
 -- Hàm Click
@@ -2771,7 +2791,7 @@ local hue = 0
 local lastTick = tick()
 local frameCount = 0
 
-getgenv().UIfps = true  -- Biến toàn cục để bật/tắt hiển thị FPS
+getgenv().UIfps = true 
 
 RunService.RenderStepped:Connect(function()
     if getgenv().UIfps then
@@ -8583,4 +8603,5 @@ if currentTime - lastNotificationTime >= notificationCooldown then
         Duration = 1
     })
     lastNotificationTime = currentTime
+end
 end
