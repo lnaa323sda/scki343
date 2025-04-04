@@ -2737,6 +2737,67 @@ spawn(function()
         end
     end
 end)
+local RunService = game:GetService("RunService")
+local DrawingText = Drawing.new("Text")
+
+-- Cấu hình chữ 3D
+DrawingText.Size = 30
+DrawingText.Center = true
+DrawingText.Outline = true
+DrawingText.OutlineColor = Color3.new(0, 0, 0)
+DrawingText.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, 50)
+DrawingText.Visible = false
+DrawingText.Font = 2  -- Font 3D
+
+-- Hiệu ứng màu cầu vồng
+local function HSVToRGB(h, s, v)
+    local i = math.floor(h * 6)
+    local f = h * 6 - i
+    local p = v * (1 - s)
+    local q = v * (1 - f * s)
+    local t = v * (1 - (1 - f) * s)
+    local r, g, b
+    if i % 6 == 0 then r, g, b = v, t, p
+    elseif i == 1 then r, g, b = q, v, p
+    elseif i == 2 then r, g, b = p, v, t
+    elseif i == 3 then r, g, b = p, q, v
+    elseif i == 4 then r, g, b = t, p, v
+    elseif i == 5 then r, g, b = v, p, q
+    end
+    return Color3.new(r, g, b)
+end
+
+local hue = 0
+local lastTick = tick()
+local frameCount = 0
+
+getgenv().UIfps = true  -- Biến toàn cục để bật/tắt hiển thị FPS
+
+RunService.RenderStepped:Connect(function()
+    if getgenv().UIfps then
+        frameCount = frameCount + 1
+        local currentTick = tick()
+        if currentTick - lastTick >= 1 then
+            local fps = frameCount / (currentTick - lastTick)
+            frameCount = 0
+            lastTick = currentTick
+            
+            DrawingText.Text = "FPS: " .. math.floor(fps)
+        end
+        
+        hue = (hue + 0.005) % 1  -- Hiệu ứng chuyển đổi màu liên tục
+        DrawingText.Color = HSVToRGB(hue, 1, 1)
+        DrawingText.Visible = true
+    else
+        DrawingText.Visible = false
+    end
+end)
+
+-- Thêm toggle để bật/tắt hiển thị FPS
+local Toggle = Settings:AddToggle("Toggle", {Title = "Open UI Fps", Description = "Support display fps in server", Default = true }) 
+Toggle:OnChanged(function(Value)
+    getgenv().UIfps = Value 
+end)
 Toggle = Settings:AddToggle("Toggle", {Title = "Anti Cheat Farming", Description = "This feature helps you Farm safely without being detected", Default = true })
 Toggle:OnChanged(function(Value)
     getgenv().ResetFlags = Value
@@ -7924,30 +7985,6 @@ HOPSERVER:AddButton({
     Title = "❥ Hop Server DarkBeard",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Dark.txt"))()
-        wait(1)
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "Zush Hub",
-            Text = "Wait Hop Server .... ",
-            Duration = 3
-        })
-    end
-})
-HOPSERVER:AddButton({
-    Title = "❥ Hop Server Cursed Captai",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Cursed.txt"))()
-        wait(1)
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "Zush Hub",
-            Text = "Wait Hop Server .... ",
-            Duration = 3
-        })
-    end
-})
-HOPSERVER:AddButton({
-    Title = "❥ Hop Server Soul Reaper",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/soulreaper.lua%20(1).txt"))()
         wait(1)
         game.StarterGui:SetCore("SendNotification", {
             Title = "Zush Hub",
