@@ -7933,6 +7933,30 @@ HOPSERVER:AddButton({
     end
 })
 HOPSERVER:AddButton({
+    Title = "❥ Hop Server Cursed Captai",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/Cursed.txt"))()
+        wait(1)
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Zush Hub",
+            Text = "Wait Hop Server .... ",
+            Duration = 3
+        })
+    end
+})
+HOPSERVER:AddButton({
+    Title = "❥ Hop Server Soul Reaper",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/shinichi-dz/shinhop/refs/heads/main/soulreaper.lua%20(1).txt"))()
+        wait(1)
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Zush Hub",
+            Text = "Wait Hop Server .... ",
+            Duration = 3
+        })
+    end
+})
+HOPSERVER:AddButton({
     Title = "❥ Hop Server Full Moon",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/giaotrinhhoc/Api/refs/heads/main/FullMon.txt"))()
