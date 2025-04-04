@@ -1380,7 +1380,7 @@ print("--[[Loaded UI]]--")
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local Window = Fluent:CreateWindow({
     Title = "Trẩu Roblox  [FREEPREMIUM]",
-    SubTitle = "    https://discord.gg/WYNetPAD",
+    SubTitle = "   https://discord.gg/WYNetPAD",
     TabWidth = 155,
     Size = UDim2.fromOffset(555, 320),
     Acrylic = false, 
@@ -7720,8 +7720,8 @@ end)
 local function sendWebhookNow()
     if WebhookURL == "" then
         game.StarterGui:SetCore("SendNotification", {
-            Title = "❌ Error",
-            Text = "Please enter a valid Webhook URL!",
+            Title = "Error",
+            Text = "Please enter a valid Webhook URL",
             Duration = 3
         })
         return
@@ -7729,10 +7729,10 @@ local function sendWebhookNow()
 
     local requestFunc = request or http_request or syn and syn.request
     if not requestFunc then
-        warn("[Webhook] ❌ Executor không hỗ trợ HTTP request!")
+        warn("[Webhook] Executor không hỗ trợ HTTP request")
         game.StarterGui:SetCore("SendNotification", {
             Title = "❌ Error",
-            Text = "Executor của bạn không hỗ trợ HTTP request!",
+            Text = "Executor của bạn không hỗ trợ HTTP request",
             Duration = 3
         })
         return
@@ -7776,7 +7776,7 @@ local function sendWebhookNow()
         local data = {
             embeds = {
                 {
-                    title = "📡 Server Info | Zush Hub",
+                    title = "📡 Server Info | Trẩu Roblox",
                     url = "https://www.roblox.com/users/" .. player.UserId,
                     description = "**Tên người chơi:** " .. player.DisplayName,
                     color = tonumber("0xf7c74b"),
