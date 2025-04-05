@@ -1,9 +1,3 @@
-if not CheckKey(getgenv().Key) then
-    game.Players.LocalPlayer:Kick("Fuck you , Buy key Ib 0765520260")
-else
-    print("Done , wait run...")
-    -- Thêm code của bạn ở đây
--- Đặt giá trị mặc định cho biến Attack
 getgenv().FixAttack = true
 -- Hàm Click
 function Click(delayTime)
