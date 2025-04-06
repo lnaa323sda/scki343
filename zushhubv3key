@@ -8,7 +8,7 @@ local key = getgenv().Key or nil
 local hwid = gethwid and gethwid() or tostring(Players.LocalPlayer.UserId)
 
 if not key then
-    Players.LocalPlayer:Kick("🗡 Bạn chưa nhập key duma bạn còn không có thì mua key ib 0765520260.")
+    Players.LocalPlayer:Kick("Chưa nhập key duma bạn còn không có thì mua key ib 0765520260.")
     return
 end
 
@@ -19,7 +19,7 @@ local success, response = pcall(function()
 end)
 
 if not success then
-    Players.LocalPlayer:Kick("🛠 Không kết nối được đến máy chủ.")
+    Players.LocalPlayer:Kick("Error server , pls ib admin.")
     return
 end
 
