@@ -6434,6 +6434,187 @@ Volcanic:AddButton({
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v395))
     end
 })
+-- Tọa độ Boat Dealer
+local targetPosition = Vector3.new(-16925.49609375, 9.09604263305664, 434.4322204589844)
+local flySpeed = 250
+local boatToBuy = "PirateGrandBrigade"
+local superSpeed = 300
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local SpamWRunning = false
+local BoatLoopRunning = false
+
+-- Hàm kiểm tra đảo Prehistoric
+local function isNearPrehistoricIsland()
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("Model") and v.Name == "Prehistoric Island" and v:FindFirstChild("PrimaryPart") then
+            local dist = (hrp.Position - v.PrimaryPart.Position).Magnitude
+            if dist < 1000 then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+-- Bay đến vị trí
+local function flyToPosition(targetPos, speed)
+    if isNearPrehistoricIsland() then return end
+    local distance = (hrp.Position - targetPos).Magnitude
+    local duration = distance / speed
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+    local tween = TweenService:Create(hrp, tweenInfo, {CFrame = CFrame.new(targetPos)})
+    tween:Play()
+    tween.Completed:Wait()
+end
+
+-- Tìm NPC Boat Dealer
+local function findBoatDealer()
+    local closestNPC, shortestDistance = nil, math.huge
+    for _, npc in pairs(workspace:GetDescendants()) do
+        if npc:IsA("Model") and npc:FindFirstChild("HumanoidRootPart") then
+            if npc.Name:lower():find("boat") then
+                local dist = (hrp.Position - npc.HumanoidRootPart.Position).Magnitude
+                if dist < shortestDistance then
+                    shortestDistance, closestNPC = dist, npc
+                end
+            end
+        end
+    end
+    return closestNPC
+end
+
+-- Mua thuyền
+local function buyBoat(boatName)
+    local args = {"BuyBoat", boatName}
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+    print("Mua thuyền: "..boatName)
+end
+
+-- Tìm và ngồi vào thuyền
+local function findAndSitBoat(boatName)
+    local BoatsFolder = workspace:WaitForChild("Boats")
+    for _, boat in pairs(BoatsFolder:GetChildren()) do
+        if boat:IsA("Model") and boat.Name == boatName then
+            local seat = boat:FindFirstChild("VehicleSeat", true)
+            if seat and not seat.Occupant then
+                hrp.CFrame = seat.CFrame * CFrame.new(0, 0, 3)
+                task.wait(1)
+                hrp.CFrame = seat.CFrame
+                task.wait(1)
+                print("Ngồi ghế lái")
+                return seat
+            end
+        end
+    end
+end
+
+-- Xuyên tường thuyền
+local function enableNoClipBoat(boatModel)
+    for _, part in pairs(boatModel:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+    print("Xuyên tường kích hoạt")
+end
+
+-- Xuyên vật cản quanh thuyền
+local function disableNearbyCollision(boatModel)
+    spawn(function()
+        while BoatLoopRunning and boatModel and boatModel.Parent do
+            local boatPos = boatModel.PrimaryPart and boatModel.PrimaryPart.Position or boatModel:GetModelCFrame().p
+            for _, part in pairs(workspace:GetPartBoundsInRadius(boatPos, 50)) do
+                if part:IsA("BasePart") and part.CanCollide then
+                    part.CanCollide = false
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end
+
+-- Kích hoạt tốc độ bàn thờ
+local function enableSuperSpeed(seat, speed)
+    local bv = Instance.new("BodyVelocity")
+    bv.MaxForce = Vector3.new(1e9, 0, 1e9)
+    bv.Velocity = seat.CFrame.LookVector * speed
+    bv.P = 10000
+    bv.Parent = seat
+    print("Tốc độ bàn thờ: "..speed)
+    RunService.Heartbeat:Connect(function()
+        if BoatLoopRunning and seat and seat.Parent and bv then
+            bv.Velocity = seat.CFrame.LookVector * speed
+        end
+    end)
+end
+
+-- Spam W liên tục
+local function spamWForever()
+    SpamWRunning = true
+    while SpamWRunning do
+        if isNearPrehistoricIsland() then
+            print("Gần đảo Prehistoric Island, dừng lại.")
+            SpamWRunning = false
+            BoatLoopRunning = false
+            Toggle:Set(false)
+            break
+        end
+        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
+        task.wait(0.1)
+        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
+        task.wait(0.1)
+    end
+end
+
+-- Tích hợp với UI Toggle
+Toggle = Get:AddToggle("Toggle", {Title = "Auto Find Island (Beta)", Default = false})
+Toggle:OnChanged(function(Value)
+    if Value then
+        if isNearPrehistoricIsland() then
+            print("Gần Prehistoric Island. Không thực hiện chức năng.")
+            Toggle:Set(false)
+            return
+        end
+
+        BoatLoopRunning = true
+        flyToPosition(targetPosition, flySpeed)
+        task.wait(1)
+
+        local dealer = findBoatDealer()
+        if dealer then
+            hrp.CFrame = dealer.HumanoidRootPart.CFrame * CFrame.new(0, 0, 5)
+            task.wait(1)
+            local prompt = dealer:FindFirstChildWhichIsA("ProximityPrompt", true)
+            if prompt then fireproximityprompt(prompt) end
+            task.wait(2)
+            buyBoat(boatToBuy)
+            task.wait(3)
+            local seat = findAndSitBoat(boatToBuy)
+            if seat then
+                enableNoClipBoat(seat.Parent)
+                disableNearbyCollision(seat.Parent)
+                enableSuperSpeed(seat, superSpeed)
+                spawn(spamWForever)
+            else
+                print("❌")
+            end
+        else
+            print("❌")
+        end
+    else
+        -- Ngừng toàn bộ khi toggle OFF
+        SpamWRunning = false
+        BoatLoopRunning = false
+        print(" Dừng chức năng Auto Find Island.")
+    end
+end)
 Toggle = Volcanic:AddToggle("MyToggle", {Title = "Teleport Prehistoric Island", Default = false })
 Toggle:OnChanged(function(Value)
     getgenv().TweenPrehistoric = Value
