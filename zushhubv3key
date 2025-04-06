@@ -24,7 +24,7 @@ if not success then
 end
 
 if response.status ~= "true" then
-    Players.LocalPlayer:Kick("⚙ " .. (response.message or "Lỗi xác minh key ib admin để tìm hiểu"))
+    Players.LocalPlayer:Kick("Dit me may chet me may di"))
     return
 end
 
