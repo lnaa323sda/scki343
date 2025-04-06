@@ -6574,7 +6574,7 @@ local function spamWForever()
 end
 
 -- Tích hợp với UI Toggle
-Toggle = Get:AddToggle("Toggle", {Title = "Auto Find Island (Beta)", Default = false})
+Toggle = Volcanic:AddToggle("MyToggle", {Title = "Auto Find Island (Beta)", Default = false})
 Toggle:OnChanged(function(Value)
     if Value then
         if isNearPrehistoricIsland() then
