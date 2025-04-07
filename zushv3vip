@@ -6434,6 +6434,10 @@ Volcanic:AddButton({
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v395))
     end
 })
+Toggle = Volcanic:AddToggle("Toggle", {Title = "Auto Find Island ( Beta )", Default = false})
+Toggle:OnChanged(function(Value)
+    getgenv().FindPrehistoric = Value
+end)
 Toggle = Volcanic:AddToggle("MyToggle", {Title = "Teleport Prehistoric Island", Default = false })
 Toggle:OnChanged(function(Value)
     getgenv().TweenPrehistoric = Value
