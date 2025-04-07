@@ -6434,29 +6434,178 @@ Volcanic:AddButton({
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v395))
     end
 })
-Toggle = Volcanic:AddToggle("Toggle", {Title = "Auto Find Island ( Beta )", Default = false})
+Toggle = Volcanic:AddToggle("Toggle", {Title = "Auto Find Island", Default = false})
 Toggle:OnChanged(function(Value)
-    getgenv().FindPrehistoric = Value
+    if Value then
+        task.spawn(function()
+            -- Biến cục bộ tránh spam
+            if _G._PREHISTORIC_RUNNING then return end
+            _G._PREHISTORIC_RUNNING = true
+
+            -- TELEPORT
+            local Players = game:GetService("Players")
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local Workspace = game:GetService("Workspace")
+            local TweenService = game:GetService("TweenService")
+            local LocalPlayer = Players.LocalPlayer
+
+            local PrehistoricDetected = false
+            local currentTween = nil
+
+            local function spawnBoat()
+                ReplicatedStorage.Remotes.CommF_:InvokeServer("BuyBoat", "PirateGrandBrigade")
+            end
+
+            local function teleportToBoatDealer()
+                local hrp = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+                hrp.CFrame = CFrame.new(Vector3.new(-2373, 5, -10194))
+            end
+
+            local function getBoatVehicleSeat()
+                local boatsFolder = workspace:FindFirstChild("Boats")
+                if not boatsFolder then return nil, nil end
+                for _, boat in ipairs(boatsFolder:GetChildren()) do
+                    local seat = boat:FindFirstChild("VehicleSeat")
+                    if seat and seat.Occupant and seat.Occupant.Parent == LocalPlayer.Character then
+                        return boat, seat
+                    end
+                end
+                return nil, nil
+            end
+
+            local function setNoClip(model, enable)
+                for _, desc in ipairs(model:GetDescendants()) do
+                    if desc:IsA("BasePart") then
+                        desc.CanCollide = not enable
+                    end
+                end
+            end
+
+            local function stopTween(reason)
+                if currentTween then currentTween:Cancel() end
+                currentTween = nil
+                print("DỪNG – " .. (reason or "Không rõ lý do"))
+            end
+
+            Workspace:WaitForChild("Map").ChildAdded:Connect(function(child)
+                if child.Name == "PrehistoricIsland" then
+                    PrehistoricDetected = true
+                    stopTween("Tìm thấy Prehistoric Island")
+                    _G._PREHISTORIC_RUNNING = false
+                end
+            end)
+
+            local function findAndSitBoat(boatName)
+                local hrp = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+                local BoatsFolder = workspace:WaitForChild("Boats")
+                for _, boat in pairs(BoatsFolder:GetChildren()) do
+                    if boat:IsA("Model") and boat.Name == boatName then
+                        local seat = boat:FindFirstChild("VehicleSeat", true)
+                        if seat and not seat.Occupant then
+                            hrp.CFrame = seat.CFrame * CFrame.new(0, 0, 3)
+                            task.wait(1)
+                            hrp.CFrame = seat.CFrame
+                            task.wait(1.5)
+                            local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                            if hum then hum:Move(Vector3.new(0, 0, 1), true) end
+                            task.wait(1)
+                            if seat.Occupant and seat.Occupant.Parent == LocalPlayer.Character then
+                                print("Ngồi ghế lái thành công")
+                                return seat
+                            end
+                        end
+                    end
+                end
+                warn("Không tìm thấy thuyền hoặc không thể ngồi.")
+                return nil
+            end
+
+            local function tweenBoatToTarget(targetPos)
+                local boat, seat = getBoatVehicleSeat()
+                if not boat then
+                    warn("Không tìm thấy thuyền đang lái")
+                    return
+                end
+                local primary = boat.PrimaryPart
+                if not primary then
+                    warn("Boat không có PrimaryPart")
+                    return
+                end
+                setNoClip(boat, true)
+                setNoClip(LocalPlayer.Character, true)
+                local currentPos = primary.Position
+                local finalY = 100
+                primary.CFrame = CFrame.new(currentPos.X, finalY, currentPos.Z)
+                local distance = (Vector3.new(targetPos.X, finalY, targetPos.Z) - primary.Position).Magnitude
+                local tweenTime = distance / 350
+                local info = TweenInfo.new(tweenTime, Enum.EasingStyle.Linear)
+                local goal = { CFrame = CFrame.new(targetPos.X, finalY, targetPos.Z) }
+                currentTween = TweenService:Create(primary, info, goal)
+                currentTween:Play()
+
+                task.spawn(function()
+                    while currentTween and currentTween.PlaybackState == Enum.PlaybackState.Playing do
+                        if PrehistoricDetected then
+                            currentTween:Cancel()
+                            break
+                        end
+                        task.wait(0.1)
+                    end
+                    setNoClip(boat, false)
+                    setNoClip(LocalPlayer.Character, false)
+                end)
+            end
+
+            -- CHẠY QUY TRÌNH
+            teleportToBoatDealer()
+            task.wait(2)
+            spawnBoat()
+            print(" Đã tạo PirateGrandBrigade!")
+
+            local seat = findAndSitBoat("PirateGrandBrigade")
+            if not seat then
+                warn(" Không thể ngồi vào thuyền.")
+                _G._PREHISTORIC_RUNNING = false
+                return
+            end
+
+            print("🧭 Bắt đầu bay đến tọa độ Prehistoric...")
+            local prehistoricPos = Vector3.new(-99999999, 100, 0)
+            tweenBoatToTarget(prehistoricPos)
+        end)
+    else
+        print(" Auto Find Island đã bị tắt.")
+        _G._PREHISTORIC_RUNNING = false
+    end
 end)
 Toggle = Volcanic:AddToggle("MyToggle", {Title = "Teleport Prehistoric Island", Default = false })
 Toggle:OnChanged(function(Value)
     getgenv().TweenPrehistoric = Value
 end)
-spawn(function()
-    local island
-    while not island do
-        island = game:GetService("Workspace").Map:FindFirstChild("PrehistoricIsland")
-        wait()
+-- Hàm teleport bằng CFrame
+function topos(cf)
+    local plr = game.Players.LocalPlayer
+    if plr and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+        plr.Character.HumanoidRootPart.CFrame = cf
     end
-    while wait() do
-        if getgenv().TweenPrehistoric and World3 then
-            local prehistoricIslandCore = game:GetService("Workspace").Map:FindFirstChild("PrehistoricIsland")
-            if prehistoricIslandCore then
-                local relic = prehistoricIslandCore:FindFirstChild("Core") and prehistoricIslandCore.Core:FindFirstChild("PrehistoricRelic")
-                local skull = relic and relic:FindFirstChild("Skull")
-                if skull then
-                    topos(CFrame.new(skull.Position))
-                    getgenv().TweenPrehistoric = false
+end
+-- Tự động kiểm tra và bay đến đảo khi bật toggle
+spawn(function()
+    while true do
+        wait(1)
+        if getgenv().TweenPrehistoric and game:GetService("ReplicatedStorage").__DIRECTORY and game:GetService("ReplicatedStorage").__DIRECTORY:FindFirstChild("World3") then
+            local prehistoricIsland = game:GetService("Workspace"):FindFirstChild("Map") and game:GetService("Workspace").Map:FindFirstChild("PrehistoricIsland")
+            if prehistoricIsland then
+                local core = prehistoricIsland:FindFirstChild("Core")
+                if core then
+                    local relic = core:FindFirstChild("PrehistoricRelic")
+                    if relic then
+                        local skull = relic:FindFirstChild("Skull")
+                        if skull then
+                            topos(skull.CFrame)
+                            getgenv().TweenPrehistoric = false -- Tắt toggle sau khi teleport
+                        end
+                    end
                 end
             end
         end
