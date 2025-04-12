@@ -1,1 +1,139 @@
-ccc
+-- Matsune Hub UI Library
+-- Tác giả: không rõ, mình đã chỉnh sửa lại theo mẫu UI bạn cung cấp
+
+local Library = {}
+local TweenService = game:GetService("TweenService")
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+
+function Library:CreateWindow(name)
+    local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    ScreenGui.Name = "MatsuneUI"
+
+    local Main = Instance.new("Frame", ScreenGui)
+    Main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    Main.Position = UDim2.new(0.5, -250, 0.5, -200)
+    Main.Size = UDim2.new(0, 520, 0, 350)
+    Main.Name = "Main"
+    Main.AnchorPoint = Vector2.new(0.5, 0.5)
+    Main.ClipsDescendants = true
+
+    local Title = Instance.new("TextLabel", Main)
+    Title.Size = UDim2.new(1, 0, 0, 30)
+    Title.BackgroundTransparency = 1
+    Title.Text = name or "Matsune Hub"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.Font = Enum.Font.GothamBold
+    Title.TextSize = 16
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Position = UDim2.new(0, 10, 0, 5)
+
+    local Tabs = {}
+
+    function Tabs:CreateTab(tabName)
+        local TabFrame = Instance.new("Frame", Main)
+        TabFrame.Size = UDim2.new(1, -20, 1, -40)
+        TabFrame.Position = UDim2.new(0, 10, 0, 40)
+        TabFrame.BackgroundTransparency = 1
+        TabFrame.Name = tabName
+        TabFrame.Visible = true
+
+        local Elements = {}
+
+        function Elements:Button(text, callback)
+            local Btn = Instance.new("TextButton", TabFrame)
+            Btn.Size = UDim2.new(1, 0, 0, 30)
+            Btn.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+            Btn.Text = text
+            Btn.Font = Enum.Font.GothamBold
+            Btn.TextSize = 12
+            Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Btn.MouseButton1Click:Connect(function()
+                if callback then callback() end
+            end)
+        end
+
+        function Elements:Toggle(text, default, callback)
+            local ToggleFrame = Instance.new("Frame", TabFrame)
+            ToggleFrame.Size = UDim2.new(1, 0, 0, 30)
+            ToggleFrame.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+
+            local Label = Instance.new("TextLabel", ToggleFrame)
+            Label.Text = text
+            Label.Size = UDim2.new(0.8, 0, 1, 0)
+            Label.BackgroundTransparency = 1
+            Label.Font = Enum.Font.Gotham
+            Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Label.TextSize = 12
+
+            local Btn = Instance.new("TextButton", ToggleFrame)
+            Btn.Size = UDim2.new(0.2, -10, 1, -10)
+            Btn.Position = UDim2.new(0.8, 5, 0, 5)
+            Btn.BackgroundColor3 = default and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(100, 100, 100)
+            Btn.Text = ""
+
+            local toggled = default
+            Btn.MouseButton1Click:Connect(function()
+                toggled = not toggled
+                Btn.BackgroundColor3 = toggled and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(100, 100, 100)
+                if callback then callback(toggled) end
+            end)
+        end
+
+        function Elements:Slider(label, min, max, default, callback)
+            local Frame = Instance.new("Frame", TabFrame)
+            Frame.Size = UDim2.new(1, 0, 0, 40)
+            Frame.BackgroundTransparency = 1
+
+            local Label = Instance.new("TextLabel", Frame)
+            Label.Text = label .. ": " .. default
+            Label.Size = UDim2.new(1, 0, 0, 20)
+            Label.BackgroundTransparency = 1
+            Label.Font = Enum.Font.Gotham
+            Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Label.TextSize = 12
+
+            local Slider = Instance.new("TextButton", Frame)
+            Slider.Size = UDim2.new(1, 0, 0, 15)
+            Slider.Position = UDim2.new(0, 0, 0, 25)
+            Slider.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            Slider.Text = ""
+
+            local Indicator = Instance.new("Frame", Slider)
+            Indicator.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+            Indicator.Size = UDim2.new((default - min)/(max - min), 0, 1, 0)
+            Indicator.Name = "Indicator"
+
+            local dragging = false
+            local function update(input)
+                local scale = math.clamp((input.Position.X - Slider.AbsolutePosition.X) / Slider.AbsoluteSize.X, 0, 1)
+                Indicator.Size = UDim2.new(scale, 0, 1, 0)
+                local value = math.floor(min + (max - min) * scale)
+                Label.Text = label .. ": " .. value
+                if callback then callback(value) end
+            end
+
+            Slider.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true end
+            end)
+            Slider.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+            end)
+
+            UIS.InputChanged:Connect(function(input)
+                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                    update(input)
+                end
+            end)
+        end
+
+        return Elements
+    end
+
+    return Tabs
+end
+
+return Library
