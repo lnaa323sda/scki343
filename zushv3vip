@@ -131,12 +131,13 @@ end
 _G.Logo = 14103696428
 _G.Logo1 = 14288624550
 local UI = Instance.new("ScreenGui")
-UI.Name = randomString
+UI.Name = "ZUSH_UI" -- đặt tên cố định để có thể toggle sau
 UI.Parent = game.CoreGui:WaitForChild("RobloxGui"):WaitForChild("Modules")
 UI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 if syn then
 syn.protect_gui(UI)
 end
+library.UI = UI -- cho phép gọi library.UI từ ngoài
 function library:Destroy()
 library:Destroy()
 end
