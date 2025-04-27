@@ -1,5 +1,5 @@
 local Update = (loadstring(game:HttpGet("https://you.whimper.xyz/sources/relzhub/dep/pc.lua")))();
-local Alert = (loadstring(game:HttpGet("https://you.whimper.xyz/sources/relzhub/dep/alert.lua")))();
+local Alert = (loadstring(game:HttpGet("https://raw.githubusercontent.com/lnaa323sda/scki343/refs/heads/main/RuBuV1Eng.txt")))();
 local Library = Update:Window("Blox Fruits");
 local MainTab = Library:Tab("Main", "rbxassetid://10723407389");
 local SettingsTab = Library:Tab("Setting", "rbxassetid://10734950309");
