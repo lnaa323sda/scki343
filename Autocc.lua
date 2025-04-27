@@ -108,5 +108,3 @@ getgenv().ConfigsKaitun = {
 		["Auto Chat"] = false,
 	},
 }
-
-loadstring(game:HttpGet("https://api.realaya.xyz/v1/files/l/73mkp0aqyfo4ypy8hvl0nz10lq49fey5.lua"))()
