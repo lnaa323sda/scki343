@@ -67,8 +67,8 @@ getgenv().ConfigsKaitun = {
 	},
 
 	["Fruit"] = {
-		["Main Fruit"] = {"Dough-Dough"},
-		["Sec Fruit"] = {"Flame-Flame", "Ice-Ice", "Quake-Quake", "Light-Light", "Dark-Dark", "Spider-Spider", "Rumble-Rumble", "Magma-Magma", "Buddha-Buddha"},
+		["Main Fruit"] = {""},
+		["Sec Fruit"] = {""},
 		["Safe Fruit"] = {
 			"Dough-Dough",
 			"Dragon-Dragon"
