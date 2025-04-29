@@ -2198,11 +2198,11 @@ spawn(function()
 	end);
 end);
 MainSection = Tabs.MainTab:Section({
-	Title = "Main",
+	Title = "Chính",
 	TextXAlignment = "Left"
 });
 GameTimeParagraph = Tabs.MainTab:Paragraph({
-	Title = "Game Time",
+	Title = "Thời gian",
 	Desc = "0",
 	Image = "timer",
 	ImageSize = 20
@@ -2214,7 +2214,7 @@ spawn(function()
 			local Hour = math.floor(GameTime / 60 ^ 2) % 24;
 			local Minute = math.floor(GameTime / 60 ^ 1) % 60;
 			local Second = math.floor(GameTime / 60 ^ 0) % 60;
-			GameTimeParagraph:SetDesc(Hour .. " Hours " .. Minute .. " Minute " .. Second .. " Second");
+			GameTimeParagraph:SetDesc(Hour .. " Giờ " .. Minute .. " Phút " .. Second .. " Giây");
 		end);
 	end;
 end);
@@ -2246,16 +2246,16 @@ spawn(function()
 end);
 DiscordServerParagraph = Tabs.MainTab:Paragraph({
 	Title = "Discord Server",
-	Desc = "Join discord server to get update info and webhooks!",
+	Desc = "Tham gia discord Trẩu Roblox để nhận thông báo",
 	TextXAlignment = "Left",
 	Buttons = {
 		{
 			Title = "Copy Link",
 			Callback = function()
-				setclipboard("https://discord.gg/6J7faueCGa");
+				setclipboard("https://discord.gg/K6jXNUEByE");
 				WindUI:Notify({
 					Title = "Notification",
-					Content = "Copied",
+					Content = "Done",
 					Icon = "bell",
 					Duration = 3
 				});
@@ -2264,7 +2264,7 @@ DiscordServerParagraph = Tabs.MainTab:Paragraph({
 	}
 });
 LevelFarmSection = Tabs.MainTab:Section({
-	Title = "Level Farm",
+	Title = "Cày cấp",
 	TextXAlignment = "Left"
 });
 local WeaponList = {
@@ -2273,7 +2273,7 @@ local WeaponList = {
 	"Fruit"
 };
 ChooseWeaponDropdown = Tabs.MainTab:Dropdown({
-	Title = "Choose Weapon",
+	Title = "Chọn vũ khí",
 	Values = WeaponList,
 	Value = _G.Settings.Main["Select Weapon"],
 	Callback = function(option)
@@ -2326,7 +2326,7 @@ local LevelFarmMethodList = {
 	"Nearest"
 };
 LevelFarmMethodDropdown = Tabs.MainTab:Dropdown({
-	Title = "Choose Farm Level Method",
+	Title = "Chọn phương pháp cày cấp",
 	Values = LevelFarmMethodList,
 	Value = _G.Settings.Main["Farm Level Method"],
 	Callback = function(option)
@@ -2335,7 +2335,7 @@ LevelFarmMethodDropdown = Tabs.MainTab:Dropdown({
 	end
 });
 AutoLevelFarmToggle = Tabs.MainTab:Toggle({
-	Title = "Auto Farm Level",
+	Title = "Tự động cày cấp",
 	Value = _G.Settings.Main["Auto Farm"],
 	Callback = function(state)
 		_G.Settings.Main["Auto Farm"] = state;
@@ -2445,8 +2445,8 @@ spawn(function()
 	end;
 end);
 AutoFastFarmToggle = Tabs.MainTab:Toggle({
-	Title = "Auto Fast Farm",
-	Desc = "Function Sea 1 Only",
+	Title = "Tự động Kaitun",
+	Desc = "Chức năng chỉ sài cho sea 1",
 	Value = _G.Settings.Main["Auto Fast Farm"],
 	Callback = function(state)
 		_G.Settings.Main["Auto Fast Farm"] = state;
@@ -2467,7 +2467,7 @@ spawn(function()
 	end);
 end);
 MasteryFarmSection = Tabs.MainTab:Section({
-	Title = "Mastery Farm",
+	Title = "Cày Mastery",
 	TextXAlignment = "Left"
 });
 if World3 then
@@ -2486,7 +2486,7 @@ elseif World2 or World1 then
 	};
 end;
 MasteryMethodDropdown = Tabs.MainTab:Dropdown({
-	Title = "Choose Mastery Method",
+	Title = "Chọn cách cày Mastery",
 	Values = MasteryMethodList,
 	Value = _G.Settings.Main["Mastery Method"],
 	Callback = function(option)
@@ -2495,7 +2495,7 @@ MasteryMethodDropdown = Tabs.MainTab:Dropdown({
 	end
 });
 AutoFruitMasteryToggle = Tabs.MainTab:Toggle({
-	Title = "Auto Fruit Mastery",
+	Title = "Tự động Fruit Mastery",
 	Value = _G.Settings.Main["Auto Farm Fruit Mastery"],
 	Callback = function(state)
 		_G.Settings.Main["Auto Farm Fruit Mastery"] = state;
@@ -2504,7 +2504,7 @@ AutoFruitMasteryToggle = Tabs.MainTab:Toggle({
 	end
 });
 AutoGunMasteryToggle = Tabs.MainTab:Toggle({
-	Title = "Auto Gun Mastery",
+	Title = "Tự động Gun Mastery",
 	Value = _G.Settings.Main["Auto Farm Gun Mastery"],
 	Callback = function(state)
 		_G.Settings.Main["Auto Farm Gun Mastery"] = state;
@@ -2520,7 +2520,7 @@ for i, v in pairs(Inventory) do
 	end;
 end;
 ChooseSwordDropdown = Tabs.MainTab:Dropdown({
-	Title = "Choose Sword",
+	Title = "Chọn Sword",
 	Values = SwordList,
 	Value = _G.Settings.Main["Selected Mastery Sword"],
 	Callback = function(option)
@@ -2548,7 +2548,7 @@ spawn(function()
 	end;
 end);
 AutoSwordMasteryToggle = Tabs.MainTab:Toggle({
-	Title = "Auto Sword Mastery",
+	Title = "Chọn Sword Mastery",
 	Value = _G.Settings.Main["Auto Farm Sword Mastery"],
 	Callback = function(state)
 		_G.Settings.Main["Auto Farm Sword Mastery"] = state;
@@ -3257,7 +3257,7 @@ TyrantOfTheSkiesSection = Tabs.MainTab:Section({
 	TextXAlignment = "Left"
 });
 AutoSummonTyrantOfTheSkiesToggle = Tabs.MainTab:Toggle({
-	Title = "Auto Summon Tyrant Of The Skies",
+	Title = "Tự động triệu hồi boss",
 	Default = false,
 	Callback = function(state)
 		_G.Settings.Main["Auto Summon Tyrant Of The Skies"] = state;
@@ -3332,7 +3332,7 @@ spawn(function()
 	end;
 end);
 AutoKillTyrantOfTheSkiesToggle = Tabs.MainTab:Toggle({
-	Title = "Auto Kill Tyrant Of The Skies",
+	Title = "Tự động giết Tyrant Of The Skies",
 	Default = false,
 	Callback = function(state)
 		_G.Settings.Main["Auto Kill Tyrant Of The Skies"] = state;
@@ -3363,7 +3363,7 @@ spawn(function()
 	end;
 end);
 MonFarmSection = Tabs.MainTab:Section({
-	Title = "Mon Farm",
+	Title = "Cày quái",
 	TextXAlignment = "Left"
 });
 if World1 then
@@ -3458,7 +3458,7 @@ elseif World3 then
 	};
 end;
 ChooseMonDropdown = Tabs.MainTab:Dropdown({
-	Title = "Choose Mon",
+	Title = "Chọn quái",
 	Values = tableMon,
 	Value = _G.Settings.Main["Selected Mon"],
 	Callback = function(option)
@@ -3467,8 +3467,8 @@ ChooseMonDropdown = Tabs.MainTab:Dropdown({
 	end
 });
 AutoMonFarmToggle = Tabs.MainTab:Toggle({
-	Title = "Auto Farm Mon",
-	Desc = "Auto Kill Mon When Spawn",
+	Title = "Tự động cày",
+	Desc = "",
 	Value = _G.Settings.Main["Auto Farm Mon"],
 	Callback = function(state)
 		_G.Settings.Main["Auto Farm Mon"] = state;
@@ -3504,11 +3504,11 @@ spawn(function()
 	end;
 end);
 BossSection = Tabs.MainTab:Section({
-	Title = "Boss Farm",
+	Title = "Cày Boss",
 	TextXAlignment = "Left"
 });
 BossStatusParagraph = Tabs.MainTab:Paragraph({
-	Title = "Boss Status",
+	Title = "Trạng thái Boss",
 	Desc = "N/A"
 });
 spawn(function()
@@ -3566,7 +3566,7 @@ elseif World3 then
 	};
 end;
 ChooseBossDropdown = Tabs.MainTab:Dropdown({
-	Title = "Choose Boss",
+	Title = "Chọn Boss",
 	Values = tableBoss,
 	Value = _G.Settings.Main["Selected Boss"],
 	Callback = function(option)
@@ -3575,7 +3575,7 @@ ChooseBossDropdown = Tabs.MainTab:Dropdown({
 	end
 });
 AutoFarmBossToggle = Tabs.MainTab:Toggle({
-	Title = "Auto Farm Boss",
+	Title = "Tự động giết Boss",
 	Desc = "Auto Kill Boss When Spawn",
 	Value = _G.Settings.Main["Auto Farm Boss"],
 	Callback = function(state)
@@ -3612,7 +3612,7 @@ spawn(function()
 	end;
 end);
 AutoFarmAllBossToggle = Tabs.MainTab:Toggle({
-	Title = "Auto Farm All Boss",
+	Title = "Tự động giết tất cả Boss",
 	Value = _G.Settings.Main["Auto Farm All Boss"],
 	Callback = function(state)
 		_G.Settings.Main["Auto Farm All Boss"] = state;
@@ -3654,7 +3654,7 @@ EliteHunterSection = Tabs.OthersTab:Section({
 	TextXAlignment = "Left"
 });
 EliteHunterParagraph = Tabs.OthersTab:Paragraph({
-	Title = "Elite Hunter Status",
+	Title = "Trạng thái Elite Hunter",
 	Desc = "N/A"
 });
 spawn(function()
@@ -3669,7 +3669,7 @@ spawn(function()
 	end;
 end);
 EliteHunterProgressParagraph = Tabs.OthersTab:Paragraph({
-	Title = "Elite Hunter Progress",
+	Title = "Số lượng Elite Hunter",
 	Desc = "N/A"
 });
 spawn(function()
@@ -3684,8 +3684,8 @@ spawn(function()
 	end;
 end);
 AutoEliteHunterToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Elite Hunter",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động Elite Hunter",
+	Desc = "Chỉ hoạt động trên sea 3",
 	Value = _G.Settings.Farm["Auto Elite Hunter"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Elite Hunter"] = state;
@@ -3694,8 +3694,8 @@ AutoEliteHunterToggle = Tabs.OthersTab:Toggle({
 	end
 });
 AutoEliteHunterHopToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Elite Hunter Hop",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động Elite Hunter Hop",
+	Desc = "Đổi server khác kiếm boss",
 	Value = _G.Settings.Farm["Auto Elite Hunter Hop"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Elite Hunter Hop"] = state;
@@ -3754,7 +3754,7 @@ spawn(function()
 	end;
 end);
 BoneFarmSection = Tabs.OthersTab:Section({
-	Title = "Bone Farm",
+	Title = "Cày xương",
 	TextXAlignment = "Left"
 });
 local listBoneFarmMethod = {
@@ -3762,7 +3762,7 @@ local listBoneFarmMethod = {
 	"No Quest"
 };
 BoneFarmMethodDropdown = Tabs.OthersTab:Dropdown({
-	Title = "Choose Bone Farm Method",
+	Title = "Chọn chế độ farm xương",
 	Values = listBoneFarmMethod,
 	Value = _G.Settings.Farm["Selected Bone Farm Method"],
 	Callback = function(option)
@@ -3771,7 +3771,7 @@ BoneFarmMethodDropdown = Tabs.OthersTab:Dropdown({
 	end
 });
 BoneCountParagraph = Tabs.OthersTab:Paragraph({
-	Title = "Bones Owned",
+	Title = "Tổng xương",
 	Desc = "N/A"
 });
 spawn(function()
@@ -3783,8 +3783,8 @@ spawn(function()
 	end;
 end);
 AutoFarmBoneToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Farm Bone",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động cày xương",
+	Desc = "Hoạt động chỉ sea 3",
 	Value = _G.Settings.Farm["Auto Farm Bone"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Farm Bone"] = state;
@@ -3863,8 +3863,8 @@ spawn(function()
 	end;
 end);
 AutoRandomSurpriseToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Random Surprise",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động đổi xương",
+	Desc = "Hoạt động chỉ sea 3",
 	Value = _G.Settings.Farm["Auto Random Surprise"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Random Surprise"] = state;
@@ -3882,12 +3882,12 @@ spawn(function()
 	end);
 end);
 PirateRaidSection = Tabs.OthersTab:Section({
-	Title = "Pirate Raid",
+	Title = "Đánh hải tặc",
 	TextXAlignment = "Left"
 });
 AutoPirateRaidToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Pirate Raid",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động đánh hải tặc",
+	Desc = "Hoạt động chỉ sea 3",
 	Value = _G.Settings.Farm["Auto Pirate Raid"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Pirate Raid"] = state;
@@ -3944,12 +3944,12 @@ spawn(function()
 	end;
 end);
 ChestFarmSection = Tabs.OthersTab:Section({
-	Title = "Chest Farm",
+	Title = "Cày rương",
 	TextXAlignment = "Left"
 });
 AutoFarmChestTweenToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Farm Chest Tween",
-	Desc = "Tween to chest",
+	Title = "Tự động cày rương ( Bay )",
+	Desc = "Chế độ bay",
 	Value = _G.Settings.Farm["Auto Farm Chest Tween"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Farm Chest Tween"] = state;
@@ -3958,8 +3958,8 @@ AutoFarmChestTweenToggle = Tabs.OthersTab:Toggle({
 	end
 });
 AutoFarmChestInstantToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Farm Chest Instant",
-	Desc = "Instant to chest",
+	Title = "Tự động cày rương ( Bypass )",
+	Desc = "Bypass đến rương",
 	Value = _G.Settings.Farm["Auto Farm Chest Instant"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Farm Chest Instant"] = state;
@@ -3968,8 +3968,8 @@ AutoFarmChestInstantToggle = Tabs.OthersTab:Toggle({
 	end
 });
 AutoStopItemsToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Stop Items",
-	Desc = "Stop When Get God's Chalice or FoD",
+	Title = "Tự động dừng vật phẩm",
+	Desc = "Nhặt được chìa khóa hoặc chén sẽ dừng",
 	Value = _G.Settings.Farm["Auto Stop Items"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Stop Items"] = state;
@@ -4030,11 +4030,11 @@ spawn(function()
 	end;
 end);
 CakePrinceSection = Tabs.OthersTab:Section({
-	Title = "Cake Prince",
+	Title = "Hoàng tử bánh ngọt",
 	TextXAlignment = "Left"
 });
 CakePrinceStatusParagraph = Tabs.OthersTab:Paragraph({
-	Title = "Cake Prince Status",
+	Title = "Trạng thái",
 	Desc = "N/A"
 });
 spawn(function()
@@ -4048,7 +4048,7 @@ spawn(function()
 				elseif string.len((game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("CakePrinceSpawner")) == 86 then
 					CakePrinceStatusParagraph:SetDesc(string.sub((game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("CakePrinceSpawner"), 39, 39) .. " Remaining");
 				else
-					CakePrinceStatusParagraph:SetDesc("Cake Prince Status: Spawned!");
+					CakePrinceStatusParagraph:SetDesc("Trạng thái : Có rồi hú hú");
 				end;
 			else
 				CakePrinceStatusParagraph:SetDesc("Sea 3 only");
@@ -4057,8 +4057,8 @@ spawn(function()
 	end;
 end);
 AutoKatakuriToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Katakuri",
-	Desc = "Auto Farm + Kill Cake Prince [ Sea 3 Only ]",
+	Title = "Tự động Katakuri",
+	Desc = "Tự cày + giết boss",
 	Value = _G.Settings.Farm["Auto Farm Katakuri"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Farm Katakuri"] = state;
@@ -4067,8 +4067,8 @@ AutoKatakuriToggle = Tabs.OthersTab:Toggle({
 	end
 });
 AutoSpawnCakePrinceToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Spawn Cake Prince",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động triệu hồi",
+	Desc = "",
 	Value = _G.Settings.Farm["Auto Spawn Cake Prince"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Spawn Cake Prince"] = state;
@@ -4136,8 +4136,8 @@ spawn(function()
 	end;
 end);
 AutoKillCakePrinceToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Kill Cake Prince",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động giết Katakuri",
+	Desc = "",
 	Value = _G.Settings.Farm["Auto Kill Cake Prince"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Kill Cake Prince"] = state;
@@ -4146,8 +4146,8 @@ AutoKillCakePrinceToggle = Tabs.OthersTab:Toggle({
 	end
 });
 AutoKillDoughKingToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Kill Dough King",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động Dough King",
+	Desc = "",
 	Value = _G.Settings.Farm["Auto Kill Dough King"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Kill Dough King"] = state;
@@ -4216,7 +4216,7 @@ spawn(function()
 	end;
 end);
 MaterialsSection = Tabs.OthersTab:Section({
-	Title = "Materials",
+	Title = "Nguyên liệu",
 	TextXAlignment = "Left"
 });
 if World1 then
@@ -4338,7 +4338,7 @@ function getConfigMaterial(Material)
 	end;
 end;
 MaterialDropdown = Tabs.OthersTab:Dropdown({
-	Title = "Choose Material",
+	Title = "Chọn nguyên liệu",
 	Values = MaterialList,
 	Value = _G.Settings.Farm["Selected Material"],
 	Callback = function(option)
@@ -4346,7 +4346,7 @@ MaterialDropdown = Tabs.OthersTab:Dropdown({
 	end
 });
 AutoFarmMaterialToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Farm Material",
+	Title = "Tự động cày nguyên liệu",
 	Value = _G.Settings.Farm["Auto Farm Material"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Farm Material"] = state;
@@ -4390,12 +4390,12 @@ spawn(function()
 	end;
 end);
 SettingsSection = Tabs.SettingsTab:Section({
-	Title = "Settings",
+	Title = "Cài đặt",
 	TextXAlignment = "Left"
 });
 SpinPositionToggle = Tabs.SettingsTab:Toggle({
-	Title = "Spin Position",
-	Desc = "Spin Position When Farm",
+	Title = "Vị trí quay",
+	Desc = "Quay như điên lúc cày",
 	Value = _G.Settings.Setting["Spin Position"],
 	Callback = function(state)
 		_G.Settings.Setting["Spin Position"] = state;
@@ -4403,7 +4403,7 @@ SpinPositionToggle = Tabs.SettingsTab:Toggle({
 	end
 });
 FarmDistanceSlider = Tabs.SettingsTab:Slider({
-	Title = "Farm Distance",
+	Title = "Khoảng cách cày",
 	Step = 1,
 	Value = {
 		Min = 10,
@@ -4415,7 +4415,7 @@ FarmDistanceSlider = Tabs.SettingsTab:Slider({
 	end
 });
 PlayerTweenSpeedSlider = Tabs.SettingsTab:Slider({
-	Title = "Player Tween Speed",
+	Title = "Tốc độ bay nhân vật",
 	Step = 1,
 	Value = {
 		Min = 10,
@@ -4427,7 +4427,7 @@ PlayerTweenSpeedSlider = Tabs.SettingsTab:Slider({
 	end
 });
 BringMobToggle = Tabs.SettingsTab:Toggle({
-	Title = "Bring Mob",
+	Title = "Gom quái",
 	Value = true,
 	Callback = function(state)
 		_G.Settings.Setting["Bring Mob"] = state;
@@ -4454,7 +4454,7 @@ local BringList = {
 	"High"
 };
 BringMobDropdown = Tabs.SettingsTab:Dropdown({
-	Title = "Bring Mob",
+	Title = "Gom quái",
 	Value = _G.Settings.Setting["Bring Mob Mode"],
 	Values = BringList,
 	Callback = function(option)
@@ -4504,8 +4504,8 @@ spawn(function()
 	end;
 end);
 AttackAuraToggle = Tabs.SettingsTab:Toggle({
-	Title = "Atatck Aura",
-	Desc = "Attack Nearest Enemies",
+	Title = "Hào quang tấn công",
+	Desc = "",
 	Value = _G.Settings.Items["Attack Aura"],
 	Callback = function(state)
 		_G.Settings.Items["Attack Aura"] = state;
@@ -4522,11 +4522,11 @@ spawn(function()
 	end);
 end);
 GraphicSettingSection = Tabs.SettingsTab:Section({
-	Title = "Graphic",
+	Title = "Đồ họa",
 	TextXAlignment = "Left"
 });
 HideNotificationToggle = Tabs.SettingsTab:Toggle({
-	Title = "Hide Notification",
+	Title = "Xóa thông báo",
 	Value = _G.Settings.Setting["Hide Notification"],
 	Callback = function(state)
 		_G.Settings.Setting["Hide Notification"] = state;
@@ -4544,7 +4544,7 @@ spawn(function()
 	end;
 end);
 HideDamageTextToggle = Tabs.SettingsTab:Toggle({
-	Title = "Hide Damage Text",
+	Title = "Xóa dame",
 	Value = _G.Settings.Setting["Hide Damage Text"],
 	Callback = function(state)
 		_G.Settings.Setting["Hide Damage Text"] = state;
@@ -4562,7 +4562,7 @@ spawn(function()
 	end;
 end);
 BlackScreenToggle = Tabs.SettingsTab:Toggle({
-	Title = "Black Screen",
+	Title = "Màn hình đen",
 	Value = _G.Settings.Setting["Black Screen"],
 	Callback = function(state)
 		_G.Settings.Setting["Black Screen"] = state;
@@ -4580,7 +4580,7 @@ spawn(function()
 	end;
 end);
 WhiteScreenToggle = Tabs.SettingsTab:Toggle({
-	Title = "White Screen",
+	Title = "Màn hình trắng",
 	Value = _G.Settings.Setting["White Screen"],
 	Callback = function(state)
 		_G.Settings.Setting["White Screen"] = state;
@@ -4598,11 +4598,11 @@ spawn(function()
 	end;
 end);
 MasterySettingsSection = Tabs.SettingsTab:Section({
-	Title = "Mastery Settings",
+	Title = "Cài đặt Mastery",
 	TextXAlignment = "Left"
 });
 MasteryHealthSlider = Tabs.SettingsTab:Slider({
-	Title = "Mastery Health %",
+	Title = "Mastery % máu",
 	Step = 1,
 	Value = {
 		Min = 1,
@@ -4676,11 +4676,11 @@ MasteryGunSkillXToggle = Tabs.SettingsTab:Toggle({
 	end
 });
 OthersSettingsSection = Tabs.SettingsTab:Section({
-	Title = "Others",
+	Title = "Khác",
 	TextXAlignment = "Left"
 });
 AutoSetSpawnPointToggle = Tabs.SettingsTab:Toggle({
-	Title = "Auto Set Spawn Point",
+	Title = "Tự động Set Spawn Point",
 	Value = _G.Settings.Setting["Auto Set Spawn Point"],
 	Callback = function(state)
 		_G.Settings.Setting["Auto Set Spawn Point"] = state;
@@ -4697,7 +4697,7 @@ spawn(function()
 	end;
 end);
 AutoObservationToggle = Tabs.SettingsTab:Toggle({
-	Title = "Auto Observation",
+	Title = "Tự động Observation",
 	Value = _G.Settings.Setting["Auto Observation"],
 	Callback = function(state)
 		_G.Settings.Setting["Auto Observation"] = state;
@@ -4717,7 +4717,7 @@ spawn(function()
 	end;
 end);
 AutoHakiToggle = Tabs.SettingsTab:Toggle({
-	Title = "Auto Haki",
+	Title = "Tự động Haki",
 	Value = _G.Settings.Setting["Auto Haki"],
 	Callback = function(state)
 		_G.Settings.Setting["Auto Haki"] = state;
@@ -4725,7 +4725,7 @@ AutoHakiToggle = Tabs.SettingsTab:Toggle({
 	end
 });
 AutoRejoinToggle = Tabs.SettingsTab:Toggle({
-	Title = "Auto Rejoin",
+	Title = "Tự động vô lại",
 	Value = _G.Settings.Setting["Auto Rejoin"],
 	Callback = function(state)
 		_G.Settings.Setting["Auto Rejoin"] = state;
@@ -4753,12 +4753,12 @@ spawn(function()
 	end;
 end);
 GunSwordSection = Tabs.ItemsTab:Section({
-	Title = "World",
+	Title = "Sea",
 	TextXAlignment = "Left"
 });
 AutoSecondSeaToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Second Sea",
-	Desc = "Function Sea 1 Only",
+	Title = "Tự động lên sea 2",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Second Sea"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Second Sea"] = state;
@@ -4767,8 +4767,8 @@ AutoSecondSeaToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoThirdSeaToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Third Sea",
-	Desc = "Function Sea 2 Only",
+	Title = "Tự động lên sea 3",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Third Sea"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Third Sea"] = state;
@@ -4868,11 +4868,11 @@ spawn(function()
 	end;
 end);
 GunSwordSection = Tabs.ItemsTab:Section({
-	Title = "Fighting Style",
+	Title = "Melee",
 	TextXAlignment = "Left"
 });
 AutoSuperHumanToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Super Human",
+	Title = "Tự động Super Human",
 	Value = _G.Settings.Items["Auto Super Human"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Super Human"] = state;
@@ -4881,7 +4881,7 @@ AutoSuperHumanToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoDeathStepToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Death Step",
+	Title = "Tự động Death Step",
 	Value = _G.Settings.Items["Auto Death Step"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Death Step"] = state;
@@ -4890,7 +4890,7 @@ AutoDeathStepToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoSharkmanKarateToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Sharkman Karate",
+	Title = "Tự động Sharkman Karate",
 	Value = _G.Settings.Items["Auto Fishman Karate"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Fishman Karate"] = state;
@@ -4899,7 +4899,7 @@ AutoSharkmanKarateToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoElectricClawToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Electric Claw",
+	Title = "Tự động Electric Claw",
 	Value = _G.Settings.Items["Auto Electric Claw"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Electric Claw"] = state;
@@ -4908,7 +4908,7 @@ AutoElectricClawToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoDragonTalonToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Dragon Talon",
+	Title = "Tự động Dragon Talon",
 	Value = _G.Settings.Items["Auto Dragon Talon"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Dragon Talon"] = state;
@@ -4917,7 +4917,7 @@ AutoDragonTalonToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoGodHumanToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto God Human",
+	Title = "Tự động God Human",
 	Value = _G.Settings.Items["Auto God Human"],
 	Callback = function(state)
 		_G.Settings.Items["Auto God Human"] = state;
@@ -5716,8 +5716,8 @@ function AutoSoulGuitar()
 	end;
 end;
 AutoSoulGuitarToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Soul Guitar",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động Soul Guitar",
+	Desc = "Chỉ hoạt động trên sea 3",
 	Value = _G.Settings.Items["Auto Soul Guitar"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Soul Guitar"] = state;
@@ -5735,8 +5735,8 @@ spawn(function()
 	end;
 end);
 AutoRengokuToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Rengoku",
-	Desc = "Function Sea 2 Only",
+	Title = "Tự động Rengoku",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Rengoku"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Rengoku"] = state;
@@ -5774,8 +5774,8 @@ spawn(function()
 	end);
 end);
 AutoHallowScytheToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Hallow Scythe",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động Hallow Scythe",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Hallow Scythe"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Hallow Scythe"] = state;
@@ -5784,8 +5784,8 @@ AutoHallowScytheToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoWardenSwordToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Warden Sword",
-	Desc = "Function Sea 1 Only",
+	Title = "Tự động Warden Sword",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Warden Sword"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Warden Sword"] = state;
@@ -5794,8 +5794,8 @@ AutoWardenSwordToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoGetYamaToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Get Yama",
-	Desc = "Need 30 Elite Hunter, Function Sea 3 Only",
+	Title = "Tự động lấy Yama",
+	Desc = "cần đánh 30 con elite",
 	Value = _G.Settings.Items["Auto Yama"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Yama"] = state;
@@ -5804,8 +5804,8 @@ AutoGetYamaToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoGetYamaHopToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Get Yama Hop",
-	Desc = "Hop If Elite Hunter Not Spawn",
+	Title = "Tự động lấy Yama + Hop",
+	Desc = "Tự đổi server lấy yama",
 	Value = _G.Settings.Items["Auto Yama Hop"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Yama Hop"] = state;
@@ -5814,7 +5814,7 @@ AutoGetYamaHopToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoGetTushitaToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Get Tushita",
+	Title = "Tự động lấy Tushita",
 	Value = _G.Settings.Items["Auto Tushita"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Tushita"] = state;
@@ -5823,8 +5823,8 @@ AutoGetTushitaToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoDragonTridentToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Dragon Trident",
-	Desc = "Function Sea 2 Only",
+	Title = "Tự động Dragon Trident",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Dragon Trident"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Dragon Trident"] = state;
@@ -5833,8 +5833,8 @@ AutoDragonTridentToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoDragonTridentToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Greybeard",
-	Desc = "Function Sea 1 Only",
+	Title = "Tự động Greybeard",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Greybeard"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Greybeard"] = state;
@@ -5843,8 +5843,8 @@ AutoDragonTridentToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoSharkSawToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Shark Saw",
-	Desc = "Function Sea 1 Only",
+	Title = "Tự động Shark Saw",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Shark Saw"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Shark Saw"] = state;
@@ -5853,8 +5853,8 @@ AutoSharkSawToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoPoleToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Pole",
-	Desc = "Function Sea 1 Only",
+	Title = "Tự động Pole",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Pole"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Pole"] = state;
@@ -5863,8 +5863,8 @@ AutoPoleToggle = Tabs.ItemsTab:Toggle({
 	end
 });
 AutoDarkDaggerToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Dark Dagger",
-	Desc = "Need Spawn Rip Indra, Function Sea 3 Only",
+	Title = "Tự động Dark Dagger",
+	Desc = "Cần Spawn Rip Indra",
 	Value = _G.Settings.Items["Auto Dark Dagger"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Dark Dagger"] = state;
@@ -6186,11 +6186,11 @@ spawn(function()
 	end;
 end);
 StatsSection = Tabs.StatsTab:Section({
-	Title = "Stats",
+	Title = "Trạng thái",
 	TextXAlignment = "Left"
 });
 StatsPointParagraph = Tabs.StatsTab:Paragraph({
-	Title = "Stats",
+	Title = "Trạng thái",
 	Desc = "0"
 });
 spawn(function()
@@ -6201,35 +6201,35 @@ spawn(function()
 	end;
 end);
 AutoAddMeleeStats = Tabs.StatsTab:Toggle({
-	Title = "Add Melee Stats",
+	Title = "Thêm điểm Melee",
 	Value = _G.Settings.Stats["Auto Add Melee Stats"],
 	Callback = function(state)
 		_G.Settings.Stats["Auto Add Melee Stats"] = state;
 	end
 });
 AutoAddDefenseStats = Tabs.StatsTab:Toggle({
-	Title = "Add Defense Stats",
+	Title = "Thêm điểm Defense",
 	Value = _G.Settings.Stats["Auto Add Defense Stats"],
 	Callback = function(state)
 		_G.Settings.Stats["Auto Add Defense Stats"] = state;
 	end
 });
 AutoAddSwordStats = Tabs.StatsTab:Toggle({
-	Title = "Add Sword Stats",
+	Title = "Thêm điểm Sword",
 	Value = _G.Settings.Stats["Auto Add Sword Stats"],
 	Callback = function(state)
 		_G.Settings.Stats["Auto Add Sword Stats"] = state;
 	end
 });
 AutoAddGunStats = Tabs.StatsTab:Toggle({
-	Title = "Add Gun Stats",
+	Title = "Thêm điểm Gun",
 	Value = _G.Settings.Stats["Auto Add Gun Stats"],
 	Callback = function(state)
 		_G.Settings.Stats["Auto Add Gun Stats"] = state;
 	end
 });
 AutoAddDevilFruitStats = Tabs.StatsTab:Toggle({
-	Title = "Add Devil Fruit Stats",
+	Title = "Thêm điểm Devil Fruit",
 	Value = _G.Settings.Stats["Auto Add Devil Fruit Stats"],
 	Callback = function(state)
 		_G.Settings.Stats["Auto Add Devil Fruit Stats"] = state;
@@ -6237,7 +6237,7 @@ AutoAddDevilFruitStats = Tabs.StatsTab:Toggle({
 });
 PointStats = 1;
 StatsPointToAddSlider = Tabs.StatsTab:Slider({
-	Title = "Point",
+	Title = "Điểm",
 	Step = 1,
 	Value = {
 		Min = 1,
@@ -6419,7 +6419,7 @@ for i, v in pairs(RaidsModule.advancedRaids) do
 	table.insert(Raidslist, v);
 end;
 ChooseChipRaidDropdown = Tabs.RaidTab:Dropdown({
-	Title = "Choose Chip",
+	Title = "Chọn Chip",
 	Values = Raidslist,
 	Value = _G.Settings.Raid["Selected Chip"],
 	Callback = function(option)
@@ -6440,7 +6440,7 @@ spawn(function()
 	end);
 end);
 AutoRaidToggle = Tabs.RaidTab:Toggle({
-	Title = "Auto Raid",
+	Title = "Tự động Raid",
 	Desc = "Complete automatically",
 	Value = _G.Settings.Raid["Auto Raid"],
 	Callback = function(state)
@@ -6450,7 +6450,7 @@ AutoRaidToggle = Tabs.RaidTab:Toggle({
 	end
 });
 AutoAwakeningToggle = Tabs.RaidTab:Toggle({
-	Title = "Auto Awaken",
+	Title = "Tự động Awaken",
 	Value = _G.Settings.Raid["Auto Awaken"],
 	Callback = function(state)
 		_G.Settings.Raid["Auto Awaken"] = state;
@@ -6479,7 +6479,7 @@ PriceDevilFruitToUnstoreSlider = Tabs.RaidTab:Slider({
 	end
 });
 AutoUnstoreDevilFruitToggle = Tabs.RaidTab:Toggle({
-	Title = "Auto Unstore Devil Fruit",
+	Title = "Tự động mở Devil Fruit",
 	Value = _G.Settings.Raid["Unstore Devil Fruit"],
 	Callback = function(state)
 		_G.Settings.Raid["Unstore Devil Fruit"] = state;
@@ -6516,7 +6516,7 @@ spawn(function()
 	end;
 end);
 TeleportTolabButton = Tabs.RaidTab:Button({
-	Title = "Teleport To Lab",
+	Title = "Dịch chuyển đến phòng thí nghiệm",
 	Callback = function()
 		if World2 then
 			TweenPlayer(CFrame.new(-6438.73535, 250.645355, -4501.50684));
@@ -6530,7 +6530,7 @@ LawRaidSection = Tabs.RaidTab:Section({
 	TextXAlignment = "Left"
 });
 AutoLawRaidToggle = Tabs.RaidTab:Toggle({
-	Title = "Auto Law Raid",
+	Title = "Tự động Law Raid",
 	Value = _G.Settings.Raid["Law Raid"],
 	Callback = function(state)
 		_G.Settings.Raid["Law Raid"] = value;
@@ -6584,7 +6584,7 @@ spawn(function()
 	end);
 end);
 RaceTabSection = Tabs.RaceTab:Section({
-	Title = "Race",
+	Title = "Tộc",
 	TextXAlignment = "Left"
 });
 local PlaceV4List = {
@@ -6594,7 +6594,7 @@ local PlaceV4List = {
 	"Acient One"
 };
 SelectedPlaceDropdown = Tabs.RaceTab:Dropdown({
-	Title = "Selected Place",
+	Title = "Chọn địa điểm",
 	Values = PlaceV4List,
 	Value = _G.Settings.Race["Selected Place"],
 	Callback = function(value)
@@ -6603,7 +6603,7 @@ SelectedPlaceDropdown = Tabs.RaceTab:Dropdown({
 	end
 });
 TeleportToPlaceToggle = Tabs.RaceTab:Toggle({
-	Title = "Teleport To Place",
+	Title = "Bay đến địa điểm",
 	Value = _G.Settings.Race["Teleport To Place"],
 	Callback = function(state)
 		_G.Settings.Race["Teleport To Place"] = state;
@@ -6633,7 +6633,7 @@ spawn(function()
 	end;
 end);
 AutoBuyGearToggle = Tabs.RaceTab:Toggle({
-	Title = "Auto Buy Gear",
+	Title = "Tự động mua Gear",
 	Value = _G.Settings.Race["Auto Buy Gear"],
 	Callback = function(state)
 		_G.Settings.Race["Auto Buy Gear"] = state;
@@ -6657,7 +6657,7 @@ spawn(function()
 	end);
 end);
 TweenToMirageIslandToggle = Tabs.RaceTab:Toggle({
-	Title = "Tween To Mirage Island",
+	Title = "Bay đến đảo bí ẩn",
 	Desc = "Tween to highest point",
 	Value = _G.Settings.Race["Tween To Highest Mirage"],
 	Callback = function(state)
@@ -6666,7 +6666,7 @@ TweenToMirageIslandToggle = Tabs.RaceTab:Toggle({
 	end
 });
 FindBlueGearToggle = Tabs.RaceTab:Toggle({
-	Title = "Find Blue Gear",
+	Title = "Tìm gear xanh",
 	Value = _G.Settings.Race["Find Blue Gear"],
 	Callback = function(state)
 		_G.Settings.Race["Find Blue Gear"] = state;
@@ -6691,7 +6691,7 @@ spawn(function()
 	end);
 end);
 LookMoonAbilityToggle = Tabs.RaceTab:Toggle({
-	Title = "Look Moon & use Ability",
+	Title = "Nhìn trăng & dùng tộc",
 	Value = _G.Settings.Race["Look Moon Ability"],
 	Callback = function(state)
 		_G.Settings.Race["Look Moon Ability"] = state;
@@ -6711,7 +6711,7 @@ spawn(function()
 	end;
 end);
 AutoTrainToggle = Tabs.RaceTab:Toggle({
-	Title = "Auto Train",
+	Title = "Tự động Train",
 	Value = _G.Settings.Race["Auto Train"],
 	Callback = function(state)
 		_G.Settings.Race["Auto Train"] = state;
@@ -6786,7 +6786,7 @@ spawn(function()
 	end;
 end);
 TeleportToRaceDoorButton = Tabs.RaceTab:Button({
-	Title = "Teleport To Race Door",
+	Title = "Bay đến cửa tộc",
 	Callback = function()
 		(game:GetService("Players")).LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(28286.35546875, 14895.3017578125, 102.62469482421875);
 		wait(0.1);
@@ -6812,13 +6812,13 @@ TeleportToRaceDoorButton = Tabs.RaceTab:Button({
 	end
 });
 BuyAcientQuestButton = Tabs.RaceTab:Button({
-	Title = "Buy Acient Quest",
+	Title = "Mua Acient Quest",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("UpgradeRace", "Buy");
 	end
 });
 AutoTrialToggle = Tabs.RaceTab:Toggle({
-	Title = "Auto Trial",
+	Title = "Tự động win ải",
 	Value = _G.Settings.Race["Auto Trial"],
 	Callback = function(value)
 		_G.Settings.Race["Auto Trial"] = value;
@@ -6882,7 +6882,7 @@ spawn(function()
 	end);
 end);
 AutoKillPlayerAfterTrialToggle = Tabs.RaceTab:Toggle({
-	Title = "Auto Kill Player After Trial",
+	Title = "Tự động giết người chơi",
 	Value = _G.Settings.Race["Auto Kill Player After Trial"],
 	Callback = function(value)
 		_G.Settings.Race["Auto Kill Player After Trial"] = value;
@@ -6913,37 +6913,37 @@ spawn(function()
 	end;
 end);
 TeleportSection = Tabs.TeleportTab:Section({
-	Title = "Teleport",
+	Title = "Dịch chuyển",
 	TextXAlignment = "Left"
 });
 TeleportToFirstSeaButton = Tabs.TeleportTab:Button({
-	Title = "Teleport To First Sea",
+	Title = "Dịch chuyển đến sea 1",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("TravelMain");
 	end
 });
 TeleportToSecondSeaButton = Tabs.TeleportTab:Button({
-	Title = "Teleport To Second Sea",
+	Title = "Dịch chuyển đến sea 2",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("TravelDressrosa");
 	end
 });
 TeleportToThirdSeaButton = Tabs.TeleportTab:Button({
-	Title = "Teleport To Third Sea",
+	Title = "Dịch chuyển đến sea 3",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("TravelZou");
 	end
 });
 TeleportIslandSection = Tabs.TeleportTab:Section({
-	Title = "Island",
+	Title = "Đảo",
 	TextXAlignment = "Left"
 });
 ShopSection = Tabs.ShopTab:Section({
-	Title = "Shop",
+	Title = "Cửa hàng",
 	TextXAlignment = "Left"
 });
 AutoBuyLegendarySwordToggle = Tabs.ShopTab:Toggle({
-	Title = "Auto Buy Legendary Sword",
+	Title = "Tự động mua Legendary Sword",
 	Value = _G.Settings.Shop["Auto Buy Legendary Sword"],
 	Callback = function(state)
 		_G.Settings.Shop["Auto Buy Legendary Sword"] = state;
