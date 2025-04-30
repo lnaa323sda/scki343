@@ -1,10 +1,11 @@
 local TS
 
+
 local function scrapeAPI()
     local req = (syn and syn.request) or (http and http.request) or request
     local success, response = pcall(function()
         return req({
-            Url = "http://deka.pylex.software:10632/JobId/fullmoon",
+            Url = "https://ducdesigner.site/JobId/fullmoon",
             Method = "GET"
         })
     end)
@@ -22,7 +23,7 @@ local function scrapeAPI()
             return jobIds
         end
     else
-        warn("Lỗi lấy dữ liệu từ API!")
+        warn("")
     end
 
     return nil
@@ -31,15 +32,15 @@ end
 local function autoHopServer()
     local jobIds = scrapeAPI()
     if not jobIds then
-        warn("Không tìm thấy JobId từ API!")
+        warn("")
         return
     end
 
     for _, jobId in ipairs(jobIds) do
         pcall(function()
-            -- Xử lý teleport vào server có JobId
+            
             game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", jobId)
-            task.wait(5) -- Thời gian chờ giữa các lần chuyển server
+            task.wait(5)
         end)
     end
 end
