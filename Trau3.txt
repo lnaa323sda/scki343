@@ -9828,40 +9828,45 @@ RemoveLavaButton = Tabs.MiscTab:Button({
 	end
 });
 --- tab full moon ----
+local FullMoonTab = Tabs.FullmoonTab
 local FullMoonButtons = {}
 
+-- Hàm cập nhật tab Full Moon
 local function UpdateFullMoonTab()
-	for _, btn in pairs(FullMoonButtons) do
-		pcall(function() btn:Destroy() end)
-	end
-	table.clear(FullMoonButtons)
+    -- Xoá các nút cũ
+    for _, btn in pairs(FullMoonButtons) do
+        pcall(function() btn:Destroy() end)
+    end
+    table.clear(FullMoonButtons)
 
-	local success, result = pcall(function()
-		return HttpService:JSONDecode(game:HttpGet("https://ducdesigner.site/JobId/fullmoon"))
-	end)
+    -- Gọi API lấy danh sách JobId
+    local success, result = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet("https://ducdesigner.site/JobId/fullmoon"))
+    end)
 
-	if success and type(result) == "table" then
-		for i, jobId in pairs(result) do
-			local button = Tabs.FullmoonTab:Button({
-				Title = "Join Full Moon " .. i,
-				Desc = "Click để vào server",
-				Callback = function()
-					TeleportService:TeleportToPlaceInstance(game.PlaceId, tostring(jobId), player)
-				end
-			})
-			table.insert(FullMoonButtons, button)
-		end
-	else
-		warn("Lỗi api rồi các ông cháu")
-	end
+    if success and type(result) == "table" then
+        for i, jobId in pairs(result) do
+            local button = FullMoonTab:Button({
+                Title = "Join Full Moon #" .. i,
+                Desc = "Click để vào server",
+                Callback = function()
+                    TeleportService:TeleportToPlaceInstance(game.PlaceId, tostring(jobId), LocalPlayer)
+                end
+            })
+            table.insert(FullMoonButtons, button)
+        end
+    else
+        warn("Không thể lấy dữ liệu Full Moon từ API.")
+    end
 end
 
+-- Gọi lần đầu và tự cập nhật mỗi 10s
 UpdateFullMoonTab()
 task.spawn(function()
-	while true do
-		task.wait(10)
-		pcall(UpdateFullMoonTab)
-	end
+    while true do
+        task.wait(10)
+        pcall(UpdateFullMoonTab)
+    end
 end)
 ServerTabSection = Tabs.ServerTab:Section({
 	Title = "Máy chủ",
