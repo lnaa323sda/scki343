@@ -112,11 +112,6 @@ local Tabs = {
 		Icon = "layout-grid",
 		Desc = "Misc Section"
 	}),
-	FullmoonTab = Window:Tab({
-		Title = "Tab Full Moon",
-		Icon = "server",
-		Desc = "Server Full Moon"
-	}),
 	ServerTab = Window:Tab({
 		Title = "Tab server",
 		Icon = "server",
@@ -6598,6 +6593,24 @@ RaceTabSection = Tabs.RaceTab:Section({
 	Title = "Tộc",
 	TextXAlignment = "Left"
 });
+HopfullmoonButton = Tabs.RaceTab:Button({
+    Title = "Hop Server Full Moon",
+    Desc = "Vô server có full moon",
+    Callback = function()
+        pcall(function()
+            loadstring(game:HttpGet("https://pastebin.com/raw/qFyeEbHi"))()
+        end)
+    end
+})
+HopmirageButton = Tabs.RaceTab:Button({
+    Title = "Hop Server Mirage Island",
+    Desc = "Vô server có đảo bí ẩn",
+    Callback = function()
+        pcall(function()
+            loadstring(game:HttpGet("https://pastebin.com/raw/uLxAbwuF"))()
+        end)
+    end
+})
 local PlaceV4List = {
 	"Top Of GreatTree",
 	"Timple Of Time",
@@ -9827,58 +9840,6 @@ RemoveLavaButton = Tabs.MiscTab:Button({
 		end;
 	end
 });
---- tab full moon ----
-local function sendHttpRequest(apiUrl)
-    local req = (syn and syn.request) or (http and http.request) or request
-    if not req then warn("") return nil end
-    local success, response = pcall(function() return req({ Url = apiUrl, Method = "GET" }) end)
-    if not success or not response or not response.Body then warn("") return nil end
-    return response.Body
-end
-
-local function CreateServerUpdater(tab, apiUrl)
-    local serverButtons = {}
-
-    local function UpdateServerList()
-        local response = sendHttpRequest(apiUrl)
-        if not response then return end
-
-        local data = HttpService:JSONDecode(response)
-        if type(data) ~= "table" then warn("") return end
-
-        local newIds = data
-        local newSet = {}
-        for _, id in ipairs(newIds) do newSet[id] = true end
-
-        for id, button in pairs(serverButtons) do
-            if not newSet[id] then
-                button:Destroy()
-                serverButtons[id] = nil
-            end
-        end
-
-        for _, id in ipairs(newIds) do
-            if not serverButtons[id] then
-                serverButtons[id] = tab:Button({
-                    Title = "Join Server: " .. id,
-                    Desc = "Click để vào server",
-                    Callback = function()
-                        TeleportService:TeleportToPlaceInstance(game.PlaceId, id, player)
-                    end
-                })
-            end
-        end
-    end
-
-    task.spawn(function()
-        while true do
-            pcall(UpdateServerList)
-            wait(5)
-        end
-    end)
-end
-
-CreateServerUpdater(FullmoonTab, "https://ducdesigner.site/JobId/fullmoon")
 ServerTabSection = Tabs.ServerTab:Section({
 	Title = "Máy chủ",
 	TextXAlignment = "Left"
