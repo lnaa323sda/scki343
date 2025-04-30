@@ -9828,46 +9828,57 @@ RemoveLavaButton = Tabs.MiscTab:Button({
 	end
 });
 --- tab full moon ----
-local FullMoonTab = Tabs.FullmoonTab
-local FullMoonButtons = {}
-
--- Hàm cập nhật tab Full Moon
-local function UpdateFullMoonTab()
-    -- Xoá các nút cũ
-    for _, btn in pairs(FullMoonButtons) do
-        pcall(function() btn:Destroy() end)
-    end
-    table.clear(FullMoonButtons)
-
-    -- Gọi API lấy danh sách JobId
-    local success, result = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet("https://ducdesigner.site/JobId/fullmoon"))
-    end)
-
-    if success and type(result) == "table" then
-        for i, jobId in pairs(result) do
-            local button = FullMoonTab:Button({
-                Title = "Join Full Moon #" .. i,
-                Desc = "Click để vào server",
-                Callback = function()
-                    TeleportService:TeleportToPlaceInstance(game.PlaceId, tostring(jobId), LocalPlayer)
-                end
-            })
-            table.insert(FullMoonButtons, button)
-        end
-    else
-        warn("Không thể lấy dữ liệu Full Moon từ API.")
-    end
+local function sendHttpRequest(apiUrl)
+    local req = (syn and syn.request) or (http and http.request) or request
+    if not req then warn("") return nil end
+    local success, response = pcall(function() return req({ Url = apiUrl, Method = "GET" }) end)
+    if not success or not response or not response.Body then warn("") return nil end
+    return response.Body
 end
 
--- Gọi lần đầu và tự cập nhật mỗi 10s
-UpdateFullMoonTab()
-task.spawn(function()
-    while true do
-        task.wait(10)
-        pcall(UpdateFullMoonTab)
+local function CreateServerUpdater(tab, apiUrl)
+    local serverButtons = {}
+
+    local function UpdateServerList()
+        local response = sendHttpRequest(apiUrl)
+        if not response then return end
+
+        local data = HttpService:JSONDecode(response)
+        if type(data) ~= "table" then warn("") return end
+
+        local newIds = data
+        local newSet = {}
+        for _, id in ipairs(newIds) do newSet[id] = true end
+
+        for id, button in pairs(serverButtons) do
+            if not newSet[id] then
+                button:Destroy()
+                serverButtons[id] = nil
+            end
+        end
+
+        for _, id in ipairs(newIds) do
+            if not serverButtons[id] then
+                serverButtons[id] = tab:Button({
+                    Title = "Join Server: " .. id,
+                    Desc = "Click để vào server",
+                    Callback = function()
+                        TeleportService:TeleportToPlaceInstance(game.PlaceId, id, player)
+                    end
+                })
+            end
+        end
     end
-end)
+
+    task.spawn(function()
+        while true do
+            pcall(UpdateServerList)
+            wait(5)
+        end
+    end)
+end
+
+CreateServerUpdater(FullmoonTab, "https://ducdesigner.site/JobId/fullmoon")
 ServerTabSection = Tabs.ServerTab:Section({
 	Title = "Máy chủ",
 	TextXAlignment = "Left"
