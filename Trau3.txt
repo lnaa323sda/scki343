@@ -5242,8 +5242,8 @@ GunSwordSection = Tabs.ItemsTab:Section({
 	TextXAlignment = "Left"
 });
 AutoGetSaberToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Get Saber",
-	Desc = "Function Sea 1 Only",
+	Title = "Tự động lấy Saber",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Saber"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Saber"] = state;
@@ -5349,8 +5349,8 @@ spawn(function()
 	end;
 end);
 AutoBuddySwordToggle = Tabs.ItemsTab:Toggle({
-	Title = "Auto Buddy Sword",
-	Desc = "Function Sea 3 Only",
+	Title = "Tự động Buddy Sword",
+	Desc = "",
 	Value = _G.Settings.Items["Auto Buddy Sword"],
 	Callback = function(state)
 		_G.Settings.Items["Auto Buddy Sword"] = state;
@@ -6597,18 +6597,14 @@ HopfullmoonButton = Tabs.RaceTab:Button({
     Title = "Hop Server Full Moon",
     Desc = "Vô server có full moon",
     Callback = function()
-        pcall(function()
-            loadstring(game:HttpGet("https://pastebin.com/raw/qFyeEbHi"))()
-        end)
+        wait(3)    loadstring(game:HttpGet("https://raw.githubusercontent.com/lnaa323sda/scki343/refs/heads/main/fullmoon"))()
     end
 })
 HopmirageButton = Tabs.RaceTab:Button({
     Title = "Hop Server Mirage Island",
     Desc = "Vô server có đảo bí ẩn",
     Callback = function()
-        pcall(function()
-            loadstring(game:HttpGet("https://pastebin.com/raw/uLxAbwuF"))()
-        end)
+         wait(3)   loadstring(game:HttpGet("https://raw.githubusercontent.com/lnaa323sda/scki343/refs/heads/main/RuBuV1Eng.txt"))()
     end
 })
 local PlaceV4List = {
