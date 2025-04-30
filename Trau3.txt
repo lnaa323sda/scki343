@@ -1,3 +1,8 @@
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
 local Keysystem = (loadstring(game:HttpGet("https://relzhub.farrghii.com/config/keysystem.lua")))();
 local WindUI = (loadstring(game:HttpGet("https://tree-hub.vercel.app/api/UI/WindUI")))();
 local Window = WindUI:CreateWindow({
@@ -106,6 +111,11 @@ local Tabs = {
 		Icon = "layout-grid",
 		Desc = "Misc Section"
 	}),
+	FullmoonTab = Window:Tab({
+		Title = "Tab Full Moon",
+		Icon = "server",
+		Desc = "Server Full Moon"
+	})
 	ServerTab = Window:Tab({
 		Title = "Tab server",
 		Icon = "server",
@@ -6962,7 +6972,7 @@ spawn(function()
 	end;
 end);
 AutoBuyHakiColorToggle = Tabs.ShopTab:Toggle({
-	Title = "Auto Buy Haki Color",
+	Title = "Tự động mua Haki Color",
 	Value = _G.Settings.Shop["Auto Buy Haki Color"],
 	Callback = function(state)
 		_G.Settings.Shop["Auto Buy Haki Color"] = state;
@@ -6981,46 +6991,46 @@ AbilitiesShopSection = Tabs.ShopTab:Section({
 	TextXAlignment = "Left"
 });
 BuyGeppoButton = Tabs.ShopTab:Button({
-	Title = "Buy Geppo",
+	Title = "Mua Geppo",
 	Desc = "$10,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyHaki", "Geppo");
 	end
 });
 BuyBusoHaki = Tabs.ShopTab:Button({
-	Title = "Buy Buso Haki",
+	Title = "Mua Buso Haki",
 	Desc = "$25,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyHaki", "Buso");
 	end
 });
 BuySoruButton = Tabs.ShopTab:Button({
-	Title = "Buy Soru",
+	Title = "Mua Soru",
 	Desc = "$25,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyHaki", "Soru");
 	end
 });
 BuyObservationHakiButton = Tabs.ShopTab:Button({
-	Title = "Buy Observation Haki",
+	Title = "Mua Observation Haki",
 	Desc = "$750,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("KenTalk", "Buy");
 	end
 });
 FightingStyleShopSection = Tabs.ShopTab:Section({
-	Title = "Fighting Style",
+	Title = "Melee",
 	TextXAlignment = "Left"
 });
 BuyBlackLegButton = Tabs.ShopTab:Button({
-	Title = "Buy Black Leg",
+	Title = "Mua Black Leg",
 	Desc = "$150,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyBlackLeg");
 	end
 });
 BuyElectroButton = Tabs.ShopTab:Button({
-	Title = "Buy Electro",
+	Title = "Mua Electro",
 	Desc = "$550,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyElectro");
@@ -7034,7 +7044,7 @@ BuyFishmanKarateButton = Tabs.ShopTab:Button({
 	end
 });
 BuyDragonClawButton = Tabs.ShopTab:Button({
-	Title = "Buy Dragon Claw",
+	Title = "Mua Dragon Claw",
 	Desc = "Æ’1,500",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BlackbeardReward", "DragonClaw", "1");
@@ -7042,21 +7052,21 @@ BuyDragonClawButton = Tabs.ShopTab:Button({
 	end
 });
 BuySuperhumanButton = Tabs.ShopTab:Button({
-	Title = "Buy Superhuman",
+	Title = "Mua Superhuman",
 	Desc = "$3,000,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuySuperhuman");
 	end
 });
 BuyDeathStepButton = Tabs.ShopTab:Button({
-	Title = "Buy Death Step",
+	Title = "Mua Death Step",
 	Desc = "Æ’5,000 $5,000,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyDeathStep");
 	end
 });
 BuySharkmanKarateButton = Tabs.ShopTab:Button({
-	Title = "Buy Sharkman Karate",
+	Title = "Mua Sharkman Karate",
 	Desc = "Æ’5,000 $2,500,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuySharkmanKarate", true);
@@ -7064,28 +7074,28 @@ BuySharkmanKarateButton = Tabs.ShopTab:Button({
 	end
 });
 BuyElectricClawButton = Tabs.ShopTab:Button({
-	Title = "Buy Electric Claw",
+	Title = "Mua Electric Claw",
 	Desc = "Æ’5,000 $3,000,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyElectricClaw");
 	end
 });
 BuyDragonTalonButton = Tabs.ShopTab:Button({
-	Title = "Buy Dragon Talon",
+	Title = "Mua Dragon Talon",
 	Desc = "Æ’5,000 $3,000,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyDragonTalon");
 	end
 });
 BuyGodHumanButton = Tabs.ShopTab:Button({
-	Title = "Buy God Human",
+	Title = "Mua God Human",
 	Desc = "Æ’5,000 $5,000,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyGodhuman");
 	end
 });
 BuySanguineArtButton = Tabs.ShopTab:Button({
-	Title = "Buy Sanguine Art",
+	Title = "Mua Sanguine Art",
 	Desc = "Æ’5,000 $5,000,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuySanguineArt", true);
@@ -7097,63 +7107,63 @@ SwordShopSection = Tabs.ShopTab:Section({
 	TextXAlignment = "Left"
 });
 BuyCutlassButton = Tabs.ShopTab:Button({
-	Title = "Buy Cutlass",
+	Title = "Mua Cutlass",
 	Desc = "$1,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Cutlass");
 	end
 });
 BuyKatanaButton = Tabs.ShopTab:Button({
-	Title = "Buy Katana",
+	Title = "Mua Katana",
 	Desc = "$1,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Katana");
 	end
 });
 BuyIronMaceButton = Tabs.ShopTab:Button({
-	Title = "Buy Iron Mace",
+	Title = "Mua Iron Mace",
 	Desc = "$25,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Iron Mace");
 	end
 });
 BuyDualKatanaButton = Tabs.ShopTab:Button({
-	Title = "Buy Dual Katana",
+	Title = "Mua Dual Katana",
 	Desc = "$12,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Dual Katana");
 	end
 });
 BuyTripleKatanaButton = Tabs.ShopTab:Button({
-	Title = "Buy Triple Katana",
+	Title = "Mua Triple Katana",
 	Desc = "$60,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Triple Katana");
 	end
 });
 BuyPipeButton = Tabs.ShopTab:Button({
-	Title = "Buy Pipe",
+	Title = "Mua Pipe",
 	Desc = "$100,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Pipe");
 	end
 });
 BuyDualHeadedBladeButton = Tabs.ShopTab:Button({
-	Title = "Buy Dual Headed Blade",
+	Title = "Mua Dual Headed Blade",
 	Desc = "$400,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Dual-Headed Blade");
 	end
 });
 BuyBisentoButton = Tabs.ShopTab:Button({
-	Title = "Buy Bisento",
+	Title = "Mua Bisento",
 	Desc = "$1,200,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Bisento");
 	end
 });
 BuySoulCaneButton = Tabs.ShopTab:Button({
-	Title = "Buy Soul Cane",
+	Title = "Mua Soul Cane",
 	Desc = "$1,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Soul Cane");
@@ -7164,42 +7174,42 @@ GunShopSection = Tabs.ShopTab:Section({
 	TextXAlignment = "Left"
 });
 BuySlingshotButton = Tabs.ShopTab:Button({
-	Title = "Buy Slingshot",
+	Title = "Mua Slingshot",
 	Desc = "$5,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Slingshot");
 	end
 });
 BuyMusketButton = Tabs.ShopTab:Button({
-	Title = "Buy Musket",
+	Title = "Mua Musket",
 	Desc = "$8,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Musket");
 	end
 });
 BuyFintlockButton = Tabs.ShopTab:Button({
-	Title = "Buy Flintlock",
+	Title = "Mua Flintlock",
 	Desc = "$10,500",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Flintlock");
 	end
 });
 BuyRefinedFintlockButton = Tabs.ShopTab:Button({
-	Title = "Buy Refined Fintlock",
+	Title = "Mua Refined Fintlock",
 	Desc = "$60,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Refined Fintlock");
 	end
 });
 BuyCanonButton = Tabs.ShopTab:Button({
-	Title = "Buy Cannon",
+	Title = "Mua Cannon",
 	Desc = "$100,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Cannon");
 	end
 });
 BuyKabuchaButton = Tabs.ShopTab:Button({
-	Title = "Buy Kabucha",
+	Title = "Mua Kabucha",
 	Desc = "Æ’1,500",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BlackbeardReward", "Slingshot", "1");
@@ -7211,7 +7221,7 @@ StatsShopSection = Tabs.ShopTab:Section({
 	TextXAlignment = "Left"
 });
 ResetStatsShopButton = Tabs.ShopTab:Button({
-	Title = "Reset Stats",
+	Title = "Reset chỉ số",
 	Desc = "Æ’2,500",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BlackbeardReward", "Refund", "1");
@@ -7219,7 +7229,7 @@ ResetStatsShopButton = Tabs.ShopTab:Button({
 	end
 });
 RandomRaceShopButton = Tabs.ShopTab:Button({
-	Title = "Random Race",
+	Title = "Random tộc",
 	Desc = "Æ’3,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BlackbeardReward", "Reroll", "1");
@@ -7231,21 +7241,21 @@ AccessoriesShopSection = Tabs.ShopTab:Section({
 	TextXAlignment = "Left"
 });
 BuyBlackCapeButton = Tabs.ShopTab:Button({
-	Title = "Buy Black Cape",
+	Title = "Mua Black Cape",
 	Desc = "$50,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Black Cape");
 	end
 });
 BuySwordsmanHatButton = Tabs.ShopTab:Button({
-	Title = "Buy Swordsman Hat",
+	Title = "Mua Swordsman Hat",
 	Desc = "$150,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Swordsman Hat");
 	end
 });
 BuyTomoeRingButton = Tabs.ShopTab:Button({
-	Title = "Buy Tomoe Ring",
+	Title = "Mua Tomoe Ring",
 	Desc = "$500,000",
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyItem", "Tomoe Ring");
@@ -7256,7 +7266,7 @@ CombatTabSection = Tabs.CombatTab:Section({
 	TextXAlignment = "Left"
 });
 PlayerInServerTotalParagraph = Tabs.CombatTab:Paragraph({
-	Title = "Players In Server",
+	Title = "Người chơi trong server",
 	Desc = "0"
 });
 spawn(function()
@@ -7279,7 +7289,7 @@ for i, v in pairs((game:GetService("Players")):GetChildren()) do
 	table.insert(PlayerList, v.Name);
 end;
 SelectedPlayerDropdown = Tabs.CombatTab:Dropdown({
-	Title = "Choose Player",
+	Title = "Chọn người chơi",
 	Values = PlayerList,
 	Value = tostring(PlayerList[1]),
 	Callback = function(option)
@@ -7287,7 +7297,7 @@ SelectedPlayerDropdown = Tabs.CombatTab:Dropdown({
 	end
 });
 RefreshPlayerButton = Tabs.CombatTab:Button({
-	Title = "Refresh Player",
+	Title = "Tải lại danh sách",
 	Callback = function()
 		PlayerList = {};
 		for i, v in pairs((game:GetService("Players")):GetChildren()) do
@@ -7297,7 +7307,7 @@ RefreshPlayerButton = Tabs.CombatTab:Button({
 	end
 });
 SpectatePlayerToggle = Tabs.CombatTab:Toggle({
-	Title = "Spectate Player",
+	Title = "Nhìn người chơi",
 	Value = false,
 	Callback = function(state)
 		SpectatePlys = state;
@@ -7309,7 +7319,7 @@ SpectatePlayerToggle = Tabs.CombatTab:Toggle({
 	end
 });
 TeleportToPlayerToggle = Tabs.CombatTab:Toggle({
-	Title = "Teleport To Player",
+	Title = "Bay đến người chơi",
 	Value = false,
 	Callback = function(state)
 		_G.TeleportToPlayer = value;
@@ -7385,7 +7395,7 @@ elseif World3 then
 	};
 end;
 SelectedTeleportIslandDropdown = Tabs.TeleportTab:Dropdown({
-	Title = "Choose Island",
+	Title = "Chọn đảo",
 	Values = IslandList,
 	Value = IslandList[1],
 	Callback = function(option)
@@ -7393,7 +7403,7 @@ SelectedTeleportIslandDropdown = Tabs.TeleportTab:Dropdown({
 	end
 });
 AutoTeleportToIslandToggle = Tabs.TeleportTab:Toggle({
-	Title = "Teleport To Island",
+	Title = "Bay đến đảo",
 	Value = false,
 	Callback = function(state)
 		_G.TeleportIsland = state;
@@ -7556,7 +7566,7 @@ elseif World3 then
 	};
 end;
 SelectedNpcTeleport = Tabs.TeleportTab:Dropdown({
-	Title = "Choose Npc",
+	Title = "Chọn Npc",
 	Values = NpcList,
 	Value = NpcList[1],
 	Callback = function(option)
@@ -7564,7 +7574,7 @@ SelectedNpcTeleport = Tabs.TeleportTab:Dropdown({
 	end
 });
 TeleportToNpcToggle = Tabs.TeleportTab:Toggle({
-	Title = "Teleport To Npc",
+	Title = "Bay đến Npc",
 	Value = false,
 	Callback = function(state)
 		_G.TeleportNPC = state;
@@ -7652,116 +7662,116 @@ TeleportToNpcToggle = Tabs.TeleportTab:Toggle({
 	end
 });
 EspSection = Tabs.EspTab:Section({
-	Title = "Esp",
+	Title = "Định vị",
 	TextXAlignment = "Left"
 });
 EspPlayerToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Player",
-	Desc = "Highlight Player",
+	Title = "Định vị người chơi",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Player"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Player"] = state;
 	end
 });
 EspChestToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Chest",
-	Desc = "Highlight Chest",
+	Title = "Định vị rương",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Chest"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Chest"] = state;
 	end
 });
 EspDevilFruitToggle = Tabs.EspTab:Toggle({
-	Title = "Esp DevilFruit",
-	Desc = "Highlight DevilFruit",
+	Title = "Định vị DevilFruit",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP DevilFruit"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP DevilFruit"] = state;
 	end
 });
 EspRealFruitToggle = Tabs.EspTab:Toggle({
-	Title = "Esp RealFruit",
-	Desc = "Highlight RealFruit",
+	Title = "Định vị RealFruit",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP RealFruit"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP RealFruit"] = state;
 	end
 });
 EspFlowerToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Flower",
-	Desc = "Highlight Flower",
+	Title = "Định vị Flower",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Flower"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Flower"] = state;
 	end
 });
 EspIslandToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Island",
-	Desc = "Highlight Island",
+	Title = "Định vị đảo",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Island"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Island"] = state;
 	end
 });
 EspNpcToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Npc",
-	Desc = "Highlight Npc",
+	Title = "Định vị Npc",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Npc"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Npc"] = state;
 	end
 });
 EspSeaBeastToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Sea Beast",
-	Desc = "Highlight SeaBeast",
+	Title = "Định vị Sea Beast",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Sea Beast"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Sea Beast"] = state;
 	end
 });
 EspMonsterToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Monster",
-	Desc = "Highlight Monster",
+	Title = "Định vị Monster",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Monster"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Monster"] = state;
 	end
 });
 EspMirageIslandToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Mirage Island",
-	Desc = "Highlight Mirage Island",
+	Title = "Định vị Mirage Island",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Mirage"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Mirage"] = state;
 	end
 });
 EspKitsuneIslandToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Kitsune Island",
-	Desc = "Highlight Kitsune Island",
+	Title = "Định vị Kitsune Island",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Kitsune"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Kitsune"] = state;
 	end
 });
 EspFrozenDimensionToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Frozen Dimension",
-	Desc = "Highlight Frozen Dimension",
+	Title = "Định vị Frozen Dimension",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Frozen"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Frozen"] = state;
 	end
 });
 EspPrehistoricIslandToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Prehistoric Island",
-	Desc = "Highlight Prehistoric Island",
+	Title = "Định vịp Prehistoric Island",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Prehistoric"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Prehistoric"] = state;
 	end
 });
 EspGearToggle = Tabs.EspTab:Toggle({
-	Title = "Esp Gear",
-	Desc = "Highlight Gear",
+	Title = "Định vị Gear",
+	Desc = "",
 	Value = _G.Settings.Esp["ESP Gear"],
 	Callback = function(state)
 		_G.Settings.Esp["ESP Gear"] = state;
@@ -7772,8 +7782,8 @@ DragonDojoSection = Tabs.DragonDojoTab:Section({
 	TextXAlignment = "Left"
 });
 AutoFarmBlazeEmberToggle = Tabs.DragonDojoTab:Toggle({
-	Title = "Auto Farm Blaze Ember",
-	Desc = "Auto Compleate Quest + Collect Blaze Ember [ Sea 3 Only ]",
+	Title = "Tự động cày Blaze Ember",
+	Desc = "",
 	Value = _G.Settings.DragonDojo["Auto Farm Blaze Ember"],
 	Callback = function(state)
 		_G.Settings.DragonDojo["Auto Farm Blaze Ember"] = state;
@@ -8050,13 +8060,13 @@ spawn(function()
 	end;
 end);
 CraftVolcanicMagnetButton = Tabs.DragonDojoTab:Button({
-	Title = "Craft Volcanic Magnet",
+	Title = "Chế tạo nam châm núi lửa",
 	Callback = function()
 		(((game:GetService("ReplicatedStorage")):WaitForChild("Remotes")):WaitForChild("CommF_")):InvokeServer("CraftItem", "Craft", "Volcanic Magnet");
 	end
 });
 local SeaEventSection = Tabs.SeaEventTab:Section({
-	Title = "Sea Event",
+	Title = "Sự kiện biển",
 	TextXAlignment = "Left"
 });
 local BoatList = {
@@ -8079,7 +8089,7 @@ local ZoneList = {
 	"Infinite"
 };
 ChooseBoatDropdown = Tabs.SeaEventTab:Dropdown({
-	Title = "Choose Boat",
+	Title = "Chọn thuyền",
 	Values = BoatList,
 	Value = _G.Settings.SeaEvent["Selected Boat"],
 	Callback = function(option)
@@ -8088,7 +8098,7 @@ ChooseBoatDropdown = Tabs.SeaEventTab:Dropdown({
 	end
 });
 ChooseZoneDropdown = Tabs.SeaEventTab:Dropdown({
-	Title = "Choose Zone",
+	Title = "Chọn vùng",
 	Values = ZoneList,
 	Value = _G.Settings.SeaEvent["Selected Zone"],
 	Callback = function(option)
@@ -8097,7 +8107,7 @@ ChooseZoneDropdown = Tabs.SeaEventTab:Dropdown({
 	end
 });
 BoatTweenSpeedSlider = Tabs.SeaEventTab:Slider({
-	Title = "Boat Tween Speed",
+	Title = "Tốc độ bay",
 	Step = 1,
 	Value = {
 		Min = 1,
@@ -8109,8 +8119,8 @@ BoatTweenSpeedSlider = Tabs.SeaEventTab:Slider({
 	end
 });
 AutoSailBoatToggle = Tabs.SeaEventTab:Toggle({
-	Title = "Sail Boat",
-	Desc = "Auto Sail Boat & Kill Enemies",
+	Title = "Thuyền buồm",
+	Desc = "tự động sea event",
 	Value = _G.Settings.SeaEvent["Sail Boat"],
 	Callback = function(state)
 		_G.Settings.SeaEvent["Sail Boat"] = state;
@@ -8476,11 +8486,11 @@ function DodgeSeabeasts()
 	end;
 end;
 SeaEventEnemiesSection = Tabs.SeaEventTab:Section({
-	Title = "Enemies",
+	Title = "Kẻ thù",
 	TextXAlignment = "Left"
 });
 AutoFarmSharkToggle = Tabs.SeaEventTab:Toggle({
-	Title = "Auto Farm Shark",
+	Title = "Tự động cày Shark",
 	Value = _G.Settings.SeaEvent["Auto Farm Shark"],
 	Callback = function(state)
 		_G.Settings.SeaEvent["Auto Farm Shark"] = state;
@@ -8489,7 +8499,7 @@ AutoFarmSharkToggle = Tabs.SeaEventTab:Toggle({
 	end
 });
 AutoFarmPiranhaToggle = Tabs.SeaEventTab:Toggle({
-	Title = "Auto Farm Piranha",
+	Title = "Tự động cày Piranha",
 	Value = _G.Settings.SeaEvent["Auto Farm Piranha"],
 	Callback = function(state)
 		_G.Settings.SeaEvent["Auto Farm Piranha"] = state;
@@ -8498,7 +8508,7 @@ AutoFarmPiranhaToggle = Tabs.SeaEventTab:Toggle({
 	end
 });
 AutoFarmFishCrewMemberToggle = Tabs.SeaEventTab:Toggle({
-	Title = "Auto Farm Fish Crew Member",
+	Title = "Tự động Fish Crew Member",
 	Value = _G.Settings.SeaEvent["Auto Farm Fish Crew Member"],
 	Callback = function(state)
 		_G.Settings.SeaEvent["Auto Farm Fish Crew Member"] = state;
@@ -8511,7 +8521,7 @@ SeaEventBoatSection = Tabs.SeaEventTab:Section({
 	TextXAlignment = "Left"
 });
 AutoFarmGhostShipToggle = Tabs.SeaEventTab:Toggle({
-	Title = "Auto Farm Ghost Ship",
+	Title = "Tự động cày Ghost Ship",
 	Value = _G.Settings.SeaEvent["Auto Farm Ghost Ship"],
 	Callback = function(state)
 		_G.Settings.SeaEvent["Auto Farm Ghost Ship"] = state;
@@ -8520,7 +8530,7 @@ AutoFarmGhostShipToggle = Tabs.SeaEventTab:Toggle({
 	end
 });
 AutoFarmPirateBrigadeToggle = Tabs.SeaEventTab:Toggle({
-	Title = "Auto Farm Pirate Brigade",
+	Title = "Tự động cày Pirate Brigade",
 	Value = _G.Settings.SeaEvent["Auto Farm Pirate Brigade"],
 	Callback = function(state)
 		_G.Settings.SeaEvent["Auto Farm Pirate Brigade"] = state;
@@ -8529,7 +8539,7 @@ AutoFarmPirateBrigadeToggle = Tabs.SeaEventTab:Toggle({
 	end
 });
 AutoFarmPirateGrandBrigadeToggle = Tabs.SeaEventTab:Toggle({
-	Title = "Auto Farm Pirate Grand Brigade",
+	Title = "Tự động cày Pirate Grand Brigade",
 	Value = _G.Settings.SeaEvent["Auto Farm Pirate Grand Brigade"],
 	Callback = function(state)
 		_G.Settings.SeaEvent["Auto Farm Pirate Grand Brigade"] = state;
@@ -8542,7 +8552,7 @@ SeaEventBossSection = Tabs.SeaEventTab:Section({
 	TextXAlignment = "Left"
 });
 AutoFarmTerrorsharkToggle = Tabs.SeaEventTab:Toggle({
-	Title = "Auto Farm Terrorshark",
+	Title = "Tự động cày Terrorshark",
 	Value = _G.Settings.SeaEvent["Auto Farm Terrorshark"],
 	Callback = function(state)
 		_G.Settings.SeaEvent["Auto Farm Terrorshark"] = state;
@@ -8551,7 +8561,7 @@ AutoFarmTerrorsharkToggle = Tabs.SeaEventTab:Toggle({
 	end
 });
 AutoFarmSeabeastsToggle = Tabs.SeaEventTab:Toggle({
-	Title = "Auto Farm Seabeasts",
+	Title = "Tự động cày Seabeasts",
 	Value = _G.Settings.SeaEvent["Auto Farm Seabeasts"],
 	Callback = function(state)
 		_G.Settings.SeaEvent["Auto Farm Seabeasts"] = state;
@@ -8560,42 +8570,42 @@ AutoFarmSeabeastsToggle = Tabs.SeaEventTab:Toggle({
 	end
 });
 SeaStackSection = Tabs.SeaStackTab:Section({
-	Title = "Sea Stack",
+	Title = "Sea",
 	TextXAlignment = "Left"
 });
 spawn(function()
 	pcall(function()
 		while wait(0.2) do
 			if game.Workspace._WorldOrigin.Locations:FindFirstChild("Mirage Island") then
-				MirageStatusSeaStackParagraph:SetDesc("ðŸï¸ Mirage Island Spawning");
+				MirageStatusSeaStackParagraph:SetDesc("Mirage Island Spawning");
 			else
-				MirageStatusSeaStackParagraph:SetDesc("ðŸï¸ Mirage Island Not Spawn");
+				MirageStatusSeaStackParagraph:SetDesc("Mirage Island Not Spawn");
 			end;
 			if game.Workspace._WorldOrigin.Locations:FindFirstChild("Kitsune Island") then
-				KitsuneStatusSeaStackParagraph:SetDesc("â›©ï¸ Kitsune Island Spawning");
+				KitsuneStatusSeaStackParagraph:SetDesc("Kitsune Island Spawning");
 			else
-				KitsuneStatusSeaStackParagraph:SetDesc("â›©ï¸ Kitsune Island Not Spawn");
+				KitsuneStatusSeaStackParagraph:SetDesc("Kitsune Island Not Spawn");
 			end;
 			if game.Workspace._WorldOrigin.Locations:FindFirstChild("Frozen Dimension") then
-				FrozenStatusSeaStackParagraph:SetDesc("â„ï¸ Frozen Dimension Spawning");
+				FrozenStatusSeaStackParagraph:SetDesc("Frozen Dimension Spawning");
 			else
-				FrozenStatusSeaStackParagraph:SetDesc("â„ï¸ Frozen Dimension Not Spawn");
+				FrozenStatusSeaStackParagraph:SetDesc("Frozen Dimension Not Spawn");
 			end;
 			if game.Workspace._WorldOrigin.Locations:FindFirstChild("Prehistoric Island") then
-				PrehistoricStatusSeaStackParagraph:SetDesc("ðŸ¦´ Prehistoric Island Spawning");
+				PrehistoricStatusSeaStackParagraph:SetDesc("Prehistoric Island Spawning");
 			else
-				PrehistoricStatusSeaStackParagraph:SetDesc("ðŸ¦´ Prehistoric Island Not Spawn");
+				PrehistoricStatusSeaStackParagraph:SetDesc("Prehistoric Island Not Spawn");
 			end;
 		end;
 	end);
 end);
 PrehistoricStatusSeaStackParagraph = Tabs.SeaStackTab:Paragraph({
-	Title = "Prehistoric Status",
+	Title = "Trạng thái Prehistoric ",
 	Desc = "N/A"
 });
 AutoSummonPrehistoricIslandToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Summon Prehistoric Island",
-	Desc = "Need Volcanic Magnet",
+	Title = "Tìm đảo Prehistoric",
+	Desc = "Cần nam châm núi lửa",
 	Value = _G.Settings.SeaStack["Summon Prehistoric Island"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Summon Prehistoric Island"] = state;
@@ -8642,8 +8652,8 @@ spawn(function()
 	end;
 end);
 TweenToPrehistoricIslandToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Tween To Prehistoric Island",
-	Desc = "Need Spawn",
+	Title = "Bay đến đảo Prehistoric",
+	Desc = "Cần Spawn",
 	Value = _G.Settings.SeaStack["Tween To Prehistoric Island"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Tween To Prehistoric Island"] = state;
@@ -8663,7 +8673,7 @@ spawn(function()
 	end;
 end);
 AutoKillLavaGolemToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Auto Kill Lava Golem",
+	Title = "Tự động giết Lava Golem",
 	Value = _G.Settings.SeaStack["Auto Kill Lava Golem"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Auto Kill Lava Golem"] = state;
@@ -8699,11 +8709,11 @@ spawn(function()
 	end;
 end);
 FrozenStatusSeaStackParagraph = Tabs.SeaStackTab:Paragraph({
-	Title = "Frozen Status",
+	Title = "Trạng thái Frozen",
 	Desc = "N/A"
 });
 AutoSummonFrozenDimensionToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Summon Frozen Dimension",
+	Title = "Tìm đảo Frozen Dimension",
 	Value = _G.Settings.SeaStack["Summon Frozen Dimension"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Summon Frozen Dimension"] = state;
@@ -8750,7 +8760,7 @@ spawn(function()
 	end;
 end);
 TweenToFrozenDimensionToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Tween To Frozen Dimension",
+	Title = "Bay đến Frozen Dimension",
 	Value = _G.Settings.SeaStack["Tween To Frozen Dimension"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Tween To Frozen Dimension"] = state;
@@ -8771,22 +8781,22 @@ spawn(function()
 	end;
 end);
 BribeLeviathanStatusParagraph = Tabs.SeaStackTab:Paragraph({
-	Title = "Leviathan Status",
+	Title = "Leviathan",
 	Desc = "0"
 });
 BribeLeviathanButton = Tabs.SeaStackTab:Button({
-	Title = "Bribe Leviathan",
+	Title = "Mua chip Leviathan",
 	Callback = function()
 		local Status = (game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("InfoLeviathan", "2");
 		BribeLeviathanStatusParagraph:SetDesc(Status);
 	end
 });
 KitsuneStatusSeaStackParagraph = Tabs.SeaStackTab:Paragraph({
-	Title = "Kitsune Status",
+	Title = "Trạng thái Kitsune",
 	Desc = "N/A"
 });
 AutoSummonKitsuneIslandToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Summon Kitsune Island",
+	Title = "Tìm đảo Kitsune",
 	Value = _G.Settings.SeaStack["Summon Kitsune Island"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Summon Kitsune Island"] = state;
@@ -8795,7 +8805,7 @@ AutoSummonKitsuneIslandToggle = Tabs.SeaStackTab:Toggle({
 	end
 });
 TweenToKitsuneIslandToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Tween To Kitsune Island",
+	Title = "Bay đến đảo Kitsune",
 	Value = _G.Settings.SeaStack["Tween To Kitsune Island"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Tween To Kitsune Island"] = state;
@@ -8851,7 +8861,7 @@ spawn(function()
 	end;
 end);
 AutoCollectAzureEmberToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Auto Collect Azure Ember",
+	Title = "Tự động nhặt lửa linh hồn",
 	Value = _G.Settings.SeaStack["Auto Collect Azure Ember"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Auto Collect Azure Ember"] = state;
@@ -8883,7 +8893,7 @@ SetAzureEmberSlider = Tabs.SeaStackTab:Slider({
 	end
 });
 AutoTradeAzureEmberToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Auto Trade Azure Ember",
+	Title = "Tự động đổi lửa",
 	Value = _G.Settings.SeaStack["Auto Trade Azure Ember"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Auto Trade Azure Ember"] = state;
@@ -8912,11 +8922,11 @@ spawn(function()
 	end;
 end);
 MirageStatusSeaStackParagraph = Tabs.SeaStackTab:Paragraph({
-	Title = "Mirage Status",
+	Title = "Trạng thái Mirage",
 	Desc = "N/A"
 });
 TweenToMirageIslandToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Tween To Mirage Island",
+	Title = "Bay đến đảo Mirage",
 	Value = _G.Settings.SeaStack["Tween To Mirage Island"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Tween To Mirage Island"] = state;
@@ -8956,11 +8966,11 @@ spawn(function()
 	end);
 end);
 SeaBeastSeaStackSection = Tabs.SeaStackTab:Section({
-	Title = "Sea Beasts",
+	Title = "Quái vật biển",
 	TextXAlignment = "Left"
 });
 AutoAttackSeaBeastsToggle = Tabs.SeaStackTab:Toggle({
-	Title = "Auto Attack Seabeasts",
+	Title = "Tự động đánh Seabeasts",
 	Value = _G.Settings.SeaStack["Auto Attack Seabeasts"],
 	Callback = function(state)
 		_G.Settings.SeaStack["Auto Attack Seabeasts"] = state;
@@ -9005,11 +9015,11 @@ spawn(function()
 	end);
 end);
 SettingSeaSection = Tabs.SeaSettingsTab:Section({
-	Title = "Setting Sea",
+	Title = "Cài đặt Sea",
 	TextXAlignment = "Left"
 });
 LightningToggle = Tabs.SeaSettingsTab:Toggle({
-	Title = "Lightning",
+	Title = "Trời sáng",
 	Value = _G.Settings.SettingSea.Lightning,
 	Callback = function(state)
 		_G.Settings.SettingSea.Lightning = state;
@@ -9023,7 +9033,7 @@ RunService.Heartbeat:Connect(function()
 	end;
 end);
 IncreaseSpeedBoatToggle = Tabs.SeaSettingsTab:Toggle({
-	Title = "Increase Speed Boat",
+	Title = "Tăng tốc độ thuyền",
 	Value = _G.Settings.SettingSea["Increase Speed Boat"],
 	Callback = function(state)
 		_G.Settings.SettingSea["Increase Speed Boat"] = state;
@@ -9051,7 +9061,7 @@ spawn(function()
 	end;
 end);
 NoClipRockToggle = Tabs.SeaSettingsTab:Toggle({
-	Title = "No Clip Rock",
+	Title = "Xuyên vật cản",
 	Value = _G.Settings.SettingSea["No Clip Rock"],
 	Callback = function(state)
 		_G.Settings.SettingSea["No Clip Rock"] = state;
@@ -9075,11 +9085,11 @@ spawn(function()
 	end;
 end);
 SettingSeaSection = Tabs.SeaSettingsTab:Section({
-	Title = "Tools",
+	Title = "Công cụ",
 	TextXAlignment = "Left"
 });
 UseDevilFruitSkillToggle = Tabs.SeaSettingsTab:Toggle({
-	Title = "Use Devil Fruit Skill",
+	Title = "Dùng Devil Fruit Skill",
 	Value = true,
 	Callback = function(state)
 		_G.Settings.SettingSea["Use Devil Fruit Skill"] = state;
@@ -9087,7 +9097,7 @@ UseDevilFruitSkillToggle = Tabs.SeaSettingsTab:Toggle({
 	end
 });
 UseMeleeSkillToggle = Tabs.SeaSettingsTab:Toggle({
-	Title = "Use Melee Skill",
+	Title = "Dùng Melee Skill",
 	Value = true,
 	Callback = function(state)
 		_G.Settings.SettingSea["Use Melee Skill"] = state;
@@ -9095,7 +9105,7 @@ UseMeleeSkillToggle = Tabs.SeaSettingsTab:Toggle({
 	end
 });
 UseSwordSkillToggle = Tabs.SeaSettingsTab:Toggle({
-	Title = "Use Sword Skill",
+	Title = "Dùng Sword Skill",
 	Value = true,
 	Callback = function(state)
 		_G.Settings.SettingSea["Use Sword Skill"] = state;
@@ -9103,7 +9113,7 @@ UseSwordSkillToggle = Tabs.SeaSettingsTab:Toggle({
 	end
 });
 UseGunSkillToggle = Tabs.SeaSettingsTab:Toggle({
-	Title = "Use Gun Skill",
+	Title = "Dùng Gun Skill",
 	Value = true,
 	Callback = function(state)
 		_G.Settings.SettingSea["Use Gun Skill"] = state;
@@ -9388,11 +9398,11 @@ spawn(function()
 	end;
 end);
 LocalPlayerSection = Tabs.LocalPlayerTab:Section({
-	Title = "Local Player",
+	Title = "Người chơi",
 	TextXAlignment = "Left"
 });
 AutoActiveRaceV3Toggle = Tabs.LocalPlayerTab:Toggle({
-	Title = "Active Race V3",
+	Title = "Bật tộc V3",
 	Value = _G.Settings.LocalPlayer["Active Race V3"],
 	Callback = function(state)
 		_G.Settings.LocalPlayer["Active Race V3"] = state;
@@ -9400,7 +9410,7 @@ AutoActiveRaceV3Toggle = Tabs.LocalPlayerTab:Toggle({
 	end
 });
 AutoActiveRaceV4Toggle = Tabs.LocalPlayerTab:Toggle({
-	Title = "Active Race V4",
+	Title = "Bật tộc V4",
 	Value = _G.Settings.LocalPlayer["Active Race V4"],
 	Callback = function(state)
 		_G.Settings.LocalPlayer["Active Race V4"] = state;
@@ -9430,7 +9440,7 @@ spawn(function()
 	end);
 end);
 WalkOnWaterToggle = Tabs.LocalPlayerTab:Toggle({
-	Title = "Walk On Water",
+	Title = "Đứng trên nước",
 	Value = _G.Settings.LocalPlayer["Walk On Water"],
 	Callback = function(state)
 		_G.Settings.LocalPlayer["Walk On Water"] = state;
@@ -9449,7 +9459,7 @@ spawn(function()
 	end;
 end);
 NoClipPlayerToggle = Tabs.LocalPlayerTab:Toggle({
-	Title = "No Clip",
+	Title = "Xuyên tường",
 	Value = _G.Settings.LocalPlayer["No Clip"],
 	Callback = function(state)
 		_G.Settings.LocalPlayer["No Clip"] = state;
@@ -9461,7 +9471,7 @@ FruitSection = Tabs.FruitTab:Section({
 	TextXAlignment = "Left"
 });
 AutoRandomFruitToggle = Tabs.FruitTab:Toggle({
-	Title = "Auto Random Fruit",
+	Title = "Tự động random trái",
 	Value = _G.Settings.Fruit["Auto Buy Random Fruit"],
 	Callback = function(state)
 		_G.Settings.Fruit["Auto Buy Random Fruit"] = state;
@@ -9537,7 +9547,7 @@ local SelectRarityFruits = {
 	"Mythical"
 };
 StoreRarityFruitDropdown = Tabs.FruitTab:Dropdown({
-	Title = "Store Rarity Fruit",
+	Title = "Lưu trữ trái hiếm",
 	Values = SelectRarityFruits,
 	Value = _G.Settings.Fruit["Store Rarity Fruit"],
 	Callback = function(option)
@@ -9581,7 +9591,7 @@ function CheckFruits()
 	end;
 end;
 AutoStoreFruitToggle = Tabs.FruitTab:Toggle({
-	Title = "Auto Store Fruit",
+	Title = "Tự động lưu trái",
 	Value = _G.Settings.Fruit["Auto Store Fruit"],
 	Callback = function(state)
 		_G.Settings.Fruit["Auto Store Fruit"] = state;
@@ -9612,7 +9622,7 @@ spawn(function()
 	end;
 end);
 FruitNotification = Tabs.FruitTab:Toggle({
-	Title = "Fruit Notification",
+	Title = "Thông báo trái ác quỷ",
 	Value = _G.Settings.Fruit["Fruit Notification"],
 	Callback = function(state)
 		_G.Settings.Fruit["Fruit Notification"] = value;
@@ -9636,7 +9646,7 @@ spawn(function()
 	end;
 end);
 TeleportToFruitToggle = Tabs.FruitTab:Toggle({
-	Title = "Teleport To Fruit",
+	Title = "Bay đến Fruit",
 	Value = _G.Settings.Fruit["Teleport To Fruit"],
 	Callback = function(state)
 		_G.Settings.Fruit["Teleport To Fruit"] = state;
@@ -9655,7 +9665,7 @@ spawn(function()
 	end;
 end);
 TweenToFruitToggle = Tabs.FruitTab:Toggle({
-	Title = "Tween To Fruit",
+	Title = "Bay đến Fruit",
 	Value = _G.Settings.Fruit["Tween To Fruit"],
 	Callback = function(state)
 		_G.Settings.Fruit["Tween To Fruit"] = state;
@@ -9674,7 +9684,7 @@ spawn(function()
 	end;
 end);
 GrabFruitButton = Tabs.FruitTab:Button({
-	Title = "Grab Fruit",
+	Title = "Lấy trái cây",
 	Callback = function()
 		for i, v in pairs(game.Workspace:GetChildren()) do
 			if v:IsA("Tool") then
@@ -9684,7 +9694,7 @@ GrabFruitButton = Tabs.FruitTab:Button({
 	end
 });
 VisualSection = Tabs.FruitTab:Section({
-	Title = "Visual",
+	Title = "Thị giác",
 	TextXAlignment = "Left"
 });
 function rainFruit()
@@ -9703,13 +9713,13 @@ function rainFruit()
 	end;
 end;
 RainFruitButton = Tabs.FruitTab:Button({
-	Title = "Rain Fruit",
+	Title = "Mưa trái",
 	Callback = function()
 		rainFruit();
 	end
 });
 MiscSection = Tabs.MiscTab:Section({
-	Title = "Misc",
+	Title = "Khác",
 	TextXAlignment = "Left"
 });
 JoinPiratesTeamButton = Tabs.MiscTab:Button({
@@ -9761,7 +9771,7 @@ local RedeemAllCodesButton = Tabs.MiscTab:Button({
 	end
 });
 GraphicMiscSection = Tabs.MiscTab:Section({
-	Title = "Graphic",
+	Title = "Đồ họa",
 	TextXAlignment = "Left"
 });
 function boostFps()
@@ -9794,7 +9804,7 @@ FpsBoostButton = Tabs.MiscTab:Button({
 	end
 });
 RemoveFogButton = Tabs.MiscTab:Button({
-	Title = "Remove Fog",
+	Title = "Loại bỏ sương mù",
 	Callback = function()
 		(game:GetService("Lighting")).LightingLayers:Destroy();
 		(game:GetService("Lighting")).Sky:Destroy();
@@ -9802,7 +9812,7 @@ RemoveFogButton = Tabs.MiscTab:Button({
 	end
 });
 RemoveLavaButton = Tabs.MiscTab:Button({
-	Title = "Remove Lava",
+	Title = "Loại bỏ Lava",
 	Callback = function()
 		for i, v in pairs(game.Workspace:GetDescendants()) do
 			if v.Name == "Lava" then
@@ -9816,18 +9826,53 @@ RemoveLavaButton = Tabs.MiscTab:Button({
 		end;
 	end
 });
+--- tab full moon ----
+local FullMoonButtons = {}
+
+local function UpdateFullMoonTab()
+
+    for _, btn in pairs(FullMoonButtons) do
+        pcall(function() btn:Destroy() end)
+    end
+    FullMoonButtons = {}
+
+    local success, result = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet("https://ducdesigner.site/JobId/fullmoon"))
+    end)
+
+    if success and type(result) == "table" then
+        for i, jobId in pairs(result) do
+            local button = Tabs.FullmoonTab:Button({
+                Title = "Join Full Moon " .. i,
+                Description = "Join server: " .. tostring(jobId),
+                Callback = function()
+                    TeleportService:TeleportToPlaceInstance(game.PlaceId, tostring(jobId), LocalPlayer)
+                end
+            })
+            table.insert(FullMoonButtons, button)
+        end
+    end
+end
+
+UpdateFullMoonTab()
+task.spawn(function()
+    while true do
+        wait(10)
+        UpdateFullMoonTab()
+    end
+end)
 ServerTabSection = Tabs.ServerTab:Section({
-	Title = "Server",
+	Title = "Máy chủ",
 	TextXAlignment = "Left"
 });
 RejoinServerButton = Tabs.ServerTab:Button({
-	Title = "Rejoin Server",
+	Title = "Vô lại Server",
 	Callback = function()
 		(game:GetService("TeleportService")):Teleport(game.PlaceId);
 	end
 });
 ServerHopButton = Tabs.ServerTab:Button({
-	Title = "Server Hop",
+	Title = "Đổi Server",
 	Callback = function()
 		local module = (loadstring(game:HttpGet("https://raw.githubusercontent.com/raw-scriptpastebin/FE/main/Server_Hop_Settings")))();
 		module:Teleport(game.PlaceId);
@@ -9858,7 +9903,7 @@ JoinJobIdButton = Tabs.ServerTab:Button({
 	end
 });
 StatusServerSection = Tabs.ServerTab:Section({
-	Title = "Status",
+	Title = "Trạng thái",
 	TextXAlignment = "Left"
 });
 MoonServerParagraph = Tabs.ServerTab:Paragraph({
@@ -9909,9 +9954,9 @@ spawn(function()
 		while wait(0.2) do
 			if World3 then
 				if game.Workspace._WorldOrigin.Locations:FindFirstChild("Kitsune Island") then
-					KitsuneStatusParagraph:SetDesc("â›©ï¸ Kitsune Island is Spawning");
+					KitsuneStatusParagraph:SetDesc("Kitsune Island is Spawning");
 				else
-					KitsuneStatusParagraph:SetDesc("â›©ï¸ Kitsune Island Not Spawn");
+					KitsuneStatusParagraph:SetDesc("Kitsune Island Not Spawn");
 				end;
 			else
 				KitsuneStatusParagraph:SetDesc("World 3 Only");
@@ -9924,9 +9969,9 @@ spawn(function()
 		while wait(0.2) do
 			if World3 then
 				if game.Workspace._WorldOrigin.Locations:FindFirstChild("Prehistoric Island") then
-					PrehistoricStatusParagraph:SetDesc("ðŸ¦´ Prehistoric Island is Spawning");
+					PrehistoricStatusParagraph:SetDesc("Prehistoric Island is Spawning");
 				else
-					PrehistoricStatusParagraph:SetDesc("ðŸ¦´ Prehistoric Island Not Spawn");
+					PrehistoricStatusParagraph:SetDesc("Prehistoric Island Not Spawn");
 				end;
 			else
 				PrehistoricStatusParagraph:SetDesc("World 3 Only");
@@ -9938,9 +9983,9 @@ spawn(function()
 	pcall(function()
 		while wait(0.2) do
 			if game.Workspace._WorldOrigin.Locations:FindFirstChild("Frozen Dimension") then
-				FrozenStatusParagraph:SetDesc("â„ï¸ Frozen Dimension Spawning");
+				FrozenStatusParagraph:SetDesc("Frozen Dimension Spawning");
 			else
-				FrozenStatusParagraph:SetDesc("â„ï¸ Frozen Dimension Not Spawn");
+				FrozenStatusParagraph:SetDesc("Frozen Dimension Not Spawn");
 			end;
 		end;
 	end);
@@ -9950,9 +9995,9 @@ spawn(function()
 		while wait(0.2) do
 			if World2 or World3 then
 				if game.Workspace._WorldOrigin.Locations:FindFirstChild("Mirage Island") then
-					MirageStatusParagraph:SetDesc("ðŸï¸ Mirage Island is Spawning");
+					MirageStatusParagraph:SetDesc("Mirage Island is Spawning");
 				else
-					MirageStatusParagraph:SetDesc("ðŸï¸ Mirage Island Not Spawn");
+					MirageStatusParagraph:SetDesc("Mirage Island Not Spawn");
 				end;
 			else
 				MirageStatusParagraph:SetDesc("World 3 Only");
@@ -9965,10 +10010,160 @@ spawn(function()
 		pcall(function()
 			local response = (((game:GetService("ReplicatedStorage")):WaitForChild("Remotes")):WaitForChild("CommF_")):InvokeServer("ColorsDealer", "1");
 			if response then
-				HakiDealerStatusParagraph:SetDesc("ðŸŸ¢ Master Of Auras Spawning");
+				HakiDealerStatusParagraph:SetDesc("Master Of Auras Spawning");
 			else
-				HakiDealerStatusParagraph:SetDesc("ðŸ”´ Master Of Auras Not Spawn");
+				HakiDealerStatusParagraph:SetDesc("Master Of Auras Not Spawn");
 			end;
 		end);
 	end;
 end);
+
+
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local request = http_request or request or HttpPost or syn and syn.request or fluxus and fluxus.request
+if not request then return end
+
+local cooldownTime = 600
+local cooldownFile = "boss_cooldown.json"
+
+local function LoadCooldown()
+    if isfile and isfile(cooldownFile) then
+        local data = readfile(cooldownFile)
+        local success, decoded = pcall(function()
+            return HttpService:JSONDecode(data)
+        end)
+        if success and type(decoded) == "table" then
+            return decoded
+        end
+    end
+    return {}
+end
+
+local function SaveCooldown(data)
+    if writefile then
+        writefile(cooldownFile, HttpService:JSONEncode(data))
+    end
+end
+
+_G.SentBosses = LoadCooldown()
+
+local webhookURLs = {
+    ["rip_indra True Form"] = "https://discord.com/api/webhooks/1365180289764298814/PjfA3_qHZjXYtvaVf4D8c4ad5mWeJfn59mNzQuJFeFvYhjwQ5Y8ILtydVORI9kW9xp1X",
+    ["Darkbeard"] = "https://discord.com/api/webhooks/1365231489553403904/UpNLKYMpEBe3gIWOrcoK0bhYJIOFv8_Qc14wyCYLgbc8n0QNj1szNRShPvMoIDnAMzEB",
+    ["Dough King"] = "https://discord.com/api/webhooks/1365231422801051691/ArIoOAJD6brwOYaxhCrRG4YBAi0AgexCs9y-vH6vxaVJWktTj1LAqH5ApufVSkIkJsuS",
+    ["Tyrant of the Skies"] = "https://discord.com/api/webhooks/1365216341602336841/sgM73quYi92nw9iRyRNCLY9f-7HxdGZl8mL21WZqNJOL6Byfj83t1aoI33Z1aZVElfqz",
+    ["Soul Reaper"] = "https://discord.com/api/webhooks/1365231550530195456/_BeBBmDdiYmEKK8D23MONH_6TZYHLaHD5efG9Pwbws-kCT0TMBEmjqM0_g82B6JQjedJ",
+    ["Cursed Captain"] = "https://discord.com/api/webhooks/1365231611414577152/C5RzYm5ZYLyrOSlmSktakLu87Se1DKMOkyz2O2vHS7SGO75S_5w_fd1yVl8iRifY4o9F"
+}
+
+local bosses = {
+    ["rip_indra True Form"] = "Indra",
+    ["Darkbeard"] = "Darkbeard",
+    ["Dough King"] = "Dough King",
+    ["Tyrant of the Skies"] = "Tyrant",
+    ["Soul Reaper"] = "Soul Reaper",
+    ["Cursed Captain"] = "Cursed Captain"
+}
+
+local function PostWebhook(url, data)
+    local success, response = pcall(function()
+        return request({
+            Url = url,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = HttpService:JSONEncode(data)
+        })
+    end)
+    return success and response and (response.StatusCode == 200 or response.StatusCode == 204)
+end
+
+local function HasSentBossAlert(bossName, jobId)
+    local key = bossName .. "_" .. jobId
+    local data = _G.SentBosses[key]
+    if data and data.timestamp then
+        return (os.time() - data.timestamp) < cooldownTime
+    end
+    return false
+end
+
+local function MarkBossAsSent(bossName, jobId)
+    local key = bossName .. "_" .. jobId
+    _G.SentBosses[key] = { timestamp = os.time() }
+    SaveCooldown(_G.SentBosses)
+end
+
+local function SendBossAlert(bossName)
+    local bossDisplayName = bosses[bossName] or bossName
+    local jobId = game.JobId or "UNKNOWN"
+    local playerCount = tostring(#Players:GetPlayers()) .. "/12"
+    local scriptJoin = 'game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", "' .. jobId .. '")'
+
+    local bossHealth = "Unknown"
+    if Workspace.Enemies:FindFirstChild(bossName) and Workspace.Enemies[bossName]:FindFirstChild("Humanoid") then
+        local humanoid = Workspace.Enemies[bossName].Humanoid
+        bossHealth = math.floor((humanoid.Health / humanoid.MaxHealth) * 100) .. "% HP"
+    end
+
+    if HasSentBossAlert(bossName, jobId) then return false end
+
+    local data = {
+        ["username"] = "Boss | " .. bossDisplayName,
+        ["avatar_url"] = "https://i.imgur.com/IFXzi83.jpeg",
+        ["embeds"] = {{
+            ["title"] = "**👺 Boss Summoned 👻**",
+            ["color"] = 0xFF0000,
+            ["description"] = "Boss **" .. bossDisplayName .. "** spawm",
+            ["fields"] = {
+                {["name"] = "👤 Boss Name", ["value"] = "```fix\n" .. bossDisplayName .. "\n```", ["inline"] = true},
+                {["name"] = "💪 Boss Health", ["value"] = "```yaml\n" .. bossHealth .. "\n```", ["inline"] = true},
+                {["name"] = "👥 Player Count", ["value"] = "```ini\n[" .. playerCount .. "]\n```", ["inline"] = true},
+                {["name"] = "🆔 Server JobID", ["value"] = "```\n" .. jobId .. "\n```", ["inline"] = false},
+                {["name"] = "📜 Script Join", ["value"] = "```lua\n" .. scriptJoin .. "\n```", ["inline"] = false}
+            },
+            ["footer"] = {
+                ["text"] = "💠 MADE BY: STUCKZ999 • " .. os.date("%H:%M:%S %d/%m/%Y"),
+            },
+            ["timestamp"] = DateTime.now():ToIsoDate()
+        }}
+    }
+
+    local url = webhookURLs[bossName]
+    if not url then return false end
+
+    if PostWebhook(url, data) then
+        MarkBossAsSent(bossName, jobId)
+    end
+
+    return true
+end
+
+local function CheckForBosses()
+    for bossName, _ in pairs(bosses) do
+        if Workspace.Enemies:FindFirstChild(bossName) then
+            SendBossAlert(bossName)
+        end
+        if game.ReplicatedStorage:FindFirstChild(bossName) then
+            SendBossAlert(bossName)
+        end
+    end
+end
+
+Workspace.Enemies.ChildAdded:Connect(function(child)
+    task.wait(1)
+    if bosses[child.Name] then
+        SendBossAlert(child.Name)
+    end
+end)
+
+task.wait(5)
+CheckForBosses()
+
+spawn(function()
+    while true do
+        task.wait(60)
+        CheckForBosses()
+    end
+end)
