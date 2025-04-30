@@ -1,9 +1,10 @@
+repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
+
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local player = Players.LocalPlayer
 
-local Keysystem = (loadstring(game:HttpGet("https://relzhub.farrghii.com/config/keysystem.lua")))();
 local WindUI = (loadstring(game:HttpGet("https://tree-hub.vercel.app/api/UI/WindUI")))();
 local Window = WindUI:CreateWindow({
 	Title = "Trẩu Roblox [ FREEPREMIUM ]",
@@ -115,7 +116,7 @@ local Tabs = {
 		Title = "Tab Full Moon",
 		Icon = "server",
 		Desc = "Server Full Moon"
-	})
+	}),
 	ServerTab = Window:Tab({
 		Title = "Tab server",
 		Icon = "server",
@@ -9830,36 +9831,37 @@ RemoveLavaButton = Tabs.MiscTab:Button({
 local FullMoonButtons = {}
 
 local function UpdateFullMoonTab()
+	for _, btn in pairs(FullMoonButtons) do
+		pcall(function() btn:Destroy() end)
+	end
+	table.clear(FullMoonButtons)
 
-    for _, btn in pairs(FullMoonButtons) do
-        pcall(function() btn:Destroy() end)
-    end
-    FullMoonButtons = {}
+	local success, result = pcall(function()
+		return HttpService:JSONDecode(game:HttpGet("https://ducdesigner.site/JobId/fullmoon"))
+	end)
 
-    local success, result = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet("https://ducdesigner.site/JobId/fullmoon"))
-    end)
-
-    if success and type(result) == "table" then
-        for i, jobId in pairs(result) do
-            local button = Tabs.FullmoonTab:Button({
-                Title = "Join Full Moon " .. i,
-                Description = "Join server: " .. tostring(jobId),
-                Callback = function()
-                    TeleportService:TeleportToPlaceInstance(game.PlaceId, tostring(jobId), LocalPlayer)
-                end
-            })
-            table.insert(FullMoonButtons, button)
-        end
-    end
+	if success and type(result) == "table" then
+		for i, jobId in pairs(result) do
+			local button = Tabs.FullmoonTab:Button({
+				Title = "Join Full Moon " .. i,
+				Desc = "Click để vào server",
+				Callback = function()
+					TeleportService:TeleportToPlaceInstance(game.PlaceId, tostring(jobId), player)
+				end
+			})
+			table.insert(FullMoonButtons, button)
+		end
+	else
+		warn("Lỗi api rồi các ông cháu")
+	end
 end
 
 UpdateFullMoonTab()
 task.spawn(function()
-    while true do
-        wait(10)
-        UpdateFullMoonTab()
-    end
+	while true do
+		task.wait(10)
+		pcall(UpdateFullMoonTab)
+	end
 end)
 ServerTabSection = Tabs.ServerTab:Section({
 	Title = "Máy chủ",
