@@ -8,7 +8,6 @@ end;
 print("--------------------------------------------------------------------------");
 local Update = (loadstring(Game:HttpGet("https://raw.githubusercontent.com/lnaa323sda/scki343/refs/heads/main/doughking")))();
 local Library = Update:Window({
-	Title = "test"
 	SubTitle = "    discord.gg/kK2vMrUsQy",
 	Size = UDim2.new(0, 470, 0, 320),
 	TabWidth = 140
