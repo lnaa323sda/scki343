@@ -3106,7 +3106,7 @@ ImageButton.BorderSizePixel = 0
 ImageButton.Position = UDim2.new(0.120833337 - 0.10, 0, 0.0952890813 + 0.01, 0)
 ImageButton.Size = UDim2.new(0, 40, 0, 40)
 ImageButton.Draggable = true
-ImageButton.Image = "rbxassetid://100666805146072"
+ImageButton.Image = "rbxassetid://138458376384113"
 
 UICorner.CornerRadius = UDim.new(1, 0)
 UICorner.Parent = ImageButton
@@ -3368,7 +3368,7 @@ end)
 
 -- Click event: copy Discord link
 Discord.MouseButton1Click:Connect(function()
-    (setclipboard or toclipboard)("https://discord.gg/SpJQ3XVEJ8")
+    (setclipboard or toclipboard)("https://discord.gg/")
     wait(.1)
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = "Discord",
@@ -4758,41 +4758,41 @@ end
 
 local Window = library:NaJa()
 
-local Main = Window:Tab("General","14477284625")
-local AutoQuest = Window:Tab("Items Quest","11446859498")
-local Events = Window:Tab("Auto Sea Event","10734941354")
-local Racer = Window:Tab("Race V4 & Esp","10747372167")
+local Main = Window:Tab("Cày","14477284625")
+local AutoQuest = Window:Tab("Vật Phẩm","11446859498")
+local Events = Window:Tab("Sự kiện biển","10734941354")
+local Racer = Window:Tab("Tộc V4 & Esp","10747372167")
 local RaidFruit = Window:Tab("Raid & Fruits","10734975692")
-local Playerrss = Window:Tab("Teleport & PVP","10734910680")
-local MiscShop = Window:Tab("Shopee & Misc","10723434557")
-local AutoStatus = Window:Tab("Status Server","10709770317")
+local Playerrss = Window:Tab("Dịch chuyển & PVP","10734910680")
+local MiscShop = Window:Tab("Cửa hàng & Misc","10723434557")
+local AutoStatus = Window:Tab("Trạng thái","10709770317")
 
-local AutoFarm = Main:Section("Auto Main Farm","Left")
-local Settings = Main:Section("Settings Mastery","Right")
+local AutoFarm = Main:Section("Cày","Left")
+local Settings = Main:Section("Cài đặt thông thạo","Right")
 
-local Items = AutoQuest:Section("Auto Items Quest","Left")
-local Dragon = AutoQuest:Section("Auto Dragon Quest","Right")
+local Items = AutoQuest:Section("Vật phẩm","Left")
+local Dragon = AutoQuest:Section("Nhiệm vụ Dragon","Right")
 
-local Volcano = Events:Section("Auto Prehistoric","Left")
-local Events = Events:Section("Auto Events","Right")
+local Volcano = Events:Section("Núi lửa","Left")
+local Events = Events:Section("Biển","Right")
 
-local Trailers = Racer:Section("Auto Trailer V4","Left")
-local Espbruh = Racer:Section("Auto Esp Player","Right")
+local Trailers = Racer:Section("Tộc V4","Left")
+local Espbruh = Racer:Section("Định vị","Right")
 
-local AutoRaid = RaidFruit:Section("Auto Raid Fruit","Left")
-local Autofruit = RaidFruit:Section("Auto Random Fruit","Right")
+local AutoRaid = RaidFruit:Section("Raid Fruit","Left")
+local Autofruit = RaidFruit:Section("Random Fruit","Right")
 
-local Teleport = Playerrss:Section("Teleport Island","Left")
-local Playersss = Playerrss:Section("Players Combat","Right")
+local Teleport = Playerrss:Section("Dịch chuyển","Left")
+local Playersss = Playerrss:Section("Combat","Right")
 
-local TikTokShop = MiscShop:Section("Lazada Shopee","Left")
-local AutoMisc = MiscShop:Section("Misc Auto","Right")
+local TikTokShop = MiscShop:Section("Cửa hàng","Left")
+local AutoMisc = MiscShop:Section("Khác","Right")
 
-local Status = AutoStatus:Section("Status Number","Left")
-local StatusTime = AutoStatus:Section("Status Time Game","Right")
+local Status = AutoStatus:Section("Điểm","Left")
+local StatusTime = AutoStatus:Section("Trạng thái thời gian","Right")
 
 _G.SelectWeapon = "Melee"
-  AutoFarm:Dropdown("Select Weapons",{"Melee","Sword","Gun","Blox Fruit"},{"Melee"},function(v)
+  AutoFarm:Dropdown("Chọn vũ khí",{"Melee","Sword","Gun","Blox Fruit"},{"Melee"},function(v)
     _G.SelectWeapon = v
      end)
 
@@ -4836,7 +4836,7 @@ _G.SelectWeapon = "Melee"
      	end
     end)
 
-   AutoFarm:Toggle("Auto Farm Level",false,function(value)
+   AutoFarm:Toggle("Tự động cày cấp",false,function(value)
     _G.AutoFarm = value
       StopTween(_G.AutoFarm)		
        end)
@@ -4939,7 +4939,7 @@ _G.SelectWeapon = "Melee"
         end
     end)
   
-  AutoFarm:Toggle("Auto Kill Near | Mob Aura", false,function(value)
+  AutoFarm:Toggle("Tự động cày quái gần", false,function(value)
          _G.AutoNear = value
         StopTween(_G.AutoNear)
     end)
@@ -4977,20 +4977,20 @@ _G.SelectWeapon = "Melee"
              end
           end)
           
-     AutoFarm:Seperator("Auto Farm Mastery")       
+     AutoFarm:Seperator("Tự động cày thông thạo")       
      
      if World1 or World2 then
-     AutoFarm:Dropdown("Select Regime Farm",{"Farm Level Mastery", "Farm Level Mastery No Quest"},{"Farm Level Mastery No Quest"},function(Value)
+     AutoFarm:Dropdown("Chọn chế độ farm",{"Farm Level Mastery", "Farm Level Mastery No Quest"},{"Farm Level Mastery No Quest"},function(Value)
        _G.selectFruitFarm = Value
       end)
     end      
       if World3 then
-    AutoFarm:Dropdown("Select Regime Farm",{"Farm Level Mastery", "Farm Level Mastery No Quest","Farm Bone Mastery","Farm Cake Mastery"},{"Farm Level Mastery No Quest"},function(Value)
+    AutoFarm:Dropdown("Chọn chế độ farm",{"Farm Level Mastery", "Farm Level Mastery No Quest","Farm Bone Mastery","Farm Cake Mastery"},{"Farm Level Mastery No Quest"},function(Value)
        _G.selectFruitFarm = Value
       end)
     end      
 
-      AutoFarm:Toggle("Auto Farm Mastery Fruit", false,function(value)
+      AutoFarm:Toggle("Cày thông thạo Fruit", false,function(value)
          _G.AutoFarmFruits = value 
          StopTween(_G.AutoFarmFruits)
         end)  
@@ -5225,9 +5225,9 @@ spawn(function()
     end
 end)
 
-      AutoFarm:Seperator("Auto Chest Farm")       
+      AutoFarm:Seperator("Tự động farm rương")       
          
-       AutoFarm:Toggle("Auto Farm Chest", false,function(value)
+       AutoFarm:Toggle("Tự động farm rương", false,function(value)
          _G.FarmChest = value 
          StopTween(_G.FarmChest)
         end)  
@@ -5258,9 +5258,9 @@ end)
 	end
 end)
    
-      AutoFarm:Seperator("Auto Collect Berry")       
+      AutoFarm:Seperator("Tự động nhặt Berry")       
        
-    AutoFarm:Toggle("Auto Farm Berries", false,function(value)
+    AutoFarm:Toggle("Tự động cày Berries", false,function(value)
          _G.CollectBerry = value 
          StopTween(_G.CollectBerry)
         end)               
@@ -5319,19 +5319,19 @@ end)
 
 
    if World3 then
-       AutoFarm:Seperator("Bone Farm")
+       AutoFarm:Seperator("Cày xương")
                 
     Boneyou = AutoFarm:Label("Check Bone")
                 
     spawn(function()
         while wait() do
             pcall(function()
-                Boneyou:Set("Your Bone : "..(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Bones","Check")))
+                Boneyou:Set("Xương : "..(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Bones","Check")))
             end)
         end
     end)
      
-     AutoFarm:Toggle("Auto Farm Bone", false,function(value)
+     AutoFarm:Toggle("Tự động cày xương", false,function(value)
          game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
      		_G.FarmBone = value 
          StopTween(_G.FarmBone)
@@ -5398,7 +5398,7 @@ end)
         end
     end)     
     
-        AutoFarm:Toggle("Seperator Hallow Scythe", false,function(value)         
+        AutoFarm:Toggle("Đánh Soul Reaper", false,function(value)         
      	_G.Hallow = value 
          StopTween(_G.Hallow)
        end)
@@ -5435,7 +5435,7 @@ end)
          end
      end)
       
-      AutoFarm:Toggle("Auto Trade Bone", false,function(value)         
+      AutoFarm:Toggle("Tự động đổi xương", false,function(value)         
      		_G.Rdbone = value 
        end)
        
@@ -5447,7 +5447,7 @@ end)
             end
          end)  
          
-         AutoFarm:Toggle("Auto Pray", false,function(value)         
+         AutoFarm:Toggle("Cầu nguyện", false,function(value)         
      		_G.Pray = value 
        end)
        
@@ -5463,7 +5463,7 @@ end)
         end)
     end)		
     
-        AutoFarm:Toggle("Auto Try Luck", false,function(value)         
+        AutoFarm:Toggle("Thử vận ​​may", false,function(value)         
      		_G.Trylux = value 
        end)
            
@@ -5480,8 +5480,53 @@ end)
     end)      
     
        AutoFarm:Seperator("Tyrant of the Skies Farm")
+
+       function checkEagleEye()
+        local islandModel = (game:GetService("Workspace")).Map.TikiOutpost.IslandModel
+        local targetEyes = {
+            Eye1 = false,
+            Eye2 = false,
+            Eye3 = false,
+            Eye4 = false
+        }
+        
+        local foundCount = 0
+        
+        for _, v in ipairs(islandModel:GetChildren()) do
+            if string.match(v.Name, "^Eye%d$") and targetEyes[v.Name] ~= nil then
+                if tonumber(v.Transparency) == 0 then
+                    targetEyes[v.Name] = true
+                    foundCount = foundCount + 1
+                end
+            end
+        end
+        
+        return foundCount, targetEyes
+    end
+    
+    local function updateTyrantStatus()
+        local foundCount, eyeStatus = checkEagleEye()
+        
+        if foundCount == 4 then
+            TyrantStatus:Set("Status : Full [4/4] - Tyrant Boss Spawn")
+            TyrantStatus:SetColor(Color3.fromRGB(255, 255, 255)) -- Green
+        else
+            TyrantStatus:Set("Status : [" .. foundCount .. "/4] Eyes")
+            TyrantStatus:SetColor(Color3.fromRGB(255, 255, 255)) -- Orange
+        end
+    end
+    
+    TyrantStatus = AutoFarm:Label("Check mắt")
+    
+
+    spawn(function()
+        while true do
+            updateTyrantStatus()
+            wait(10)
+        end
+    end)
               
-       AutoFarm:Toggle("Auto Farm Tyrant of the Skies", false,function(value)         
+       AutoFarm:Toggle("Cày Tyrant of the Skies", false,function(value)         
      	_G.FarmDaiBan = value 
      	StopTween(_G.FarmDaiBan)
        end)
@@ -5577,26 +5622,26 @@ end)
     end
 end)
     
-        AutoFarm:Seperator("Katakuri Farm")
+        AutoFarm:Seperator("Cày Katakuri")
 
    CakePrinceStatus = AutoFarm:Label("Check Cake Prince")
     task.spawn(function()
        while task.wait() do
           pcall(function()
            if string.len(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner")) == 88 then
-           CakePrinceStatus:Set("Killed : "..string.sub(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner"),39,41)..' / 500')
+           CakePrinceStatus:Set("Còn : "..string.sub(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner"),39,41)..' / 500')
           elseif string.len(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner")) == 87 then
-          CakePrinceStatus:Set("Killed : "..string.sub(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner"),39,40)..' / 500')
+          CakePrinceStatus:Set("Còn : "..string.sub(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner"),39,40)..' / 500')
            elseif string.len(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner")) == 86 then
-        CakePrinceStatus:Set("Killed : "..string.sub(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner"),39,39)..' / 500')
+        CakePrinceStatus:Set("Còn : "..string.sub(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner"),39,39)..' / 500')
         else
-      CakePrinceStatus:Set("Prince King Spawned ✅")
+      CakePrinceStatus:Set("Đã triệu hồi ✅")
       end
     end)
   end
   end)
  
-       AutoFarm:Toggle("Auto Farm Cake Prince", false,function(value)         
+       AutoFarm:Toggle("Cày tư lệnh bột", false,function(value)         
      	_G.FarmCake = value 
      	StopTween(_G.FarmCake)
        end)
@@ -5695,7 +5740,7 @@ end)
     end
 end)
 
-       AutoFarm:Toggle("Auto Katakuri V2", false,function(value)         
+       AutoFarm:Toggle("Tự động Katakuri V2", false,function(value)         
      	_G.Fullykatakuri = value 
     	StopTween(_G.Fullykatakuri)
        end)
@@ -5811,7 +5856,7 @@ end)
 		end
 	end)
 	
-	AutoFarm:Toggle("Auto Start Chocola", false,function(value)         
+	AutoFarm:Toggle("Tự động cày Chocola", false,function(value)         
      	_G.FarmChocola = value 
     	StopTween(_G.FarmChocola)
        end)
@@ -5876,43 +5921,43 @@ end)
         end
     end)     
 	
- end	
-
-     if World1 then
-       _G.SelectBoss = "The Gorilla King"
-       AutoFarm:Dropdown("Auto Select Boss",{"The Saw", "The Gorilla King", "Bobby", "Yeti", "Mob Leader", "Vice Admiral", "Warden", "Chief Warden", "Swan", "Magma Admiral", "Fishman Lord", "Wysper", "Thunder God", "Cyborg", "Saber Expert"},{"The Gorilla King"},function(Value)
-        _G.SelectBoss = Value
-       end)
-   	  elseif World2 then      
-       _G.SelectBoss = "Diamond"
-       AutoFarm:Dropdown("Auto Select Boss",{"Diamond", "Jeremy", "Fajita", "Don Swan", "Smoke Admiral", "Cursed Captain", "Darkbeard", "Order", "Awakened Ice Admiral", "Tide Keeper"},{"Diamond"},function(Value)
-       _G.SelectBoss = Value
-      end)      
-     elseif World3 then      
-       _G.SelectBoss = "Stone"
-       AutoFarm:Dropdown("Auto Select Boss",{"Stone", "Island Empress", "Rocket Admiral", "Captain Elephant", "Beautiful Pirate", "rip_indra True Form", "Longma", "Soul Reaper", "Cake Queen", "Cake Prince", "Dough King"
-},{"Stone"},function(Value)
-        _G.SelectBoss = Value
-       end)      
-    end     
+ end	  
     
-       AutoFarm:Seperator("Auto Boss Farm")
+       AutoFarm:Seperator("Boss")
       
     BossSpawn = AutoFarm:Label("Auto Check Boss")
+
+    if World1 then
+        _G.SelectBoss = "The Gorilla King"
+        AutoFarm:Dropdown("Tự động chọn Boss",{"The Saw", "The Gorilla King", "Bobby", "Yeti", "Mob Leader", "Vice Admiral", "Warden", "Chief Warden", "Swan", "Magma Admiral", "Fishman Lord", "Wysper", "Thunder God", "Cyborg", "Saber Expert"},{"The Gorilla King"},function(Value)
+         _G.SelectBoss = Value
+        end)
+          elseif World2 then      
+        _G.SelectBoss = "Diamond"
+        AutoFarm:Dropdown("Tự động chọn Boss",{"Diamond", "Jeremy", "Fajita", "Don Swan", "Smoke Admiral", "Cursed Captain", "Darkbeard", "Order", "Awakened Ice Admiral", "Tide Keeper"},{"Diamond"},function(Value)
+        _G.SelectBoss = Value
+       end)      
+      elseif World3 then      
+        _G.SelectBoss = "Stone"
+        AutoFarm:Dropdown("Tự động chọn Boss",{"Stone", "Island Empress", "Rocket Admiral", "Captain Elephant", "Beautiful Pirate", "rip_indra True Form", "Longma", "Soul Reaper", "Cake Queen", "Cake Prince", "Dough King"
+ },{"Stone"},function(Value)
+         _G.SelectBoss = Value
+        end)      
+     end    
        
        spawn(function()
     while wait() do
         pcall(function()
             if game:GetService("ReplicatedStorage"):FindFirstChild(_G.SelectBoss) or game:GetService("Workspace").Enemies:FindFirstChild(_G.SelectBoss) then
-                BossSpawn:Set("Status :Boss Spawn ✅")
+                BossSpawn:Set("Trạng thái :Boss Spawn ✅")
             else
-                BossSpawn:Set("Status :Boss Not Spawn ❌")
+                BossSpawn:Set("Trạng thái :Boss Not Spawn ❌")
                end
             end)
           end
        end)
  
-    AutoFarm:Toggle("Auto Farm Boss", false,function(value)         
+    AutoFarm:Toggle("Tự động cày Boss", false,function(value)         
       	_G.AutoBoss = value 
        	StopTween(_G.AutoBoss)
        end)
@@ -5947,10 +5992,10 @@ end)
         end
     end)     
     
-      AutoFarm:Seperator("Auto Farm Material")
+      AutoFarm:Seperator("Cày nguyên liệu")
       
       if World1 then
-      AutoFarm:Dropdown("Select Material",{"Farm Leather + Scrap Metal","Farm Fish Tail","Farm Magma Ore","Farm Angel Wings"},{"Farm Fish Tail"},function(Value)
+      AutoFarm:Dropdown("Chọn nguyên liệu",{"Farm Leather + Scrap Metal","Farm Fish Tail","Farm Magma Ore","Farm Angel Wings"},{"Farm Fish Tail"},function(Value)
         _G.SelectMaterial = Value
       end)
       
@@ -6808,7 +6853,7 @@ end
 	
  end	
 
-      AutoFarm:Toggle("Auto Farm Material", false,function(Value)
+      AutoFarm:Toggle("Cày nguyên liệu", false,function(Value)
        _G.AutoFarmMaterial = Value 
        StopTween(_G.AutoFarmMaterial)
      end)
@@ -6816,34 +6861,34 @@ end
  ---------------------------- Auto Settings 
  
       KillPercent = "30"
-       Settings:Dropdown("Select Healt Mob Farm",{"20","25","30","35","40","45","50","55","60","65","70","75", "80"},{"25"},function(Value)
+       Settings:Dropdown("Chọn % máu để cày",{"20","25","30","35","40","45","50","55","60","65","70","75", "80"},{"25"},function(Value)
         KillPercent = Value
       end)
       
-     Settings:Toggle("Auto Use Skill Z",true,function(Z)
+     Settings:Toggle("Dùng Skill Z",true,function(Z)
        SkillZ = Z
      end)
      
-     Settings:Toggle("Auto Use Skill X",false,function(X)
+     Settings:Toggle("Dùng Skill X",false,function(X)
        SkillX = X
      end)          
        
-     Settings:Toggle("Auto Use Skill C",false,function(C)
+     Settings:Toggle("Dùng Skill C",false,function(C)
        SkillC = C
      end)      
      
-     Settings:Toggle("Auto Use Skill V",false,function(V)
+     Settings:Toggle("Dùng Skill V",false,function(V)
        SkillV = V
      end)      
      
-     Settings:Toggle("Auto Use Skill F",false,function(F)
+     Settings:Toggle("Dùng Skill F",false,function(F)
        SkillC = F
      end)  
      
-     Settings:Seperator("Settings Farm")         
+     Settings:Seperator("Cài đặt cày")         
      
       
-    Settings:Toggle("Auto Bring Mob", true,function(value)
+    Settings:Toggle("Gom quái", true,function(value)
       _G.BringMonster = value
       _G.BringMob = value 
        end)     
@@ -6973,7 +7018,7 @@ task.spawn(function()
 end)
 PosY = 35            
 
-  Settings:Toggle("Auto Walk Water", true,function(value)      
+  Settings:Toggle("Đi trên nước", true,function(value)      
       _G.WalkWater = value
  end)
 
@@ -6989,7 +7034,7 @@ PosY = 35
 			end
         end)
         
-      Settings:Toggle("Auto Set Home Point", false,function(value)      
+      Settings:Toggle("Tự đặt điểm hồi sinh", false,function(value)      
       _G.CheckPoint = Value
      end)
     spawn(function()
@@ -7000,7 +7045,7 @@ PosY = 35
     end
   end)
   
-  Settings:Toggle("Auto Haki Buso", true,function(value)
+  Settings:Toggle("Bật haki vũ trang", true,function(value)
       _G.AutoHaki = value
      end)
      spawn(function()
@@ -7011,7 +7056,7 @@ PosY = 35
     end
 end)
 
-     Settings:Toggle("Auto Active Race V3", false,function(value)    
+     Settings:Toggle("Tự động bật tộc V3", false,function(value)    
       _G.AutoRaceV3 = value
     end)
   spawn(function()
@@ -7024,7 +7069,7 @@ end)
        end
    end)
    
-   Settings:Toggle("Auto Active Race V4", false,function(value)    
+   Settings:Toggle("Tự động bật tộc V4", false,function(value)    
       _G.AutoRaceV4 = value
     end)
     spawn(function()
@@ -7039,7 +7084,7 @@ end)
     end
 end)
  
-  Settings:Toggle("Infinite Soru", false,function(Soru)       
+  Settings:Toggle("Soru vô hạn", false,function(Soru)       
       InfiniteSoru = Soru
      end)
      
@@ -7065,16 +7110,16 @@ end)
     end
 end)
 
-    Settings:Toggle("Spin Position", false,function(value)       
+    Settings:Toggle("Xoay vị trí", false,function(value)       
       _G.SpinPos = Value 
      end)
      
 PosY = 35
-  Settings:Dropdown("Farm Distnace",{"20","25","30","35","40","45","50","55","60","65","70","75","80"},{"50"},function(Value)
+  Settings:Dropdown("Khoảng cách farm",{"20","25","30","35","40","45","50","55","60","65","70","75","80"},{"50"},function(Value)
         PosY = value
       end)
   
-  Settings:Toggle("Dodge No CD", false,function(value)       
+  Settings:Toggle("Né không hồi chiêu", false,function(value)       
       DodgewithoutCool = Value 
      end)
      function NoCooldown()
@@ -7100,7 +7145,7 @@ PosY = 35
        end
     end)
   
-     Settings:Toggle("Infinite Geppo", false,function(Geppo)       
+     Settings:Toggle("Geppo vô hạn", false,function(Geppo)       
          InfiniteGeppo = Geppo
         end)
         spawn(function()
@@ -7123,7 +7168,7 @@ PosY = 35
     end
 end)
   
-    Settings:Toggle("Infinite Jump", false,function(Cokka)       
+    Settings:Toggle("Nhảy vô hạn", false,function(Cokka)       
      Infinite = Cokka
  	 game:GetService("UserInputService").JumpRequest:connect(function()
      if Infinite then
@@ -7134,11 +7179,11 @@ end)
     
      
      if World1 or World2  then
-        Items:Seperator("Auto Quest Sea")
+        Items:Seperator("Tự động nhận nhiệm vụ Sea")
         end
        
       if World1 then
-      Items:Toggle("Auto Second Sea", false,function(Second)   
+      Items:Toggle("Tự động Sea 2", false,function(Second)   
       _G.AutoSecondSea = Second  
      end)
      
@@ -7188,7 +7233,7 @@ end)
  
 end
       if World2 then
-      Items:Toggle("Auto Quest Bartilo", false,function(Bartilo)      
+      Items:Toggle("Tự động nhiệm vụ Bartilo", false,function(Bartilo)      
        _G.AutoBartilo = Bartilo
        StopTween(_G.AutoBartilo)
       end)
@@ -7282,7 +7327,7 @@ end
           end)
        end)
 
-        Items:Toggle("Auto Third Sea", false,function(ThirdSea)      
+        Items:Toggle("Tự động sea 3", false,function(ThirdSea)      
           _G.ThirdSea = ThirdSea
           StopTween(_G.ThirdSea)
        end)
@@ -7329,9 +7374,9 @@ end)
 
 end               
        if World2 then
-       Items:Seperator("Auto Factory")
+       Items:Seperator("Tự động nhà máy")
        
-        Items:Toggle("Auto Factory", false,function(Values)      
+        Items:Toggle("Đánh nhà máy", false,function(Values)      
           _G.AutoFactory = Values
        end)
        
@@ -7362,9 +7407,9 @@ end
 end
 
         if World3 then
-        Items:Seperator("Auto Pirate")
+        Items:Seperator("Tự động hải tặc")
        
-       Items:Toggle("Auto Pirate Raid", false,function(Values)      
+       Items:Toggle("Đánh hải tặc ( Tự động )", false,function(Values)      
           _G.AutoRaidPirate = Values
           StopTween(_G.AutoRaidPirate)
        end)
@@ -7404,7 +7449,7 @@ end
 	end
     end)
 
-     Items:Seperator("Auto Elite Hunter")
+     Items:Seperator("Elite Hunter")
   
     EliteHunterKill = Items:Label("Check Elite Hunter kill")
      
@@ -7412,9 +7457,9 @@ end
     while wait() do
         pcall(function()
             if game:GetService("ReplicatedStorage"):FindFirstChild("Diablo") or game:GetService("ReplicatedStorage"):FindFirstChild("Deandre") or game:GetService("ReplicatedStorage"):FindFirstChild("Urban") or game:GetService("Workspace").Enemies:FindFirstChild("Diablo") or game:GetService("Workspace").Enemies:FindFirstChild("Deandre") or game:GetService("Workspace").Enemies:FindFirstChild("Urban") then
-                EliteHunterKill:Set("Number of kills  : "..game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("EliteHunter","Progress"))
+                EliteHunterKill:Set("Số lần giết  : "..game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("EliteHunter","Progress"))
             else
-               EliteHunterKill:Set("Number of kills  : "..game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("EliteHunter","Progress"))	
+               EliteHunterKill:Set("Số lần giết  : "..game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("EliteHunter","Progress"))	
             end
         end)
     end
@@ -7426,9 +7471,9 @@ end)
     while wait() do
         pcall(function()
             if game:GetService("ReplicatedStorage"):FindFirstChild("Diablo") or game:GetService("ReplicatedStorage"):FindFirstChild("Deandre") or game:GetService("ReplicatedStorage"):FindFirstChild("Urban") or game:GetService("Workspace").Enemies:FindFirstChild("Diablo") or game:GetService("Workspace").Enemies:FindFirstChild("Deandre") or game:GetService("Workspace").Enemies:FindFirstChild("Urban") then
-               EliteHunter:Set("Elite Hunter Spawning ✅")
+               EliteHunter:Set("Elite Hunter xuất hiện ✅")
             else
-                EliteHunter:Set("Not Have Elite Hunter in Severs ❌")
+                EliteHunter:Set("Không có trong server ❌")
             end
         end)
     end
