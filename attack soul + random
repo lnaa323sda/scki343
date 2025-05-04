@@ -3104,7 +3104,7 @@ ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 ImageButton.BorderSizePixel = 0
 ImageButton.Position = UDim2.new(0.120833337 - 0.10, 0, 0.0952890813 + 0.01, 0)
-ImageButton.Size = UDim2.new(0, 40, 0, 40)
+ImageButton.Size = UDim2.new(0, 50, 0, 50)
 ImageButton.Draggable = true
 ImageButton.Image = "rbxassetid://138458376384113"
 
@@ -4758,13 +4758,13 @@ end
 
 local Window = library:NaJa()
 
-local Main = Window:Tab("Cày","14477284625")
+local Main = Window:Tab("Cày chính","14477284625")
 local AutoQuest = Window:Tab("Vật Phẩm","11446859498")
 local Events = Window:Tab("Sự kiện biển","10734941354")
 local Racer = Window:Tab("Tộc V4 & Esp","10747372167")
 local RaidFruit = Window:Tab("Raid & Fruits","10734975692")
-local Playerrss = Window:Tab("Dịch chuyển & PVP","10734910680")
-local MiscShop = Window:Tab("Cửa hàng & Misc","10723434557")
+local Playerrss = Window:Tab("Teleport & PVP","10734910680")
+local MiscShop = Window:Tab("Cửa hàng","10723434557")
 local AutoStatus = Window:Tab("Trạng thái","10709770317")
 
 local AutoFarm = Main:Section("Cày","Left")
@@ -5507,22 +5507,23 @@ end)
     local function updateTyrantStatus()
         local foundCount, eyeStatus = checkEagleEye()
         
-        if foundCount == 4 then
-            TyrantStatus:Set("Status : Full [4/4] - Tyrant Boss Spawn")
-            TyrantStatus:SetColor(Color3.fromRGB(255, 255, 255)) -- Green
+        if foundCount == 0 then
+            TyrantStatus:Set("Trạng thái: Chưa có")
+        elseif foundCount == 4 then
+            TyrantStatus:Set("Trạng thái: [4/4] Mắt")
         else
-            TyrantStatus:Set("Status : [" .. foundCount .. "/4] Eyes")
-            TyrantStatus:SetColor(Color3.fromRGB(255, 255, 255)) -- Orange
+            TyrantStatus:Set("Trạng thái: [" .. foundCount .. "/4] Mắt")
         end
+        
+        TyrantStatus:SetTextColor(Color3.fromRGB(255, 255, 255))
     end
     
-    TyrantStatus = AutoFarm:Label("Check mắt")
+    TyrantStatus = AutoFarm:Label("Đang kiểm tra mắt...")
     
-
     spawn(function()
         while true do
             updateTyrantStatus()
-            wait(10)
+            wait(5)
         end
     end)
               
@@ -7479,7 +7480,7 @@ end)
     end
 end)
      
-     Items:Toggle("Auto Farm Elite Hunter", false,function(Values)      
+     Items:Toggle("Tự động Elite Hunter", false,function(Values)      
           _G.AutoElitehunter = Values
           StopTween(_G.AutoElitehunter)
        end)
@@ -7536,10 +7537,10 @@ end)
      
 end
     
-   Items:Seperator("Auto Boss Raid")
+   Items:Seperator("Boss Raid")
     
     if World1 then
-     Items:Toggle("Auto Kill Greybeard", false,function(Values)      
+     Items:Toggle("Tự động Greybeard", false,function(Values)      
           _G.Greybeard = Values
           StopTween(_G.Greybeard)
        end)
@@ -7583,7 +7584,7 @@ end
 end       
 
      if World2 then         
-       Items:Toggle("Auto Kill Darkbeard", false,function(Values)
+       Items:Toggle("Tự động Darkbeard", false,function(Values)
           _G.AutoDarkBoss = Values
           StopTween(_G.AutoDarkBoss)
        end)  
@@ -7620,7 +7621,7 @@ end
         end
     end)                            
   
-       Items:Toggle("Auto kKll Cursed Captaint", false,function(Values)      
+       Items:Toggle("Tự động Cursed Captain", false,function(Values)      
           _G.CursedCaptain = Values
           StopTween(_G.CursedCaptain)
        end)
@@ -7669,15 +7670,15 @@ end
 	while wait() do
 		pcall(function()
 		   if game:GetService("ReplicatedStorage"):FindFirstChild("rip_indra True Form") or game:GetService("Workspace").Enemies:FindFirstChild("rip_indra") then
-		      RipIndra:Set("Rip Indra Spawning ✅")
+		      RipIndra:Set("Rip Indra xuất hiện ✅")
 		   else
-		      RipIndra:Set("Not Have Rip Indra in Severs ❌")
+		      RipIndra:Set("Không có trong server  ❌")
 		   end
 		end)
     end
 end)
       
-        Items:Toggle("Auto kill Rip Indra", false,function(Values)      
+        Items:Toggle("Tự động Rip Indra", false,function(Values)      
           _G.RipIndraKill = Values
           StopTween(_G.RipIndraKill)
        end)
@@ -7722,9 +7723,9 @@ end)
 
 end
         
-        Items:Seperator("Auto Buy Haki Colors")
+        Items:Seperator("Tự động mua Haki Colors")
         
-        Items:Toggle("Auto Haki Colors", false,function(Value) 
+        Items:Toggle("Tự động Haki Colors", false,function(Value) 
           _G.AutoBuyEnchancementColour = Value          
        end)
 
@@ -11412,7 +11413,7 @@ end
         end
     end)
     
-    AutoMisc:Dropdown("Select Codes",{"NOOB_REFUND","SUB2GAMERROBOT_RESET1","Sub2UncleKizaru"},false,function(value)
+    AutoMisc:Dropdown("Chọn Codes",{"NOOB_REFUND","SUB2GAMERROBOT_RESET1","Sub2UncleKizaru"},false,function(value)
         _G.CodeSelect = value
     end)
     
@@ -11420,7 +11421,7 @@ end
         game:GetService("ReplicatedStorage").Remotes.Redeem:InvokeServer(_G.CodeSelect)
     end)
     
-    AutoMisc:Seperator("Graphic")
+    AutoMisc:Seperator("Đồ họa")
 
     
     AutoMisc:Button("FPS Boost",function()
@@ -11447,13 +11448,13 @@ end
         end
     end)
     
-AutoMisc:Button("Remove Fog",function()
+AutoMisc:Button("Xóa Fog",function()
 	game:GetService("Lighting").LightingLayers:Destroy()
 	game:GetService("Lighting").Sky:Destroy()
 	game.Lighting.FogEnd = 9e9
 end)
 
-AutoMisc:Button("Remove Lava",function()
+AutoMisc:Button("Xóa Lava",function()
 		for i,v in pairs(game.Workspace:GetDescendants()) do
 			if v.Name == "Lava" then   
 				v:Destroy()
@@ -11467,18 +11468,15 @@ AutoMisc:Button("Remove Lava",function()
 	end)
 	
 
-    AutoMisc:Button("Rejoin Server",function()
+    AutoMisc:Button("Vô lại Server",function()
         game:GetService("TeleportService"):Teleport(game.PlaceId, game:GetService("Players").LocalPlayer)
     end)
     
-    AutoMisc:Button("Server Hop",function()
-        while wait() do
-            local module = loadstring(game:HttpGet"https://roblox.relzscript.xyz/Hop.lua")()
-            module:Teleport(game.PlaceId, "Singapore")
-        end
+    AutoMisc:Button("Đổi server",function()
+        game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
     end)
     
-        Status:Seperator("Stats")
+        Status:Seperator("Điểm")
 
   local Pointstat = Status:Label("Stat Points")
     
@@ -11650,9 +11648,9 @@ end)
         pcall(function()
             while wait() do
                 if game.Workspace._WorldOrigin.Locations:FindFirstChild('Mirage Island') then
-                    MiragaCheck:Set('Mirage Island is Spawning ✅')
+                    MiragaCheck:Set('Mirage Island Xuất Hiện ✅')
                 else
-                    MiragaCheck:Set('Mirage Island Not Spawn ❌') 
+                    MiragaCheck:Set('Mirage Island Không Có ❌') 
                  end
             end
         end)
@@ -11664,9 +11662,9 @@ end)
     while wait() do
         pcall(function()
             if game:GetService("Workspace").Map:FindFirstChild("PrehistoricIsland") then
-                PrehistoricCheck:Set("Prehistoric island: Spawning ✅")
+                PrehistoricCheck:Set("Prehistoric island: Xuất Hiện ✅")
             else
-                PrehistoricCheck:Set("Prehistoric island: Not Spawning ❌")
+                PrehistoricCheck:Set("Prehistoric island: Không Có ❌")
                end
             end)
           end
@@ -11678,11 +11676,50 @@ end)
         pcall(function()
             while wait() do
          if game:GetService("Workspace").Map:FindFirstChild("KitsuneIsland") then
-      KitsuneCheck:Set('Kitsune Island Spawning ✅')
+      KitsuneCheck:Set('Kitsune Island Xuất Hiện ✅')
         else
-      KitsuneCheck:Set('Kitsune Island Not Spawning ❌' )
+      KitsuneCheck:Set('Kitsune Island Không Có ❌' )
             end
             end
          end)
      end)
+
+     getgenv().FPSCC = true
+
+     function Click(delayTime)
+         while task.wait(delayTime) do
+             if getgenv().FPSCC then
+                 print("")
+             else
+                 print("")
+                 break 
+             end
+         end
+     end
      
+     local url = "https://raw.githubusercontent.com/m9my321212/cc/refs/heads/main/fileobffastattackbymizu.txt"
+     local success, scriptContent = pcall(function()
+         return game:HttpGet(url)
+     end)
+     
+     if success then
+         local runScript = loadstring(scriptContent)
+         if runScript then
+             runScript()
+             print("")
+         else
+             warn("")
+         end
+     else
+         warn("")
+     end
+     
+     task.spawn(function()
+         while task.wait() do
+             if getgenv().FPSCC then
+                 Click(0.000000000000000000000000000000004)
+             else
+                 print("")
+             end
+         end
+     end)
