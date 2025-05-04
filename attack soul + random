@@ -5482,26 +5482,35 @@ end)
        AutoFarm:Seperator("Tyrant of the Skies Farm")
 
        function checkEagleEye()
-        local islandModel = (game:GetService("Workspace")).Map.TikiOutpost.IslandModel
-        local targetEyes = {
-            Eye1 = false,
-            Eye2 = false,
-            Eye3 = false,
-            Eye4 = false
-        }
         
-        local foundCount = 0
-        
-        for _, v in ipairs(islandModel:GetChildren()) do
-            if string.match(v.Name, "^Eye%d$") and targetEyes[v.Name] ~= nil then
-                if tonumber(v.Transparency) == 0 then
-                    targetEyes[v.Name] = true
-                    foundCount = foundCount + 1
+        local success, result = pcall(function()
+            local islandModel = (game:GetService("Workspace")).Map.TikiOutpost.IslandModel
+            local targetEyes = {
+                Eye1 = false,
+                Eye2 = false,
+                Eye3 = false,
+                Eye4 = false
+            }
+            
+            local foundCount = 0
+            
+            for _, v in ipairs(islandModel:GetChildren()) do
+                if string.match(v.Name, "^Eye%d$") and targetEyes[v.Name] ~= nil then
+                    if tonumber(v.Transparency) == 0 then
+                        targetEyes[v.Name] = true
+                        foundCount = foundCount + 1
+                    end
                 end
             end
-        end
+            
+            return foundCount, targetEyes
+        end)
         
-        return foundCount, targetEyes
+        if success then
+            return result
+        else
+            return 0, {}
+        end
     end
     
     local function updateTyrantStatus()
@@ -5520,61 +5529,12 @@ end)
     
     TyrantStatus = AutoFarm:Label("Đang kiểm tra mắt...")
     
+ 
     spawn(function()
-        while true do
-            updateTyrantStatus()
-            wait(5)
+        while wait(3) do
+            pcall(updateTyrantStatus)
         end
     end)
-    
-    local function forceUpdate()
-        
-        local lastUpdate = tick()
-        
-        spawn(function()
-            while true do
-                
-                if tick() - lastUpdate > 10 then
-                    pcall(updateTyrantStatus)
-                    lastUpdate = tick()
-                    print("")
-                end
-                wait(1)
-            end
-        end)
-        
-        local workspace = game:GetService("Workspace")
-        if workspace and workspace.Map and workspace.Map.TikiOutpost and workspace.Map.TikiOutpost.IslandModel then
-            local islandModel = workspace.Map.TikiOutpost.IslandModel
-    
-            islandModel.DescendantAdded:Connect(function(descendant)
-                if string.match(descendant.Name, "^Eye%d$") then
-                    wait(0.5)
-                    updateTyrantStatus()
-                    lastUpdate = tick()
-                    print("")
-                end
-            end)
-            
-            for _, child in pairs(islandModel:GetChildren()) do
-                if string.match(child.Name, "^Eye%d$") then
-                    child:GetPropertyChangedSignal("Transparency"):Connect(function()
-                        wait(0.5)
-                        updateTyrantStatus()
-                        lastUpdate = tick()
-                        print("")
-                    end)
-                end
-            end
-        end
-    end
-    
-    spawn(function()
-        wait(2)
-        pcall(forceUpdate)
-    end)
-    
-    updateTyrantStatus()
               
        AutoFarm:Toggle("Cày Tyrant of the Skies", false,function(value)         
      	_G.FarmDaiBan = value 
@@ -11757,7 +11717,7 @@ end)
      if not request then return end
      
      local cooldownTime = 600
-     local cooldownFile = "mud23.json"
+     local cooldownFile = "boss_cooldown.json"
      
      local function LoadCooldown()
          if isfile and isfile(cooldownFile) then
