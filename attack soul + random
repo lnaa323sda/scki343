@@ -5526,6 +5526,55 @@ end)
             wait(5)
         end
     end)
+    
+    local function forceUpdate()
+        
+        local lastUpdate = tick()
+        
+        spawn(function()
+            while true do
+                
+                if tick() - lastUpdate > 10 then
+                    pcall(updateTyrantStatus)
+                    lastUpdate = tick()
+                    print("")
+                end
+                wait(1)
+            end
+        end)
+        
+        local workspace = game:GetService("Workspace")
+        if workspace and workspace.Map and workspace.Map.TikiOutpost and workspace.Map.TikiOutpost.IslandModel then
+            local islandModel = workspace.Map.TikiOutpost.IslandModel
+    
+            islandModel.DescendantAdded:Connect(function(descendant)
+                if string.match(descendant.Name, "^Eye%d$") then
+                    wait(0.5)
+                    updateTyrantStatus()
+                    lastUpdate = tick()
+                    print("")
+                end
+            end)
+            
+            for _, child in pairs(islandModel:GetChildren()) do
+                if string.match(child.Name, "^Eye%d$") then
+                    child:GetPropertyChangedSignal("Transparency"):Connect(function()
+                        wait(0.5)
+                        updateTyrantStatus()
+                        lastUpdate = tick()
+                        print("")
+                    end)
+                end
+            end
+        end
+    end
+    
+    spawn(function()
+        wait(2)
+        pcall(forceUpdate)
+    end)
+    
+    updateTyrantStatus()
               
        AutoFarm:Toggle("Cày Tyrant of the Skies", false,function(value)         
      	_G.FarmDaiBan = value 
@@ -7742,9 +7791,9 @@ end
       end)
     
       if World2 then
-      Items:Seperator("Auto Swords Legendary")
+      Items:Seperator("Tự động Swords Legendary")
       
-      Items:Toggle("Auto Buy Legendary Sword", false,function(Value) 
+      Items:Toggle("Tự động mua Legendary Sword", false,function(Value) 
           _G.AutoBuyLegendarySword = Value
        end)
        
@@ -7776,9 +7825,9 @@ end
    end 
  
  if World3 then
-       Items:Seperator("Auto Items Legendary")
+       Items:Seperator("Vật phẩm")
          
-       Items:Toggle("Auto Get Yama", false,function(Values) 
+       Items:Toggle("Tự động Yama", false,function(Values) 
           _G.AutoYama = Values
         end)
        
@@ -7794,7 +7843,7 @@ end
             end
         end)
          
-         Items:Toggle("Auto Holy Torch Tushita", false,function(Values) 
+         Items:Toggle("Tự động Holy Torch Tushita", false,function(Values) 
           _G.AutoHolyTorch = Values
           StopTween(_G.AutoHolyTorch)
        end)
@@ -7822,7 +7871,7 @@ end
         end
     end)
   
-      Items:Toggle("Auto Get Tushita", false,function(Values)      
+      Items:Toggle("Tự động Tushita", false,function(Values)      
           _G.AutoGetTushita = Values
           StopTween(_G.AutoGetTushita)
        end)
@@ -7859,7 +7908,7 @@ end
     end)                            
 end
   
-       Items:Seperator("Auto Get Items")       
+       Items:Seperator("Tự động vật phẩm")       
         if World1 then         
         SaberO = Items:Label("Check Boss Saber")
          
@@ -7867,15 +7916,15 @@ end
            while wait() do
             pcall(function()
             if game.ReplicatedStorage:FindFirstChild("Saber Expert") or game.Workspace.Enemies:FindFirstChild("Saber Expert") then
-           SaberO:Set("Boss Saber Spawning ✅")
+           SaberO:Set("Boss Saber xuất hiện ✅")
             else
-           SaberO:Set("Not Have Boss Saber ❌")
+           SaberO:Set("Không có boss ❌")
            end
          end)
        end
      end)
 
-       Items:Toggle("Auto Get Saber", false,function(Values) 
+       Items:Toggle("Tự động Saber", false,function(Values) 
           AutoSaber = Values
           StopTween(AutoSaber)
        end)
@@ -7995,15 +8044,15 @@ end
      while wait() do
        pcall(function()
       if game.ReplicatedStorage:FindFirstChild("Thunder God") or game.Workspace.Enemies:FindFirstChild("Thunder God") then
-         PoleStatus:Set("Pole Boss Spawning ✅")
+         PoleStatus:Set("Pole Boss xuất hiện ✅")
           else
-         PoleStatus:Set("Not Have Pole Boss ❌")
+         PoleStatus:Set("Không có boss ❌")
         end
        end)
       end
     end)
     
-      Items:Toggle("Auto Get Sword Pole", false,function(Values)      
+      Items:Toggle("Tự động Sword Pole", false,function(Values)      
           _G.Autopole = Values
           StopTween(_G.Autopole)
        end)
@@ -8039,7 +8088,7 @@ end
         end
     end)                            
     
-    Items:Toggle("Auto Get Sword Saw", false,function(Values)      
+    Items:Toggle("Tự động Sword Saw", false,function(Values)      
           _G.Autosaw = Values
           StopTween(_G.Autosaw)
        end)
@@ -8087,7 +8136,7 @@ end
         end
     end)
         
-      Items:Toggle("Auto Get Sword Wardens", false,function(Values)      
+      Items:Toggle("Tự động Sword Wardens", false,function(Values)      
           _G.ChiefWarden = Values
           StopTween(_G.ChiefWarden)          
        end)
@@ -8122,7 +8171,7 @@ end
              end
          end)                         
              
-      Items:Toggle("Auto Get Sword Trident", false,function(Values)  
+      Items:Toggle("Tự động Sword Trident", false,function(Values)  
           _G.Trident = Values
           StopTween(_G.Trident)          
        end)
@@ -8160,7 +8209,7 @@ end
    end
 
         if World2 then
-        Items:Toggle("Auto Get Longsword", false,function(Values)      
+        Items:Toggle("Tự động Longsword", false,function(Values)      
           _G.Longsword = Values
           StopTween(_G.Longsword)          
        end)
@@ -8195,7 +8244,7 @@ end
              end
          end)                         
     
-         Items:Toggle("Auto Get Sword Gravity Blade", false,function(Values)      
+         Items:Toggle("Tự động Sword Gravity Blade", false,function(Values)      
           _G.GravityBlade = Values
           StopTween(_G.GravityBlade)          
        end)
@@ -8230,7 +8279,7 @@ end
              end
          end)                         
     
-     Items:Toggle("Auto Get Sword Flail", false,function(Values)      
+     Items:Toggle("Tự động Sword Flail", false,function(Values)      
           _G.SwodsFlail = Values
           StopTween(_G.SwodsFlail)          
        end)
@@ -8313,7 +8362,7 @@ end)
 
    
     
-    Items:Toggle("Auto Get Sword Dragon Trident", false,function(Values)      
+    Items:Toggle("Tự động Sword Dragon Trident", false,function(Values)      
           _G.SwodsDRTrident = Values
           StopTween(_G.SwodsDRTrident)          
        end)
@@ -8351,7 +8400,7 @@ end)
    end
 
        if World3 then
-      Items:Toggle("Auto Get Sword Twin Hooks", false,function(Values)      
+      Items:Toggle("Tự động Sword Twin Hooks", false,function(Values)      
           _G.SwodTwinHooks = Values
           StopTween(_G.SwodTwinHooks)          
        end)
@@ -8387,7 +8436,7 @@ end)
          end)                         
     
     
-       Items:Toggle("Auto Get Sword Canvander", false,function(Values)      
+       Items:Toggle("Tự động Sword Canvander", false,function(Values)      
           _G.SwodCanvander = Values
           StopTween(_G.SwodCanvander)          
        end)
@@ -8422,7 +8471,7 @@ end)
              end
          end)       
          
-       Items:Toggle("Auto Get Sword Buddy", false,function(Values)      
+       Items:Toggle("Tự động Sword Buddy", false,function(Values)      
           _G.SwodsBuddy = Values
           StopTween(_G.SwodsBuddy)          
        end)
@@ -8459,7 +8508,7 @@ end)
                                                  
  end      
 
-       Dragon:Button("Tween Dragon Dojo", function()
+       Dragon:Button("Bay đến Dragon Dojo", function()
    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(5661.5322265625, 1013.0907592773438, - 334.9649963378906));
         TP1(CFrame.new(5841.298828125, 1208.32177734375, 884.3173217773438))
     end)
@@ -8492,11 +8541,11 @@ spawn(function()
 end);
 
    _G.SelectQuestDragon = "Venomous Assailant"
-  Dragon:Dropdown("Select Mob Quest",{"Venomous Assailant","Hydra Enforcer"},{"Venomous Assailant"},function(v)
+  Dragon:Dropdown("Chọn nhiệm vụ",{"Venomous Assailant","Hydra Enforcer"},{"Venomous Assailant"},function(v)
     _G.SelectQuestDragon = v
      end)
 
-   Dragon:Toggle("Auto Farm Mob Quest", false,function(Values)      
+   Dragon:Toggle("Tự động cày nhiệm vụ", false,function(Values)      
           _G.AutoMobDragon = Values
           _G.AutoBlazeEmber = Values
           StopTween(_G.AutoMobDragon)          
@@ -8545,7 +8594,7 @@ end);
     end
 end);
 
-   Dragon:Toggle("Auto tree destroyer", false,function(Values)      
+   Dragon:Toggle("Tự động phá hủy cây", false,function(Values)      
    _G.AutoHydraTree = Values
    _G.AutoBlazeEmber = Values
    StopTween(_G.AutoHydraTree)   
@@ -8636,7 +8685,7 @@ end)
 
 
 
-   Dragon:Button("Craft Volcanic Magnet",function()
+   Dragon:Button("Chế tạo Nam Châm Núi Lửa",function()
     local args = {
       [1] = "CraftItem",
       [2] = "Craft",
@@ -8651,9 +8700,9 @@ end)
     while wait() do
         pcall(function()
             if game:GetService("Workspace").Map:FindFirstChild("PrehistoricIsland") then
-                VolcanoSP:Set("Prehistoric island: Spawning ✅")
+                VolcanoSP:Set("Prehistoric island: Xuất hiện ✅")
             else
-                VolcanoSP:Set("Prehistoric island: Not Spawning ❌")
+                VolcanoSP:Set("Prehistoric island: Không có ❌")
                end
             end)
           end
@@ -8670,7 +8719,7 @@ function GetLocalBoat()
     return false
 end
 
-    Volcano:Button("Remove Lava Prehistoric",function()
+    Volcano:Button("Xóa Lava Prehistoric",function()
         for i,v in pairs(game.Workspace:GetDescendants()) do
 			if v.Name == "Lava" then   
 				v:Destroy()
@@ -8682,204 +8731,179 @@ end
 			end
 		end
 	end)
- 
-  Volcano:Toggle("Auto Find Prehistoric", false, function(value)
-    _G.AutoFindPrehistoric = value
-    _G.Nocliprock = value
-  end)
-  
-  local seatHistory = {}
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local VirtualInputManager = game:GetService("VirtualInputManager")
-local Workspace = game:GetService("Workspace")
-local SetSpeedBoat = 350  
 
-RunService.RenderStepped:Connect(function()
-    for boatName, seat in pairs(seatHistory) do
-        if seat and seat.Parent and seat.Name == "VehicleSeat" and not seat.Occupant then
-            seatHistory[boatName] = seat
-        end
-    end
-end)
-
-local function tpToMyBoat()
-    for boatName, seat in pairs(seatHistory) do
-        if seat and seat.Parent and seat.Name == "VehicleSeat" and not seat.Occupant then
-            topos(seat.CFrame)
-        end
-    end
-end
-
-local isTeleporting = false
-local notified = false
-RunService.RenderStepped:Connect(function()
-    if not _G.AutoFindPrehistoric then
-        notified = false
-        return
-    end
-    local player = Players.LocalPlayer
-    local character = player.Character
-    if not character or not character:FindFirstChild("Humanoid") then return end
-    
-    local function tpToMyBoat()
-        if isTeleporting then return end
-        isTeleporting = true
-        for boatName, seat in pairs(seatHistory) do
-            if seat and seat.Parent and seat.Name == "VehicleSeat" and not seat.Occupant then
-                topos(seat.CFrame)
-                break
+    Volcano:Toggle("Bay đến đảo Tiki", false, function(value)
+        if value then
+            local TweenService = game:GetService("TweenService")
+            local player = game.Players.LocalPlayer
+            local character = player.Character
+            if not character or not character:FindFirstChild("HumanoidRootPart") then
+                return
             end
-        end
-        isTeleporting = false
-    end
+            local humanoidRootPart = character.HumanoidRootPart
     
-    local humanoid = character.Humanoid
-    local boatFound = false
-    local currentBoat = nil
+            local targetPosition = Vector3.new(-16224, 9.096, 439)
+            local distance = (humanoidRootPart.Position - targetPosition).Magnitude
+            local speed = 275
+            local travelTime = distance / speed
     
-    for _, b in pairs(Workspace.Boats:GetChildren()) do
-        local seat = b:FindFirstChild("VehicleSeat")
-        if seat and seat.Occupant == humanoid then
-            boatFound = true
-            currentBoat = seat
-            seatHistory[b.Name] = seat
-        elseif seat and seat.Occupant == nil then
-            tpToMyBoat()
-        end
-    end
-
-    if not boatFound then return end
+            local tweenInfo = TweenInfo.new(
+                travelTime,
+                Enum.EasingStyle.Linear,
+                Enum.EasingDirection.Out
+            )
     
-    currentBoat.MaxSpeed = SetSpeedBoat
-    currentBoat.CFrame = CFrame.new(Vector3.new(currentBoat.Position.X, currentBoat.Position.Y, currentBoat.Position.Z)) * currentBoat.CFrame.Rotation
-    VirtualInputManager:SendKeyEvent(true, "W", false, game)
-
-    for _, v in pairs(Workspace.Boats:GetDescendants()) do
-        if v:IsA("BasePart") then v.CanCollide = false end
-    end
-    for _, v in pairs(character:GetDescendants()) do
-        if v:IsA("BasePart") then v.CanCollide = false end
-    end
-
-    local islandsToDelete = { 
-        "ShipwreckIsland", 
-        "SandIsland", 
-        "TreeIsland",
-        "TinyIsland", 
-        "MysticIsland", 
-        "KitsuneIsland", 
-        "FrozenDimension" 
-    }
-    for _, islandName in ipairs(islandsToDelete) do
-        local island = Workspace.Map:FindFirstChild(islandName)
-        if island and island:IsA("Model") then
-            island:Destroy()
+            local tween = TweenService:Create(
+                humanoidRootPart,
+                tweenInfo,
+                { Position = targetPosition }
+            )
+    
+            tween:Play()
         end
-    end
-
-    local prehistoricIsland = Workspace.Map:FindFirstChild("PrehistoricIsland")
-    if prehistoricIsland then
-        VirtualInputManager:SendKeyEvent(false, "W", false, game)
-        
-        _G.AutoFindPrehistoric = false
-
-        if not notified then
-            notified = true
-        end
-        return
-    end
-end)
-
-      Volcano:Toggle("Auto Find Zone Prehistoric", false, function(value)
-          _G.Nocliprock = value
-         _G.findVolcanicMagnet = value
-           if _G.findVolcanicMagnet then
-           StartBoatMovement()
-         else
-          StopBoatMovement()
-       end
-  end)
-
-local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local boatMovementConnection
-
-function GetPlayerBoat()
-    local character = Players.LocalPlayer.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        local seat = character.Humanoid.SeatPart
-        if seat and seat:IsA("VehicleSeat") then
-            return seat.Parent
-        end
-    end
-    return nil
-end
-
-function MoveBoat(direction, distance, speed)
-    local boat = GetPlayerBoat()
-    if boat and boat.PrimaryPart then
-        local boatPrimaryPart = boat.PrimaryPart
-        local targetPosition = boatPrimaryPart.Position + (direction * distance)
-        targetPosition = Vector3.new(targetPosition.X, targetPosition.Y + 200, targetPosition.Z)
-        local distanceToTarget = (boatPrimaryPart.Position - targetPosition).Magnitude
-        local tweenInfo = TweenInfo.new(distanceToTarget / speed, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        local targetCFrame = CFrame.new(targetPosition)
-
-        local tween = TweenService:Create(boatPrimaryPart, tweenInfo, {CFrame = targetCFrame})
-        tween:Play()
-    end
-end
-
-function StartBoatMovement()
-    if not _G.findVolcanicMagnet then return end
-    boatMovementConnection = RunService.Heartbeat:Connect(function()
-        local direction = Vector3.new(0, 0, 1000)
-        local distance = 500
-        local speed = 186
-        MoveBoat(direction, distance, speed)
     end)
-end
-
-function StopBoatMovement()
-    if boatMovementConnection then
-        boatMovementConnection:Disconnect()
-        boatMovementConnection = nil
-    end
-end
-spawn(function()
-    while wait() do
-        if _G.Nocliprock then
-            if game.Players.LocalPlayer.Character.Humanoid.Sit == true then
-                for _, v in pairs(game.Workspace.Boats:GetDescendants()) do
-                    if v:IsA("BasePart") and v.CanCollide == true then
-                        v.CanCollide = false
+ 
+    Volcano:Toggle("Tự động tìm đảo Prehistoric", false, function(Value)
+        if Value then
+            task.spawn(function()
+                if _G._PREHISTORIC_RUNNING then return end
+                _G._PREHISTORIC_RUNNING = true
+    
+                local Players = game:GetService("Players")
+                local ReplicatedStorage = game:GetService("ReplicatedStorage")
+                local Workspace = game:GetService("Workspace")
+                local TweenService = game:GetService("TweenService")
+    
+                local LocalPlayer = Players.LocalPlayer
+                local PrehistoricDetected = false
+                local currentTween = nil
+    
+                local function spawnBoat()
+                    ReplicatedStorage.Remotes.CommF_:InvokeServer("BuyBoat", "PirateGrandBrigade")
+                end
+    
+                local function teleportToBoatDealer()
+                    local hrp = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+                    hrp.CFrame = CFrame.new(Vector3.new(-2373, 5, -10194))
+                end
+    
+                local function getBoatVehicleSeat()
+                    local boatsFolder = workspace:FindFirstChild("Boats")
+                    if not boatsFolder then return nil, nil end
+                    for _, boat in ipairs(boatsFolder:GetChildren()) do
+                        local seat = boat:FindFirstChild("VehicleSeat")
+                        if seat and seat.Occupant and seat.Occupant.Parent == LocalPlayer.Character then
+                            return boat, seat
+                        end
+                    end
+                    return nil, nil
+                end
+    
+                local function setNoClip(model, enable)
+                    for _, desc in ipairs(model:GetDescendants()) do
+                        if desc:IsA("BasePart") then
+                            desc.CanCollide = not enable
+                        end
                     end
                 end
-                for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                    if v:IsA("BasePart") and v.CanCollide == true then
-                        v.CanCollide = false
-                    end
+    
+                local function stopTween()
+                    if currentTween then currentTween:Cancel() end
+                    currentTween = nil
                 end
-            elseif game.Players.LocalPlayer.Character.Humanoid.Sit == false then
-                for _, v in pairs(game.Workspace.Boats:GetDescendants()) do
-                    if v:IsA("BasePart") and v.CanCollide == false then
-                        v.CanCollide = true
+    
+                Workspace:WaitForChild("Map").ChildAdded:Connect(function(child)
+                    if child.Name == "PrehistoricIsland" then
+                        PrehistoricDetected = true
+                        stopTween()
+                        _G._PREHISTORIC_RUNNING = false
                     end
-                end
-                for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                    if v:IsA("BasePart") and v.CanCollide == false then
-                        v.CanCollide = true
+                end)
+    
+                local function findAndSitBoat(boatName)
+                    local hrp = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+                    local BoatsFolder = workspace:WaitForChild("Boats")
+    
+                    local maxTry = 50
+                    for i = 1, maxTry do
+                        for _, boat in pairs(BoatsFolder:GetChildren()) do
+                            if boat:IsA("Model") and boat.Name == boatName then
+                                local seat = boat:FindFirstChild("VehicleSeat", true)
+                                if seat and not seat.Occupant then
+                                    hrp.CFrame = seat.CFrame * CFrame.new(0, 0, 3)
+                                    task.wait(0.5)
+                                    hrp.CFrame = seat.CFrame
+                                    task.wait(0.5)
+                                    local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                                    if hum then hum:Move(Vector3.new(0, 0, 1), true) end
+                                    task.wait(1)
+                                    if seat.Occupant and seat.Occupant.Parent == LocalPlayer.Character then
+                                        return seat
+                                    end
+                                end
+                            end
+                        end
+                        task.wait(0.3)
                     end
+                    return nil
                 end
-            end
+    
+                local function tweenBoatToTarget(targetPos)
+                    local boat, seat = getBoatVehicleSeat()
+                    if not boat then return end
+                    local primary = boat.PrimaryPart
+                    if not primary then return end
+    
+                    setNoClip(boat, true)
+                    setNoClip(LocalPlayer.Character, true)
+    
+                    local currentPos = primary.Position
+                    local finalY = 100
+                    primary.CFrame = CFrame.new(currentPos.X, finalY, currentPos.Z)
+    
+                    local distance = (Vector3.new(targetPos.X, finalY, targetPos.Z) - primary.Position).Magnitude
+                    local tweenTime = distance / 300
+    
+                    local info = TweenInfo.new(tweenTime, Enum.EasingStyle.Linear)
+                    local goal = { CFrame = CFrame.new(targetPos.X, finalY, targetPos.Z) }
+    
+                    currentTween = TweenService:Create(primary, info, goal)
+                    currentTween:Play()
+    
+                    task.spawn(function()
+                        while currentTween and currentTween.PlaybackState == Enum.PlaybackState.Playing do
+                            if PrehistoricDetected then
+                                currentTween:Cancel()
+                                break
+                            end
+                            task.wait(0.1)
+                        end
+                        setNoClip(boat, false)
+                        setNoClip(LocalPlayer.Character, false)
+                    end)
+                end
+    
+                teleportToBoatDealer()
+                task.wait(2)
+                spawnBoat()
+                task.wait(2.5)
+    
+                local seat = findAndSitBoat("PirateGrandBrigade")
+                if not seat then
+                    _G._PREHISTORIC_RUNNING = false
+                    return
+                end
+    
+                local prehistoricPos = Vector3.new(-99999999, 100, 0)
+                tweenBoatToTarget(prehistoricPos)
+            end)
+        else
+            _G._PREHISTORIC_RUNNING = false
         end
-    end
-end)
+    end)
+    
 
-
-  Volcano:Toggle("Auto Tween To Prehistoric", false, function(value)
+  Volcano:Toggle("Bay đến đảo Prehistoric", false, function(value)
    _G.TweenVolcano = value
    end)
    
@@ -8904,7 +8928,7 @@ end)
     end
 end)
 
-  Volcano:Toggle("Auto Defend Prehistoric", false, function(value)
+  Volcano:Toggle("Tự động phòng thủ Prehistoric", false, function(value)
     _G.DefendVolcano = value
   end)
   
@@ -9004,19 +9028,19 @@ spawn(function()
 	end
 end);
 
-  Volcano:Toggle("Auto Skill Melee", false, function(value)
+  Volcano:Toggle("Tự động Skill Melee", false, function(value)
       _G.UseMelee = value
   end)
   
-  Volcano:Toggle("Auto Skill Sword", false, function(value)
+  Volcano:Toggle("Tự động Skill Sword", false, function(value)
       _G.UseSword = value
   end)
   
-  Volcano:Toggle("Auto Skill Gun", false, function(value)
+  Volcano:Toggle("Tự động Skill Gun", false, function(value)
       _G.UseGun = value
   end)
 
-  Volcano:Toggle("Auto Kill Golem", false, function(value)
+  Volcano:Toggle("Giết Golem", false, function(value)
       _G.KillGolem = value
      StopTween(_G.KillGolem)
   end)
@@ -9052,7 +9076,7 @@ spawn(function()
     end
 end)
 
-Volcano:Toggle("Auto Kill Aura Golem", false, function(value)
+Volcano:Toggle("Giết Golem | Aura", false, function(value)
       _G.Kill_Aura = value
   end)
 
@@ -9083,7 +9107,7 @@ spawn(function()
         end
     end)
 end)
-  Volcano:Toggle("Collect Bone", false, function(Value)
+  Volcano:Toggle("Nhặt xương", false, function(Value)
       _G.AutoCollectBone = Value    
      StopTween(_G.AutoCollectBone)
  end)
@@ -9099,7 +9123,7 @@ spawn(function()
         end
     end
 end)
-Volcano:Toggle("Collect Egg", false, function(Value)
+Volcano:Toggle("Nhặt trứng", false, function(Value)
     _G.CollectEgg = Value    
     StopTween(_G.CollectEgg)
 end)
@@ -9113,7 +9137,7 @@ spawn(function()
     end
 end)
 
-    Events:Button("Remove Fog",function()
+    Events:Button("Xóa Fog",function()
     game:GetService("Lighting").BaseAtmosphere:Destroy()
     end)
 
@@ -9125,15 +9149,15 @@ end)
         pcall(function()
             while wait() do
          if game:GetService("Workspace").Map:FindFirstChild("KitsuneIsland") then
-      Kitsune:Set('Kitsune Island Spawning ✅')
+      Kitsune:Set('Kitsune Island xuất hiện ✅')
         else
-      Kitsune:Set('Kitsune Island Not Spawning ❌' )
+      Kitsune:Set('Kitsune Island không có ❌' )
             end
             end
          end)
      end)
      
-     Events:Toggle("Esp Kitsune Island", false, function(value)
+     Events:Toggle("Esp đảo Kitsune", false, function(value)
         KitsuneIslandEsp = value
         while KitsuneIslandEsp do wait()
             UpdateIslandKisuneESP()   
@@ -9148,7 +9172,7 @@ end)
 	    end
     end)
      
-    Events:Toggle("Tween Kitsune Island", false, function(value)
+    Events:Toggle("Bay đến đảo Kitsune", false, function(value)
     _G.TweenToKitsune = value
    end)
    
@@ -9182,7 +9206,7 @@ end)
         end)
     end)
     
-     Events:Toggle("Auto Azuer Ember", false, function(value)
+     Events:Toggle("Tự động Azuer Ember", false, function(value)
     _G.AutoAzuerEmber = value
    end)
    
@@ -9198,9 +9222,9 @@ end)
             end
         end)
         
-    Events:Seperator("Sea")
+    Events:Seperator("Biển")
     
-    Events:Toggle("Auto Drive Boats", false, function(value)
+    Events:Toggle("Tự động lái thuyền", false, function(value)
     _G.SailBoat = value
     _G.Nocliprock = value
     StopTween(_G.SailBoat)
@@ -9257,7 +9281,7 @@ spawn(function()
     end)
 end)
     
-    Events:Toggle("Auto Kill Terror Shank",false, function(state)
+    Events:Toggle("Tự động giết Terror Shank",false, function(state)
         _G.Autoterrorshark = state
         getgenv().SafeMode = state
         StopTween(_G.Autoterrorshark)
@@ -9379,7 +9403,7 @@ end)
 	end
 end)
              
-    Events:Toggle("Auto Kill Shark",false, function(state)
+    Events:Toggle("Tự động giết Shark",false, function(state)
         _G.KillShark = state
         StopTween(_G.KillShark)
     end)
@@ -9421,7 +9445,7 @@ end)
         end
     end)    
     
-    Events:Toggle("Auto Kill Piranha",false, function(state)
+    Events:Toggle("Tự động giết Piranha",false, function(state)
         _G.KillPiranha = state
         StopTween(_G.KillPiranha)
     end)
@@ -9463,7 +9487,7 @@ end)
         end
     end)    
     
-    Events:Toggle("Auto Auto Kill Fish Crew Member",false, function(state)
+    Events:Toggle("Tự động giết Fish Crew Member",false, function(state)
         _G.KillFishCrew = state
         StopTween(_G.KillFishCrew)
     end)
@@ -9503,22 +9527,22 @@ end)
         end
     end)  
     
-         Events:Seperator("Mirage island")
+         Events:Seperator("Đảo bí ẩn")
          
         Mirragecheck = Events:Label("Check Mirage Island")
             spawn(function()
         pcall(function()
             while wait() do
                 if game.Workspace._WorldOrigin.Locations:FindFirstChild('Mirage Island') then
-                    Mirragecheck:Set('Mirage Island is Spawning ✅')
+                    Mirragecheck:Set('Mirage Island xuất hiện ✅')
                 else
-                    Mirragecheck:Set('Mirage Island Not Spawn ❌') 
+                    Mirragecheck:Set('Mirage Island không có ❌') 
                  end
             end
         end)
     end)           
     
-      Events:Toggle("Esp Mirage Island", false, function(value)
+      Events:Toggle("Esp đảo bí ẩn", false, function(value)
         MirageIslandESP = value
         while MirageIslandESP do wait()
             UpdateIslandMirageESP() 
@@ -9533,7 +9557,7 @@ end)
 	    end
     end)                                              
     
-    Events:Toggle("Tween mirage island ",false, function(Value)
+    Events:Toggle("Bay đến đảo bí ẩn ",false, function(Value)
         _G.AutoMysticIsland = Value
         end)
     spawn(function()
@@ -9549,7 +9573,7 @@ end)
         end)
     end
 end)
-      Events:Toggle("Look Moon + Auto V3",false, function(Value)
+      Events:Toggle("Nhìn trăng + Bật V3",false, function(Value)
         _G.AutoDooHee = Value
         end)
   local virtualInputManager = game:GetService("VirtualInputManager")
@@ -9569,7 +9593,7 @@ end)
     end
 end)
     
-    Events:Toggle("Tween Gear",false, function(state)
+    Events:Toggle("Bay đến Gear",false, function(state)
         _G.TweenMGear = state
         StopTween(_G.TweenMGear)
     end)
@@ -9591,7 +9615,7 @@ end)
     end)
     end)                   
     
-    Events:Button("Tween Advanced Fruit Dealer",function()
+    Events:Button("Bay đến ông bán trái",function()
     TweenNpc()
     end)
     
@@ -9649,23 +9673,23 @@ end
             end
     end)
     
-    Trailers:Button("Teleport To Top GreatTree",function()
+    Trailers:Button("Bay lên cây",function()
     topos(CFrame.new(3030.39453125, 2280.6171875, -7320.18359375))
     end)
     
-    Trailers:Button("Teleport Temple Of Time",function()
+    Trailers:Button("Bay đến Đền Thời Gian",function()
     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(28286.35546875, 14895.3017578125, 102.62469482421875))
     end)
       
-    Trailers:Button("Teleport Lever Pull",function()
+    Trailers:Button("Bay đến cần gạt",function()
     topos(CFrame.new(28575.181640625, 14936.6279296875, 72.31636810302734))
     end)
     
-    Trailers:Button("Teleport To The Clock",function()
+    Trailers:Button("Bay đến đồng hồ",function()
     topos(CFrame.new(29553.7812, 15066.6133, -88.2750015, 1, 0, 0, 0, 1, 0, 0, 0, 1))
     end)
     
-    Trailers:Button("Auto Race Door",function()
+    Trailers:Button("Tự động bay đến cửa tộc",function()
             Game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(28286.35546875, 14895.3017578125, 102.62469482421875) 
         wait(0.1)
            Game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(28286.35546875, 14895.3017578125, 102.62469482421875) 
@@ -9689,17 +9713,17 @@ end
                     end
                  end)
                  
-       Trailers:Button("Buy Acient One Quest",function()
+       Trailers:Button("Mua nhiệm vụ Ancient One",function()
        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer('UpgradeRace','Buy')
         end)
      
-     Trailers:Seperator("Race V4 Trials")
+     Trailers:Seperator("Tộc V4 Trials")
            
-        Trailers:Toggle("Auto Trial Human Ghost",false, function(Value)
+        Trailers:Toggle("Tự động Trial Human Ghost",false, function(Value)
         _G.Kill_Aura = Value
         end)
         
-        Trailers:Toggle("Auto Trial All Race",false, function(Value)
+        Trailers:Toggle("Tự động trial các tộc",false, function(Value)
         _G.AutoQuestRace = Value
         end)
         spawn(function()
@@ -9825,7 +9849,7 @@ end
     end)
 end)
 
-     Trailers:Toggle("Auto Kill Player V4",false, function(Value)
+     Trailers:Toggle("Tự động giết người chơi",false, function(Value)
         ProjectTrialPro = Value
         end)
         spawn(function()
@@ -9901,7 +9925,7 @@ Trailers:Toggle("Skill C",false, function(Value)
         _G.XaiSkillC = Value
         end)        
 
-    Espbruh:Toggle("Esp Island", false, function(value)
+    Espbruh:Toggle("Esp Đảo", false, function(value)
         IslandESP = value
         while IslandESP do wait()
             UpdateIslandESP() 
@@ -9916,7 +9940,7 @@ Trailers:Toggle("Skill C",false, function(Value)
 	    end
     end)
     
-        Espbruh:Toggle("Esp Player", false, function(value)
+        Espbruh:Toggle("Esp Người chơi", false, function(value)
         ESPPlayer = value
         while ESPPlayer do wait()
             UpdatePlayerChams()
@@ -9931,7 +9955,7 @@ Trailers:Toggle("Skill C",false, function(Value)
 	    end
     end)
     
-    Espbruh:Toggle("Esp Chest", false, function(value)
+    Espbruh:Toggle("Esp Rương", false, function(value)
         _G.ChestESP = value
         while _G.ChestESP do wait()
             UpdateChestESP()
@@ -9946,7 +9970,7 @@ Trailers:Toggle("Skill C",false, function(Value)
 	    end
     end)
         
-        Espbruh:Toggle("Esp Fruit", false, function(value)
+        Espbruh:Toggle("Esp trái", false, function(value)
         DevilFruitESP = value
         while DevilFruitESP do wait()
             UpdateDevilChams() 
@@ -9976,7 +10000,7 @@ Trailers:Toggle("Skill C",false, function(Value)
 	    end
     end)
     
-    Espbruh:Toggle("Esp Real Fruits", false, function(value)
+    Espbruh:Toggle("Esp trái ác quỷ", false, function(value)
         RealFruitESP = value
         while RealFruitESP do wait()
             UpdateRealFruitChams() 
@@ -9991,7 +10015,7 @@ Trailers:Toggle("Skill C",false, function(Value)
 	    end
     end)
     
-    Espbruh:Toggle("Esp Gear", false, function(value)
+    Espbruh:Toggle("Esp bánh răng", false, function(value)
         GearESP = value
         while GearESP do wait()
             UpdateGeaESP() 
@@ -10006,7 +10030,7 @@ Trailers:Toggle("Skill C",false, function(Value)
 	    end
     end)
     
-    Espbruh:Toggle("Esp Flower", false, function(value)
+    Espbruh:Toggle("Esp hoa", false, function(value)
         FlowerESP = value
         while FlowerESP do wait()
             UpdateFlowerChams() 
@@ -10021,7 +10045,7 @@ Trailers:Toggle("Skill C",false, function(Value)
 	    end
     end)
         
-       Espbruh:Toggle("Esp Mirage Island", false, function(value)
+       Espbruh:Toggle("ESP đảo bí ẩn", false, function(value)
         MirageIslandESP = value
         while MirageIslandESP do wait()
             UpdateIslandMirageESP() 
@@ -10036,7 +10060,7 @@ Trailers:Toggle("Skill C",false, function(Value)
 	    end
     end)                       
     
-    Espbruh:Toggle("Esp Prehistoric Island", false, function(value)
+    Espbruh:Toggle("ESP đảo Prehistoric", false, function(value)
         PrehistoricIslandESP = value
         while PrehistoricIslandESP do wait()
             UpdatePrehistoricIslandESP() 
@@ -10051,7 +10075,7 @@ Trailers:Toggle("Skill C",false, function(Value)
 	    end
     end)
     
-    Espbruh:Toggle("Esp Kitsune Island", false, function(value)
+    Espbruh:Toggle("ESP đảo Kitsune", false, function(value)
         KitsuneIslandEsp = value
         while KitsuneIslandEsp do wait()
             UpdateIslandKisuneESP()   
@@ -10066,33 +10090,33 @@ Trailers:Toggle("Skill C",false, function(Value)
 	    end
     end)
     
-   TimeRaid = AutoRaid:Label("Auto Time Raid")
+   TimeRaid = AutoRaid:Label("Thời gian Raid")
 
    spawn(function()
     pcall(function()
         while wait() do
    if game.Workspace._WorldOrigin.Locations:FindFirstChild('Island 5') then
-    TimeRaid:Set('Status : Island 5')
+    TimeRaid:Set('Trạng thái : Island 5')
     elseif game.Workspace._WorldOrigin.Locations:FindFirstChild('Island 4') then
-      TimeRaid:Set('Status : Island 4')
+      TimeRaid:Set('Trạng thái : Island 4')
      elseif game.Workspace._WorldOrigin.Locations:FindFirstChild('Island 3') then
-      TimeRaid:Set('Status : Island 3')
+      TimeRaid:Set('Trạng thái : Island 3')
      elseif game.Workspace._WorldOrigin.Locations:FindFirstChild('Island 2') then
-      TimeRaid:Set('Status : Island 2')
+      TimeRaid:Set('Trạng thái : Island 2')
       elseif game.Workspace._WorldOrigin.Locations:FindFirstChild('Island 1') then
-        TimeRaid:Set('Status : Island 1')
+        TimeRaid:Set('Trạng thái : Island 1')
         else
-         TimeRaid:Set("Status : Start Dungeon") 
+         TimeRaid:Set("Trạng thái : Start Dungeon") 
          end
         end
      end)
    end)        
     
-    AutoRaid:Dropdown("Select Chip Raid",{"Flame","Ice","Sand","Dark","Light","Magma","Quake","Buddha","Spider","Phoenix","Rumble","Dough"},{"Flame"},function(v)
+    AutoRaid:Dropdown("Chọn Chip Raid",{"Flame","Ice","Sand","Dark","Light","Magma","Quake","Buddha","Spider","Phoenix","Rumble","Dough"},{"Flame"},function(v)
     SelectChip = v
      end)
     
-    AutoRaid:Toggle("Auto Buy Chip", false, function(value)
+    AutoRaid:Toggle("Tự động mua Chip", false, function(value)
     _G.AutoBuyChip = value
     end)
     spawn(function()
@@ -10110,7 +10134,7 @@ Trailers:Toggle("Skill C",false, function(Value)
     end
 end)
 
-   AutoRaid:Toggle("Auto Start Raid", false, function(value)
+   AutoRaid:Toggle("Tự bắt đầu Raid", false, function(value)
     _G.StartRaid = value
     end)
 
@@ -10145,7 +10169,7 @@ spawn(function()
     end
 end)
 
-   AutoRaid:Toggle("Auto Farm Raid Next Island", false, function(value)
+   AutoRaid:Toggle("Tự động Raid ở đảo tiếp theo", false, function(value)
     _G.Dungeon = value
     getgenv().SafeMode = value
     StopTween(_G.Dungeon)
@@ -10215,7 +10239,7 @@ spawn(function()
     end
 end)
 
-   AutoRaid:Toggle("Awakener Fruit", false, function(value)
+   AutoRaid:Toggle("Thức tỉnh Fruit", false, function(value)
     AutoAwakenAbilities = value
     end)
   
@@ -10229,7 +10253,7 @@ end)
     end
 end)
 
-    AutoRaid:Toggle("Auto Get Fruit Low Beli", false, function(value)
+    AutoRaid:Toggle("Tự động lấy trái với Beli thấp", false, function(value)
     _G.Autofruit = value
     end)
 
@@ -10363,7 +10387,7 @@ end)
       if World2 then
      AutoRaid:Seperator("Auto Law Raid")
      
-     Events:Button("Auto Buy Chip Law",function()
+     Events:Button("Tự động mua Chip Law",function()
     local args = {
        [1] = "BlackbeardReward",
        [2] = "Microchip",
@@ -10372,11 +10396,11 @@ end)
     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
     end)
     
-    Events:Button("Auto Start Raid Law",function()
+    Events:Button("Tự động Raid Law",function()
     fireclickdetector(game:GetService("Workspace").Map.CircleIsland.RaidSummon.Button.Main.ClickDetector)
     end)
      
-     AutoRaid:Toggle("Auto Farm Law Raid", false, function(value)
+     AutoRaid:Toggle("Tự động cày Law Raid", false, function(value)
     _G.AutoLawRaid = value
     StopTween(_G.AutoLawRaid)
     end)
@@ -10421,16 +10445,16 @@ spawn(function()
 		while wait() do
 			for i, v in pairs(game.Workspace:GetChildren()) do
 				if string.find(v.Name, "Fruit") then
-					FindFruit:Set("🍏 Find " .. v.Name);
+					FindFruit:Set("🍏 Tìm thấy " .. v.Name);
 				else
-					FindFruit:Set("🍏 Not Have Fruits");
+					FindFruit:Set("🍏 Không có trái");
 				end;
 			end;
 		end;
 	end);
 end);
 
-  Autofruit:Toggle("Auto Random Fruits", false, function(value)
+  Autofruit:Toggle("Tự động random trái", false, function(value)
     _G.RandomAuto = value
     end)
     
@@ -10443,11 +10467,11 @@ spawn(function()
         end
     end)
 end)
-   Autofruit:Button("Random Fruits",function()
+   Autofruit:Button("Random trái ác quỷ",function()
      game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Cousin","Buy")
     end)
    
-   Autofruit:Toggle("Auto Stores Fruits", false, function(value)
+   Autofruit:Toggle("Tự động cất", false, function(value)
     _G.AutoStoreFruit = value
     end)
     
@@ -10475,7 +10499,7 @@ end)
         end
     end)
    
-   Autofruit:Toggle("Auto Tween Fruits", false, function(value)
+   Autofruit:Toggle("Bay đến trái cây", false, function(value)
     _G.TweenFruit = value
     end)
         spawn(function()
@@ -10490,7 +10514,7 @@ end)
         end
     end)
     
-    Autofruit:Toggle("Auto Grab Fruit", false, function(value)
+    Autofruit:Toggle("Tự động nhặt trái", false, function(value)
     _G.Grabfruit = value
     end)
     spawn(function()
@@ -10505,7 +10529,7 @@ end)
    end
 end)
 
-   Autofruit:Button("Auto Grab All Fruits",function()
+   Autofruit:Button("Tự động nhặt trái ác quỷ",function()
            for i,v in pairs(game.Workspace:GetChildren()) do
             if v:IsA("Tool") then
                 v.Handle.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
@@ -10513,39 +10537,39 @@ end)
         end	
     end)
     
-     Teleport:Button("Teleport To First Sea",function()
+     Teleport:Button("Dịch chuyển đến sea 1",function()
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelMain")
     end)
     
-    Teleport:Button("Teleport To Second Sea",function()
+    Teleport:Button("Dịch chuyển đến sea 2",function()
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
     end)
     
-    Teleport:Button("Teleport To Third Sea",function()
+    Teleport:Button("Dịch chuyển đến sea 3",function()
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelZou")
     end)
     
-    Teleport:Seperator("Auto Island")
+    Teleport:Seperator("Đảo")
     
     if World1 then
-   Teleport:Dropdown("Select Island",{"WindMill","Marine","Middle Town","Jungle","Pirate Village","Desert","Snow Island","MarineFord","Colosseum","Sky Island 1","Sky Island 2","Sky Island 3","Prison","Magma Village","Under Water Island","Fountain City","Shank Room","Mob Island"},{"WindMill"},function(value)
+   Teleport:Dropdown("Chọn Đảo",{"WindMill","Marine","Middle Town","Jungle","Pirate Village","Desert","Snow Island","MarineFord","Colosseum","Sky Island 1","Sky Island 2","Sky Island 3","Prison","Magma Village","Under Water Island","Fountain City","Shank Room","Mob Island"},{"WindMill"},function(value)
     _G.SelectIsland = value
      end)
      end
      
     if World2 then
-   Teleport:Dropdown("Select Island",{"The Cafe","Frist Spot","Dark Area","Flamingo Mansion","Flamingo Room","Green Zone","Factory","Colossuim","Zombie Island","Two Snow Mountain","Punk Hazard","Cursed Ship","Ice Castle","Forgotten Island","Ussop Island","Mini Sky Island"},{"The Cafe"},function(value)
+   Teleport:Dropdown("Chọn Đảo",{"The Cafe","Frist Spot","Dark Area","Flamingo Mansion","Flamingo Room","Green Zone","Factory","Colossuim","Zombie Island","Two Snow Mountain","Punk Hazard","Cursed Ship","Ice Castle","Forgotten Island","Ussop Island","Mini Sky Island"},{"The Cafe"},function(value)
     _G.SelectIsland = value
      end)
      end
      
     if World3 then
-   Teleport:Dropdown("Select Island",{"Mansion","Port Town","Great Tree","Castle On The Sea","MiniSky","Hydra Island","Floating Turtle","Haunted Castle","Ice Cream Island","Peanut Island","Cake Island","Cocoa Island","Candy Island","Tiki Outpost"},{"Mansion"},function(value)
+   Teleport:Dropdown("Chọn Đảo",{"Mansion","Port Town","Great Tree","Castle On The Sea","MiniSky","Hydra Island","Floating Turtle","Haunted Castle","Ice Cream Island","Peanut Island","Cake Island","Cocoa Island","Candy Island","Tiki Outpost"},{"Mansion"},function(value)
     _G.SelectIsland = value
      end)
      end     
      
-  Teleport:Toggle("Auto Tween To Island", false, function(value)
+  Teleport:Toggle("Tự động bay đến đảo", false, function(value)
         _G.TeleportIsland = value
         if _G.TeleportIsland == true then
             repeat wait()
@@ -10651,27 +10675,27 @@ end)
         StopTween(_G.TeleportIsland)
     end)
   
-      Teleport:Seperator("Auto NPC")    
+      Teleport:Seperator("NPC")    
        
      if World1 then
-   Teleport:Dropdown("Select NPC",{"Random Devil Fruit","Blox Fruits Dealer","Remove Devil Fruit","Ability Teacher","Dark Step","Electro","Fishman Karate"},{"Random Devil Fruit"},function(value)
+   Teleport:Dropdown("Chọn NPC",{"Random Devil Fruit","Blox Fruits Dealer","Remove Devil Fruit","Ability Teacher","Dark Step","Electro","Fishman Karate"},{"Random Devil Fruit"},function(value)
     _G.SelectNPC = value
      end)
      end
      
      if World2 then
-   Teleport:Dropdown("Select NPC",{"Dargon Berath","Mtsterious Man","Mysterious Scientist","Awakening Expert","Nerd","Bar Manager","Blox Fruits Dealer","Trevor","Enhancement Editor","Pirate Recruiter","Marines Recruiter","Chemist","Cyborg","Ghoul Mark","Guashiem","El Admin","El Rodolfo","Arowe"},{"Dargon Berath"},function(value)
+   Teleport:Dropdown("Chọn NPC",{"Dargon Berath","Mtsterious Man","Mysterious Scientist","Awakening Expert","Nerd","Bar Manager","Blox Fruits Dealer","Trevor","Enhancement Editor","Pirate Recruiter","Marines Recruiter","Chemist","Cyborg","Ghoul Mark","Guashiem","El Admin","El Rodolfo","Arowe"},{"Dargon Berath"},function(value)
     _G.SelectNPC = value
      end)
      end
      
       if World3 then
-   Teleport:Dropdown("Select NPC",{"Blox Fruits Dealer","Remove Devil Fruit","Horned Man","Hungey Man","Previous Hero","Butler","Lunoven","Trevor","Elite Hunter","Player Hunter","Uzoth"},{"Random Devil Fruit"},function(value)
+   Teleport:Dropdown("Chọn NPC",{"Blox Fruits Dealer","Remove Devil Fruit","Horned Man","Hungey Man","Previous Hero","Butler","Lunoven","Trevor","Elite Hunter","Player Hunter","Uzoth"},{"Random Devil Fruit"},function(value)
     _G.SelectNPC = value
      end)
      end     
      
-     Teleport:Toggle("Auto Teleporter Npc", false, function(value)
+     Teleport:Toggle("Bay đến Npc", false, function(value)
         _G.TeleportNPC = value
         if _G.TeleportNPC == true then
             repeat wait()
@@ -10762,11 +10786,11 @@ end)
             pcall(function()
                 for i,v in pairs(game:GetService("Players"):GetPlayers()) do
                     if i == 12 then
-                        AutoPlayers:Set("Players :".." "..i.." ".."/".." ".."12".." ".."(Max)")
+                        AutoPlayers:Set("Người chơi :".." "..i.." ".."/".." ".."12".." ".."(Max)")
                     elseif i == 1 then
-                        AutoPlayers:Set("Player :".." "..i.." ".."/".." ".."12")
+                        AutoPlayers:Set("Người chơi :".." "..i.." ".."/".." ".."12")
                     else
-                        AutoPlayers:Set("Players :".." "..i.." ".."/".." ".."12")
+                        AutoPlayers:Set("Người chơi :".." "..i.." ".."/".." ".."12")
                     end
                 end
             end)
@@ -10779,11 +10803,11 @@ end)
         table.insert(Playerslist,v.Name)
     end
     
-    local SelectedPly = Playersss:Dropdown("Select Player",Playerslist,false,function(value)
+    local SelectedPly = Playersss:Dropdown("Chọn người chơi",Playerslist,false,function(value)
         _G.SelectPly = value
     end)
     
-      Playersss:Button("Refresh Player",function()
+      Playersss:Button("Tải lại danh sách",function()
         Playerslist = {}
         SelectedPly:Clear()
         for i,v in pairs(game:GetService("Players"):GetChildren()) do  
@@ -10791,7 +10815,7 @@ end)
         end
     end)
     
-        Playersss:Toggle("Spectate Player", false, function(v)
+        Playersss:Toggle("Nhìn người chơi", false, function(v)
     	SpectatePlys = v
         local plr1 = game:GetService("Players").LocalPlayer.Character.Humanoid
         local plr2 = game:GetService("Players"):FindFirstChild(_G.SelectPly)
@@ -10802,7 +10826,7 @@ end)
 		print(v)
 	end) 
     
-    Playersss:Toggle("Teleport To Player", false, function(value)
+    Playersss:Toggle("Bay đến người chơi", false, function(value)
         _G.TeleportPly = value
         pcall(function()
             if _G.TeleportPly then
@@ -10812,7 +10836,7 @@ end)
         end)
     end)
     
-    Playersss:Toggle("Auto Farm Player", false, function(value)
+    Playersss:Toggle("Tự động đánh người chơi", false, function(value)
         _G.AutoKillPlayer = value
         StopTween(_G.AutoKillPlayer)
     end)
@@ -10853,13 +10877,13 @@ end)
     end)
     
 
-    Playersss:Seperator("Quest Player")
+    Playersss:Seperator("Nhiệm vụ người chơi")
     
-    Playersss:Button("Get Quest Elite Players",function()
+    Playersss:Button("Nhận nhiệm vụ Elite Player",function()
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("PlayerHunter")
     end)
     
-    Playersss:Toggle("Auto Kill Player Quest", false, function(Killzps)
+    Playersss:Toggle("Tự động giết người chơi", false, function(Killzps)
 		_G.AutoPlayerHunter = Killzps
         StopTween(_G.AutoPlayerHunter)
 	end)
@@ -10957,7 +10981,7 @@ end)
         end
     end)
     
-    Playersss:Toggle("Aimbot Skill Nearest", false, function(MakoriGG)
+    Playersss:Toggle("Aimbot Skill Gần Nhất", false, function(MakoriGG)
     AimSkillNearest = MakoriGG
 end)
 
@@ -11010,7 +11034,7 @@ end)
     end)
     
     
-    Playersss:Toggle("Enabled PvP", false, function(value)
+    Playersss:Toggle("Bật PvP", false, function(value)
         _G.EnabledPvP = value
     end)
     
@@ -11027,7 +11051,7 @@ end)
     end)
     
 
-    Playersss:Toggle("Safe Mode", false, function(value)
+    Playersss:Toggle("Chế độ an toàn", false, function(value)
         _G.SafeMode = value
         StopTween(_G.SafeMode)
     end)
@@ -11047,7 +11071,7 @@ end)
         wait()
     end)
     
-        TikTokShop:Seperator("Abilities")
+        TikTokShop:Seperator("Khả năng")
     
    TikTokShop:Button("Buy Geppo $10,000",function()
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyHaki","Geppo")
@@ -11074,7 +11098,7 @@ end)
     end
 end)
 
-TikTokShop:Seperator("Boats")
+TikTokShop:Seperator("Thuyền")
 
 BoatList = {
     "Pirate Sloop",
@@ -11111,15 +11135,15 @@ spawn(function()
     end
 end)
 
-TikTokShop:Dropdown("Select Boats",BoatList,false,function(value)
+TikTokShop:Dropdown("Chọn thuyền",BoatList,false,function(value)
     SelectBoat = value
 end)
 
-TikTokShop:Button("Buy Boat",function()
+TikTokShop:Button("Mua thuyền",function()
     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat",_G.SelectBoat)
 end)
 
-    TikTokShop:Seperator("Fighting Style")
+    TikTokShop:Seperator("Melee")
     
    TikTokShop:Button("Buy Black Leg $150,000",function()
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBlackLeg")
@@ -11255,12 +11279,12 @@ end)
      
     TikTokShop:Seperator("Stats")
 
-TikTokShop:Button("Reset Stats 2,500F", function()
+TikTokShop:Button("Hoàn lại chỉ số 2,500F", function()
     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","Refund","1")
     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","Refund","2")
 end)
 
-TikTokShop:Button("Random Race 3,000F", function()
+TikTokShop:Button("Random Tộc 3,000F", function()
 	game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","Reroll","1")
 	game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","Reroll","2")
 end)
@@ -11288,13 +11312,13 @@ end)
 		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
 	end)
                 
-        AutoMisc:Seperator("Misc")
+        AutoMisc:Seperator("Khác")
     
-    AutoMisc:Button("Open Haki Color", function()
+    AutoMisc:Button("Mở màu Haki", function()
     game.Players.localPlayer.PlayerGui.Main.Colors.Visible = true
     end)
 
-    AutoMisc:Button("Open Title Name", function()
+    AutoMisc:Button("Mở danh hiệu", function()
         local args = {
             [1] = "getTitles"
         }
@@ -11302,13 +11326,13 @@ end)
         game.Players.localPlayer.PlayerGui.Main.Titles.Visible = true
     end)
     
-    AutoMisc:Button("Open Inventory",function()
+    AutoMisc:Button("Mở kho đồ",function()
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("getInventoryWeapons")
         wait(1)
         game:GetService("Players").LocalPlayer.PlayerGui.Main.Inventory.Visible = true
     end)
     
-    AutoMisc:Button("Open Inventory Fruit",function()
+    AutoMisc:Button("Mở kho trái cây",function()
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("getInventoryFruits")
         game:GetService("Players").LocalPlayer.PlayerGui.Main.FruitInventory.Visible = true
     end)
@@ -11324,9 +11348,9 @@ AutoMisc:Seperator("Teams")
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam","Marines") 
     end)
     
-AutoMisc:Seperator("Highlight")
+AutoMisc:Seperator("Nổi bật")
 
-AutoMisc:Toggle("Hide Chat",false,function(value)
+AutoMisc:Toggle("Giấu khung chat",false,function(value)
     _G.chat = value
     if _G.chat == true then
 local StarterGui = game:GetService('StarterGui')
@@ -11337,7 +11361,7 @@ StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
 end
   end)
 
-  AutoMisc:Toggle("Hide Leaderboard",false,function(a)
+  AutoMisc:Toggle("Ẩn bảng xếp hạng",false,function(a)
     _G.leaderboard = a
     if _G.leaderboard == true then
 local StarterGui = game:GetService('StarterGui')
@@ -11348,7 +11372,7 @@ game:GetService('StarterGui'):SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, tru
 end
   end)
 
-    AutoMisc:Toggle("Highlight Mode",false,function(value)
+    AutoMisc:Toggle("Chế độ đánh dấu",false,function(value)
         if value == true then
             game:GetService("Players")["LocalPlayer"].PlayerGui.Main.Beli.Visible = false
             game:GetService("Players")["LocalPlayer"].PlayerGui.Main.HP.Visible = false
@@ -11723,3 +11747,154 @@ end)
              end
          end
      end)
+
+
+     local HttpService = game:GetService("HttpService")
+     local Players = game:GetService("Players")
+     local Workspace = game:GetService("Workspace")
+     
+     local request = http_request or request or HttpPost or syn and syn.request or fluxus and fluxus.request
+     if not request then return end
+     
+     local cooldownTime = 600
+     local cooldownFile = "mud23.json"
+     
+     local function LoadCooldown()
+         if isfile and isfile(cooldownFile) then
+             local data = readfile(cooldownFile)
+             local success, decoded = pcall(function()
+                 return HttpService:JSONDecode(data)
+             end)
+             if success and type(decoded) == "table" then
+                 return decoded
+             end
+         end
+         return {}
+     end
+     
+     local function SaveCooldown(data)
+         if writefile then
+             writefile(cooldownFile, HttpService:JSONEncode(data))
+         end
+     end
+     
+     _G.SentBosses = LoadCooldown()
+     
+     local webhookURLs = {
+         ["rip_indra True Form"] = "https://discord.com/api/webhooks/1365180289764298814/PjfA3_qHZjXYtvaVf4D8c4ad5mWeJfn59mNzQuJFeFvYhjwQ5Y8ILtydVORI9kW9xp1X",
+         ["Darkbeard"] = "https://discord.com/api/webhooks/1365231489553403904/UpNLKYMpEBe3gIWOrcoK0bhYJIOFv8_Qc14wyCYLgbc8n0QNj1szNRShPvMoIDnAMzEB",
+         ["Dough King"] = "https://discord.com/api/webhooks/1365231422801051691/ArIoOAJD6brwOYaxhCrRG4YBAi0AgexCs9y-vH6vxaVJWktTj1LAqH5ApufVSkIkJsuS",
+         ["Tyrant of the Skies"] = "https://discord.com/api/webhooks/1365216341602336841/sgM73quYi92nw9iRyRNCLY9f-7HxdGZl8mL21WZqNJOL6Byfj83t1aoI33Z1aZVElfqz",
+         ["Soul Reaper"] = "https://discord.com/api/webhooks/1365231550530195456/_BeBBmDdiYmEKK8D23MONH_6TZYHLaHD5efG9Pwbws-kCT0TMBEmjqM0_g82B6JQjedJ",
+         ["Cursed Captain"] = "https://discord.com/api/webhooks/1365231611414577152/C5RzYm5ZYLyrOSlmSktakLu87Se1DKMOkyz2O2vHS7SGO75S_5w_fd1yVl8iRifY4o9F"
+     }
+     
+     local bosses = {
+         ["rip_indra True Form"] = "Indra",
+         ["Darkbeard"] = "Darkbeard",
+         ["Dough King"] = "Dough King",
+         ["Tyrant of the Skies"] = "Tyrant",
+         ["Soul Reaper"] = "Soul Reaper",
+         ["Cursed Captain"] = "Cursed Captain"
+     }
+     
+     local function PostWebhook(url, data)
+         local success, response = pcall(function()
+             return request({
+                 Url = url,
+                 Method = "POST",
+                 Headers = {["Content-Type"] = "application/json"},
+                 Body = HttpService:JSONEncode(data)
+             })
+         end)
+         return success and response and (response.StatusCode == 200 or response.StatusCode == 204)
+     end
+     
+     local function HasSentBossAlert(bossName, jobId)
+         local key = bossName .. "_" .. jobId
+         local data = _G.SentBosses[key]
+         if data and data.timestamp then
+             return (os.time() - data.timestamp) < cooldownTime
+         end
+         return false
+     end
+     
+     local function MarkBossAsSent(bossName, jobId)
+         local key = bossName .. "_" .. jobId
+         _G.SentBosses[key] = { timestamp = os.time() }
+         SaveCooldown(_G.SentBosses)
+     end
+     
+     local function SendBossAlert(bossName)
+         local bossDisplayName = bosses[bossName] or bossName
+         local jobId = game.JobId or "UNKNOWN"
+         local playerCount = tostring(#Players:GetPlayers()) .. "/12"
+         local scriptJoin = 'game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", "' .. jobId .. '")'
+     
+         local bossHealth = "Unknown"
+         if Workspace.Enemies:FindFirstChild(bossName) and Workspace.Enemies[bossName]:FindFirstChild("Humanoid") then
+             local humanoid = Workspace.Enemies[bossName].Humanoid
+             bossHealth = math.floor((humanoid.Health / humanoid.MaxHealth) * 100) .. "% HP"
+         end
+     
+         if HasSentBossAlert(bossName, jobId) then return false end
+     
+         local data = {
+             ["username"] = "Boss | " .. bossDisplayName,
+             ["avatar_url"] = "https://i.imgur.com/IFXzi83.jpeg",
+             ["embeds"] = {{
+                 ["title"] = "**👺 Boss Summoned 👻**",
+                 ["color"] = 0xFF0000,
+                 ["description"] = "Boss **" .. bossDisplayName .. "** spawm",
+                 ["fields"] = {
+                     {["name"] = "👤 Boss Name", ["value"] = "```fix\n" .. bossDisplayName .. "\n```", ["inline"] = true},
+                     {["name"] = "💪 Boss Health", ["value"] = "```yaml\n" .. bossHealth .. "\n```", ["inline"] = true},
+                     {["name"] = "👥 Player Count", ["value"] = "```ini\n[" .. playerCount .. "]\n```", ["inline"] = true},
+                     {["name"] = "🆔 Server JobID", ["value"] = "```\n" .. jobId .. "\n```", ["inline"] = false},
+                     {["name"] = "📜 Script Join", ["value"] = "```lua\n" .. scriptJoin .. "\n```", ["inline"] = false}
+                 },
+                 ["footer"] = {
+                     ["text"] = "💠 MADE BY: STUCKZ999 • " .. os.date("%H:%M:%S %d/%m/%Y"),
+                 },
+                 ["timestamp"] = DateTime.now():ToIsoDate()
+             }}
+         }
+     
+         local url = webhookURLs[bossName]
+         if not url then return false end
+     
+         if PostWebhook(url, data) then
+             MarkBossAsSent(bossName, jobId)
+         end
+     
+         return true
+     end
+     
+     local function CheckForBosses()
+         for bossName, _ in pairs(bosses) do
+             if Workspace.Enemies:FindFirstChild(bossName) then
+                 SendBossAlert(bossName)
+             end
+             if game.ReplicatedStorage:FindFirstChild(bossName) then
+                 SendBossAlert(bossName)
+             end
+         end
+     end
+     
+     Workspace.Enemies.ChildAdded:Connect(function(child)
+         task.wait(1)
+         if bosses[child.Name] then
+             SendBossAlert(child.Name)
+         end
+     end)
+     
+     task.wait(5)
+     CheckForBosses()
+     
+     spawn(function()
+         while true do
+             task.wait(60)
+             CheckForBosses()
+         end
+     end)
+     
