@@ -1,3 +1,11 @@
+-- Cre : Matsune Hub
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Trẩu Roblox",
+    Text = "Game vui vẻ nhé",
+    Duration = 5,
+    Icon = "rbxassetid://138458376384113"
+})
+
 _G.FastAttack = true
 
 if _G.FastAttack then
@@ -7603,63 +7611,100 @@ if World3 then
 
     AutoFarm:Seperator("Tyrant of the Skies Farm")
 
-    function checkEagleEye()
-        local success, result =
-            pcall(
-            function()
-                local islandModel = (game:GetService("Workspace")).Map.TikiOutpost.IslandModel
-                local targetEyes = {
-                    Eye1 = false,
-                    Eye2 = false,
-                    Eye3 = false,
-                    Eye4 = false
-                }
+    pcall(function()
 
-                local foundCount = 0
-
-                for _, v in ipairs(islandModel:GetChildren()) do
-                    if string.match(v.Name, "^Eye%d$") and targetEyes[v.Name] ~= nil then
-                        if tonumber(v.Transparency) == 0 then
-                            targetEyes[v.Name] = true
-                            foundCount = foundCount + 1
-                        end
+        function checkEagleEye()
+            local islandModel = (game:GetService("Workspace")).Map.TikiOutpost.IslandModel
+            local targetEyes = {
+                Eye1 = false,
+                Eye2 = false,
+                Eye3 = false,
+                Eye4 = false
+            }
+            
+            local foundCount = 0
+            
+            for _, v in ipairs(islandModel:GetChildren()) do
+                if string.match(v.Name, "^Eye%d$") and targetEyes[v.Name] ~= nil then
+                    if tonumber(v.Transparency) == 0 then
+                        targetEyes[v.Name] = true
+                        foundCount = foundCount + 1
                     end
                 end
-
-                return foundCount, targetEyes
             end
-        )
-
-        if success then
-            return result
-        else
-            return 0, {}
+            
+            return foundCount, targetEyes
         end
-    end
-
-    local function updateTyrantStatus()
-        local foundCount, eyeStatus = checkEagleEye()
-
-        if foundCount == 0 then
-            TyrantStatus:Set("Trạng thái: Chưa có")
-        elseif foundCount == 4 then
-            TyrantStatus:Set("Trạng thái: [4/4] Mắt")
-        else
-            TyrantStatus:Set("Trạng thái: [" .. foundCount .. "/4] Mắt")
+        
+        local function updateTyrantStatus()
+            local foundCount, eyeStatus = checkEagleEye()
+            
+            if foundCount == 0 then
+                TyrantStatus:Set("Trạng thái: Chưa có")
+            elseif foundCount == 4 then
+                TyrantStatus:Set("Trạng thái: [4/4] Mắt")
+            else
+                TyrantStatus:Set("Trạng thái: [" .. foundCount .. "/4] Mắt")
+            end
+            
+            TyrantStatus:SetTextColor(Color3.fromRGB(255, 255, 255))
         end
-
-        TyrantStatus:SetTextColor(Color3.fromRGB(255, 255, 255))
-    end
-
-    TyrantStatus = AutoFarm:Label("Đang kiểm tra mắt...")
-
-    spawn(
-        function()
-            while wait(3) do
-                pcall(updateTyrantStatus)
+        
+        TyrantStatus = AutoFarm:Label("Đang kiểm tra mắt...")
+        
+        spawn(function()
+            while true do
+                updateTyrantStatus()
+                wait(5)
+            end
+        end)
+        
+        local function forceUpdate()
+            local lastUpdate = tick()
+            
+            spawn(function()
+                while true do
+                    if tick() - lastUpdate > 10 then
+                        pcall(updateTyrantStatus)
+                        lastUpdate = tick()
+                    end
+                    wait(1)
+                end
+            end)
+            
+            local workspace = game:GetService("Workspace")
+            if workspace and workspace.Map and workspace.Map.TikiOutpost and workspace.Map.TikiOutpost.IslandModel then
+                local islandModel = workspace.Map.TikiOutpost.IslandModel
+        
+                islandModel.DescendantAdded:Connect(function(descendant)
+                    if string.match(descendant.Name, "^Eye%d$") then
+                        wait(0.5)
+                        updateTyrantStatus()
+                        lastUpdate = tick()
+                    end
+                end)
+                
+                for _, child in pairs(islandModel:GetChildren()) do
+                    if string.match(child.Name, "^Eye%d$") then
+                        child:GetPropertyChangedSignal("Transparency"):Connect(function()
+                            wait(0.5)
+                            updateTyrantStatus()
+                            lastUpdate = tick()
+                        end)
+                    end
+                end
             end
         end
-    )
+        
+        spawn(function()
+            wait(2)
+            pcall(forceUpdate)
+        end)
+        
+        updateTyrantStatus()
+    
+    end)
+    
 
     AutoFarm:Toggle(
         "Cày Tyrant of the Skies",
