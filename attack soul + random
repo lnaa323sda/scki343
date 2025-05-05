@@ -7611,104 +7611,148 @@ if World3 then
 
     AutoFarm:Seperator("Tyrant of the Skies Farm")
 
+
     pcall(function()
         local TyrantStatus = nil
         
+        local currentEyeCount = 0
+        
         function checkEagleEye()
-            local islandModel = game:GetService("Workspace").Map.TikiOutpost.IslandModel
-            local targetEyes = {
-                Eye1 = false,
-                Eye2 = false,
-                Eye3 = false,
-                Eye4 = false
-            }
-            
-            local foundCount = 0
-            
-            for _, v in ipairs(islandModel:GetChildren()) do
-                if string.match(v.Name, "^Eye%d$") and targetEyes[v.Name] ~= nil then
-                    if v:IsA("BasePart") and v.Transparency == 0 then
-                        targetEyes[v.Name] = true
-                        foundCount = foundCount + 1
+            local success, result = pcall(function()
+                local islandModel = game:GetService("Workspace").Map.TikiOutpost.IslandModel
+                local targetEyes = {
+                    Eye1 = false,
+                    Eye2 = false,
+                    Eye3 = false,
+                    Eye4 = false
+                }
+                
+                local foundCount = 0
+                
+                for _, v in pairs(islandModel:GetChildren()) do
+                    if string.match(v.Name, "^Eye%d$") and targetEyes[v.Name] ~= nil then
+                        if v.Transparency == 0 then
+                            targetEyes[v.Name] = true
+                            foundCount = foundCount + 1
+                            print("")
+                        else
+                            print("")
+                        end
                     end
                 end
+                
+                return foundCount, targetEyes
+            end)
+            
+            if not success then
+                print("")
+                return 0, {}
             end
             
-            return foundCount, targetEyes
+            return result
         end
         
         local function updateTyrantStatus()
-            pcall(function()
+            local success, result = pcall(function()
                 local foundCount, eyeStatus = checkEagleEye()
                 
-                if foundCount == 0 then
-                    TyrantStatus:Set("Trạng thái: Chưa có")
-                elseif foundCount == 4 then
-                    TyrantStatus:Set("Trạng thái: [4/4] Mắt")
-                else
-                    TyrantStatus:Set("Trạng thái: [" .. foundCount .. "/4] Mắt")
-                end
-                
-                TyrantStatus:SetTextColor(Color3.fromRGB(255, 255, 255))
-                
-                for eye, status in pairs(eyeStatus) do
+                if foundCount ~= currentEyeCount then
+                    currentEyeCount = foundCount
+                    
+                    if foundCount == 0 then
+                        TyrantStatus:Set("Trạng thái: Chưa có")
+                    elseif foundCount == 4 then
+                        TyrantStatus:Set("Trạng thái: [4/4] Mắt")
+                    else
+                        TyrantStatus:Set("Trạng thái: [" .. foundCount .. "/4] Mắt")
+                    end
+                    
+                    TyrantStatus:SetTextColor(Color3.fromRGB(255, 255, 255))
                     print("")
                 end
             end)
+            
+            if not success then
+                print("")
+            end
         end
         
         TyrantStatus = AutoFarm:Label("Đang kiểm tra mắt...")
         
-        spawn(function()
-            while true do
+        local RunService = game:GetService("RunService")
+        local lastCheckTime = 0
+        local checkInterval = 1
+        
+        local heartbeatConnection
+        heartbeatConnection = RunService.Heartbeat:Connect(function(deltaTime)
+            local currentTime = tick()
+            if currentTime - lastCheckTime >= checkInterval then
+                lastCheckTime = currentTime
                 pcall(updateTyrantStatus)
-                wait(2)
             end
         end)
-    
-        local function connectEyeEvents()
-            local workspace = game:GetService("Workspace")
+        
+        spawn(function()
+            while true do
+                wait(10)
+                if not heartbeatConnection.Connected then
+                    print("")
+                    heartbeatConnection = RunService.Heartbeat:Connect(function(deltaTime)
+                        local currentTime = tick()
+                        if currentTime - lastCheckTime >= checkInterval then
+                            lastCheckTime = currentTime
+                            pcall(updateTyrantStatus)
+                        end
+                    end)
+                end
+                
+                pcall(updateTyrantStatus)
+            end
+        end)
+        
+        local workspace = game:GetService("Workspace")
+        
+        local function setupIslandModelWatcher()
             if workspace and workspace.Map and workspace.Map.TikiOutpost and workspace.Map.TikiOutpost.IslandModel then
                 local islandModel = workspace.Map.TikiOutpost.IslandModel
                 
+                islandModel.ChildAdded:Connect(function(child)
+                    wait(0.1)
+                    pcall(updateTyrantStatus)
+                end)
+                
+                islandModel.ChildRemoved:Connect(function(child)
+                    wait(0.1)
+                    pcall(updateTyrantStatus)
+                end)
+                
+                islandModel.DescendantAdded:Connect(function(descendant)
+                    wait(0.1)
+                    pcall(updateTyrantStatus)
+                end)
+                
                 for _, child in pairs(islandModel:GetChildren()) do
-                    if string.match(child.Name, "^Eye%d$") and child:IsA("BasePart") then
-    
-                        if child:GetAttribute("ConnectionActive") then
-                            continue
-                        end
-                        
-                        child:SetAttribute("ConnectionActive", true)
+                    if string.match(child.Name, "^Eye%d$") then
                         child:GetPropertyChangedSignal("Transparency"):Connect(function()
-    
-                            wait(0.1)
-                            updateTyrantStatus()
+                            pcall(updateTyrantStatus)
                         end)
-                        print("")
                     end
                 end
-                
-                islandModel.ChildAdded:Connect(function(child)
-                    if string.match(child.Name, "^Eye%d$") and child:IsA("BasePart") then
-                        wait(0.5)
-                        
-                        child:SetAttribute("ConnectionActive", true)
-                        child:GetPropertyChangedSignal("Transparency"):Connect(function()
-                            wait(0.1)
-                            updateTyrantStatus()
-                        end)
-                        
-                        print("")
-                        updateTyrantStatus()
-                    end
-                end)
             end
         end
+        
+        pcall(setupIslandModelWatcher)
+        
+        spawn(function()
+            for i = 1, 10 do
+                wait(1)
+                pcall(setupIslandModelWatcher)
+            end
+        end)
         
         spawn(function()
             wait(1)
             pcall(updateTyrantStatus)
-            pcall(connectEyeEvents)
         end)
     end)
     
@@ -7900,12 +7944,17 @@ if World3 then
         end
     end)
     
+    local VirtualInputManager = game:GetService("VirtualInputManager")
+    local TweenService = game:GetService("TweenService")
+    local player = game.Players.LocalPlayer
+    local hrp = nil
+    
     local WeaponList = {"Melee", "Sword", "Fruit"}
     local currentWeaponIndex = 1
     _G.SkillZ, _G.SkillX, _G.SkillC = true, true, true
     _G.UseSkillKub = true
     
-    local flySpeed = 5 
+    local flySpeed = 5
     
     game:GetService("RunService").Heartbeat:Connect(function()
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
@@ -7969,25 +8018,33 @@ if World3 then
     
     local function spamSkills()
         if _G.UseSkillKub then
+            
+            -- Skill Z
             if _G.SkillZ then 
-                VirtualInputManager:SendKeyEvent(true, "Z", false, game) 
-                wait(0.1)
-                VirtualInputManager:SendKeyEvent(false, "Z", false, game) 
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Z, false, game) 
+                wait(0.5)
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Z, false, game) 
             end
             wait(0.1)
             
+            -- Skill X
             if _G.SkillX then 
-                VirtualInputManager:SendKeyEvent(true, "X", false, game) 
-                wait(0.1)
-                VirtualInputManager:SendKeyEvent(false, "X", false, game) 
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.X, false, game) 
+                wait(0.5)
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.X, false, game) 
             end
             wait(0.1)
             
+            -- Skill C
             if _G.SkillC then 
-                VirtualInputManager:SendKeyEvent(true, "C", false, game) 
-                wait(0.1)
-                VirtualInputManager:SendKeyEvent(false, "C", false, game) 
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.C, false, game) 
+                wait(0.5)
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.C, false, game) 
             end
+            
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+            wait(0.2)
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
         end
     end
     
@@ -8005,24 +8062,34 @@ if World3 then
     
     local function getAllPots()
         local pots = {}
+    
         for _, obj in pairs(workspace:GetDescendants()) do
             if obj:IsA("BasePart") then
                 local name = obj.Name:lower()
                 if (name:find("pot") or name:find("jar") or name:find("urn")) then
-                    table.insert(pots, obj)
+    
+                    if obj.Parent and obj.Parent.Parent then
+                        table.insert(pots, obj)
+                    end
                 end
             end
         end
-        print("")
+        
+        if hrp then
+            table.sort(pots, function(a, b)
+                local distanceA = (a.Position - hrp.Position).Magnitude
+                local distanceB = (b.Position - hrp.Position).Magnitude
+                return distanceA < distanceB
+            end)
+        end
+        
         return pots
     end
     
     local function smashOneRound()
         local pots = getAllPots()
         for _, pot in ipairs(pots) do
-            
             if checkForTyrantBoss() then
-                print("")
                 isAutoSummonActive = false
                 StopTween()
                 return
@@ -8033,11 +8100,12 @@ if World3 then
             if pot and pot:IsA("BasePart") and pot.Parent and hrp then
                 local distance = (pot.Position - hrp.Position).Magnitude
                 if distance > 300 then
-                    print("")
+    
                     continue
                 end
-                
+    
                 local targetPos = pot.Position + Vector3.new(0, 3, 0)
+                if tweenObject then tweenObject:Cancel() end
                 tweenObject = TweenService:Create(hrp, TweenInfo.new(0.5), {CFrame = CFrame.new(targetPos)})
                 tweenObject:Play()
                 tweenObject.Completed:Wait()
@@ -8045,25 +8113,32 @@ if World3 then
                 local weaponType = WeaponList[currentWeaponIndex]
                 local equipped = equipWeaponType(weaponType)
                 if equipped then
-                    wait(0.2)
                     spamSkills()
-                    wait(0.3)
                 else
-                    print("")
                 end
                 
                 currentWeaponIndex = currentWeaponIndex + 1
                 if currentWeaponIndex > #WeaponList then currentWeaponIndex = 1 end
+                
+                wait(0.2)
             end
         end
     end
     
     function summonTyrantOfTheSkies()
+        
         while isAutoSummonActive do
-            
+    
             if checkForTyrantBoss() then
-                print("")
+    
                 isAutoSummonActive = false
+                
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = "Trẩu Roblox",
+                    Text = "Boss xuất hiện",
+                    Duration = 5
+                })
+                
                 break
             end
             
@@ -8073,10 +8148,18 @@ if World3 then
             for i = 1, 3 do
                 if not isAutoSummonActive then return end
                 smashOneRound()
-                wait(1)
+                
+                if checkForTyrantBoss() then
+                    isAutoSummonActive = false
+                    break
+                end
+                
+                wait(0.5)
             end
             
-            wait(3)
+            if isAutoSummonActive then
+                wait(2)
+            end
         end
     end
 
