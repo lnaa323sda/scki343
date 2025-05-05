@@ -7923,7 +7923,8 @@ if World3 then
                         end
                     end
                 end
-    
+                
+                
                 for i, v in pairs(player.Character:GetChildren()) do
                     if v:IsA("Tool") then
                         for _, tip in ipairs(WeaponList) do
@@ -7941,6 +7942,7 @@ if World3 then
         local weaponName = _G["Weapon_" .. weaponType]
         if weaponName then
             if player.Character:FindFirstChild(weaponName) then
+                -- Already equipped
                 return true
             elseif player.Backpack:FindFirstChild(weaponName) then
                 player.Character.Humanoid:EquipTool(player.Backpack:FindFirstChild(weaponName))
@@ -8008,12 +8010,6 @@ if World3 then
         return false
     end
     
-    local function anchorPlayer(state)
-        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            player.Character.HumanoidRootPart.Anchored = state
-        end
-    end
-    
     local function smashOneRound()
         local pots = getAllPots()
         for _, pot in ipairs(pots) do
@@ -8068,7 +8064,7 @@ if World3 then
     
             wait(4)
         end
-    end    
+    end        
 
     AutoFarm:Seperator("Cày Katakuri")
 
