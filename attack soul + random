@@ -12,12 +12,6 @@ if getgenv().FixLagV2 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/JewhisKids/NewFreeScript/main/Misc/SuperFpsBoost.lua"))()
 end
 
-getgenv().FixLagV1 = false
-
-if getgenv().FixLagV1 then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/stuckez999/main/refs/heads/main/opensource"))()
-end
-
 _G.FastAttack = true
 
 if _G.FastAttack then
