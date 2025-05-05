@@ -1,14 +1,6 @@
 -- Cre : Matsune Hub
 repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
 
-if getgenv().Team == "Pirates" then
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
-elseif getgenv().Team == "Marines" then
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines")
-end
-
-wait(2)
-
 game.StarterGui:SetCore("SendNotification", {
     Title = "Trẩu Roblox",
     Text = "Cảm ơn đã sử dụng",
