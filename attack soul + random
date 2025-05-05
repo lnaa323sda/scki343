@@ -1,6 +1,4 @@
 -- Cre : Matsune Hub
-repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
-
 game.StarterGui:SetCore("SendNotification", {
     Title = "Trẩu Roblox",
     Text = "Cảm ơn đã sử dụng",
