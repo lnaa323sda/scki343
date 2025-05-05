@@ -1,24 +1,10 @@
 -- Cre : Matsune Hub
-repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
-
 game.StarterGui:SetCore("SendNotification", {
     Title = "Trẩu Roblox",
     Text = "Cảm ơn đã sử dụng",
     Duration = 5,
     Icon = "rbxassetid://138458376384113"
 })
-
-getgenv().FixLagV2 = false
-
-if getgenv().FixLagV2 then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/JewhisKids/NewFreeScript/main/Misc/SuperFpsBoost.lua"))()
-end
-
-getgenv().FixLagV1 = false
-
-if getgenv().FixLagV1 then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/stuckez999/main/refs/heads/main/opensource"))()
-end
 
 _G.FastAttack = true
 
