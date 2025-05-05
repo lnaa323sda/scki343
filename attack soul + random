@@ -17476,29 +17476,16 @@ AutoMisc:Button(
 AutoMisc:Seperator("Đồ họa")
 
 AutoMisc:Button(
-    "FPS Boost",
+    "FPS Boost V2",
     function()
-        local decalsyeeted = true
-        local g = game
-        local w = g.Workspace
-        local l = g.Lighting
-        local t = w.Terrain
-        settings().Rendering.QualityLevel = "Level01"
-        for i, v in pairs(g:GetDescendants()) do
-            if v:IsA("Part") or v:IsA("Union") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
-                v.Material = "Plastic"
-                v.Reflectance = 0
-            elseif v:IsA("Decal") or v:IsA("Texture") and decalsyeeted then
-                v.Transparency = 1
-            elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-                v.Lifetime = NumberRange.new(0)
-            elseif v:IsA("Explosion") then
-                v.BlastPressure = 1
-                v.BlastRadius = 1
-            elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") then
-                v.Enabled = false
-            end
-        end
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/JewhisKids/NewFreeScript/main/Misc/SuperFpsBoost.lua"))()
+    end
+)
+
+AutoMisc:Button(
+    "FPS Boost V1",
+    function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/stuckez999/main/refs/heads/main/opensource"))()
     end
 )
 
@@ -17832,5 +17819,7 @@ StatusTime:Button(
         loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hopmirage"))()
     end
 )
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/stuckez999/main/refs/heads/main/razsss"))()
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/cc/refs/heads/main/hello.lua"))()
