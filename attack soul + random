@@ -1,39 +1,3 @@
--- Initialize Library
-local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/Library-ui/refs/heads/main/Redzhubui"))()
-
--- Create the main window
-local Window = redzlib:MakeWindow({
-    Title = "Zush Hub",
-    SubTitle = "by Stuckz999",
-    SaveFolder = "Zush | Zush Hub Config.lua"
-})
-
--- Add minimize button
-Window:AddMinimizeButton({
-    Button = { Image = "rbxassetid://108644766679780", BackgroundTransparency = 0 },
-    Corner = { CornerRadius = UDim.new(0, 5) },
-})
-
--- Create Tabs
-local MainSettingsTab = Window:MakeTab({"Info Hub", "cherry"}) -- Main settings tab
-local FarmTab = Window:MakeTab({"Farm", "apple"}) -- Farming tab
-local ItemsTab = Window:MakeTab({"Items", "box"}) -- Items tab
-local SettingsTab = Window:MakeTab({"Settings", "settings"}) -- General settings tab
-local LocalPlayerTab = Window:MakeTab({"Local Player", "user"}) -- Local player settings
-local StatsTab = Window:MakeTab({"Stats", "chart-no-axes-column"}) -- Stats management
-local SeaEventTab = Window:MakeTab({"Sea Event", "anchor"}) -- Sea Event management
-local SeaStackTab = Window:MakeTab({"Sea Stack", "waves"}) -- Sea Stack section
-local DragonDojoTab = Window:MakeTab({"Dragon Dojo", "shield"}) -- Dragon Dojo section
-local RaceTab = Window:MakeTab({"Race", "bot"}) -- Race section
-local CombatTab = Window:MakeTab({"Combat", "sword"}) -- Combat section
-local RaidTab = Window:MakeTab({"Raid", "door-open"}) -- Raid section
-local EspTab = Window:MakeTab({"ESP", "scan-eye"}) -- ESP section
-local TeleportTab = Window:MakeTab({"Teleport", "map-pinned"}) -- Teleport section
-local ShopTab = Window:MakeTab({"Shop", "shopping-cart"}) -- Shop section
-local FruitTab = Window:MakeTab({"Fruit", "vegan"}) -- Fruit section
-local MiscTab = Window:MakeTab({"Misc", "layout-grid"}) -- Misc section
-local ServerTab = Window:MakeTab({"Server", "server"}) -- Server section
-
 _G.FastAttack = true
 
 if _G.FastAttack then
@@ -3036,6 +3000,42 @@ function CheckItemBPCRBPCR(name)
         end
     end
 end
+
+local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/Library-ui/refs/heads/main/Redzhubui"))()
+
+-- Create the main window
+local Window = redzlib:MakeWindow({
+    Title = "Zush Hub",
+    SubTitle = "by Stuckz999",
+    SaveFolder = "Zush | Zush Hub Config.lua"
+})
+
+-- Add minimize button
+Window:AddMinimizeButton({
+    Button = { Image = "rbxassetid://108644766679780", BackgroundTransparency = 0 },
+    Corner = { CornerRadius = UDim.new(0, 5) },
+})
+
+-- Create Tabs
+local MainSettingsTab = Window:MakeTab({"Info Hub", "cherry"}) -- Main settings tab
+local FarmTab = Window:MakeTab({"Farm", "apple"}) -- Farming tab
+local ItemsTab = Window:MakeTab({"Items", "box"}) -- Items tab
+local SettingsTab = Window:MakeTab({"Settings", "settings"}) -- General settings tab
+local LocalPlayerTab = Window:MakeTab({"Local Player", "user"}) -- Local player settings
+local StatsTab = Window:MakeTab({"Stats", "chart-no-axes-column"}) -- Stats management
+local SeaEventTab = Window:MakeTab({"Sea Event", "anchor"}) -- Sea Event management
+local SeaStackTab = Window:MakeTab({"Sea Stack", "waves"}) -- Sea Stack section
+local DragonDojoTab = Window:MakeTab({"Dragon Dojo", "shield"}) -- Dragon Dojo section
+local RaceTab = Window:MakeTab({"Race", "bot"}) -- Race section
+local CombatTab = Window:MakeTab({"Combat", "sword"}) -- Combat section
+local RaidTab = Window:MakeTab({"Raid", "door-open"}) -- Raid section
+local EspTab = Window:MakeTab({"ESP", "scan-eye"}) -- ESP section
+local TeleportTab = Window:MakeTab({"Teleport", "map-pinned"}) -- Teleport section
+local ShopTab = Window:MakeTab({"Shop", "shopping-cart"}) -- Shop section
+local FruitTab = Window:MakeTab({"Fruit", "vegan"}) -- Fruit section
+local MiscTab = Window:MakeTab({"Misc", "layout-grid"}) -- Misc section
+local ServerTab = Window:MakeTab({"Server", "server"}) -- Server section
+
 _G.SelectWeapon = "Melee"
   AutoFarm:Dropdown("Select Weapons",{"Melee","Sword","Gun","Blox Fruit"},{"Melee"},function(v)
     _G.SelectWeapon = v
@@ -3081,14 +3081,18 @@ _G.SelectWeapon = "Melee"
      	end
     end)
 
+MainSettingsTab:AddSection({ "Info Hub" })
 MainSettingsTab:AddDiscordInvite({
     Name = "Zush Hub | Community",
     Description = "Join our discord community to receive information about the next update",
     Logo = "rbxassetid://108644766679780",
     Invite = "https://discord.gg/ADZ7H2rwk7",
 })
+
+FarmTab:AddSection({ "Farm" })
 FarmTab:AddToggle({
     Name = "Auto Farm Leve",
+    Description = "Tự động farm cấp",
     Default = false,
     Callback = function(value)
 		_G.AutoFarm = value
