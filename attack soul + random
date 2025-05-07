@@ -1979,19 +1979,18 @@ spawn(function()
 		end;
 	end);
 end);
--- Tạo Section trong Tab Main
-MainSection = Tabs.MainTab:Section({
+local MainSection = MainSettingsTab:Section({
     Title = "Main",
     TextXAlignment = "Left"
-});
+})
 
 -- Tạo Paragraph hiển thị Game Time
-GameTimeParagraph = Tabs.MainTab:Paragraph({
+local GameTimeParagraph = MainSettingsTab:Paragraph({
     Title = "Game Time",
     Desc = "0",
     Image = "timer",
     ImageSize = 20
-});
+})
 
 -- Cập nhật Game Time mỗi giây
 spawn(function()
@@ -2004,15 +2003,15 @@ spawn(function()
             GameTimeParagraph:SetDesc(Hour .. " Hours " .. Minute .. " Minute " .. Second .. " Second")
         end)
     end
-end);
+end)
 
 -- Tạo Paragraph hiển thị FPS
-FpsParagraph = Tabs.MainTab:Paragraph({
+local FpsParagraph = MainSettingsTab:Paragraph({
     Title = "Fps",
     Desc = "0",
     Image = "monitor",
     ImageSize = 20
-});
+})
 
 -- Cập nhật FPS mỗi giây
 spawn(function()
@@ -2021,15 +2020,15 @@ spawn(function()
             FpsParagraph:SetDesc(workspace:GetRealPhysicsFPS())
         end)
     end
-end);
+end)
 
 -- Tạo Paragraph hiển thị Ping
-PingParagraph = Tabs.MainTab:Paragraph({
+local PingParagraph = MainSettingsTab:Paragraph({
     Title = "Ping",
     Desc = "0",
     Image = "signal",
     ImageSize = 20
-});
+})
 
 -- Cập nhật Ping mỗi giây
 spawn(function()
@@ -2038,4 +2037,4 @@ spawn(function()
             PingParagraph:SetDesc((game:GetService("Stats")).Network.ServerStatsItem["Data Ping"]:GetValueString())
         end)
     end
-end);
+end)
