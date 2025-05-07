@@ -3251,7 +3251,7 @@ spawn(function()
 local Section = FarmTab:AddSection({"Auto Farm Mastery"})
 
 if World1 or World2 then
-    local Dropdown = AutoFarm:AddDropdown({
+    local Dropdown = FarmTab:AddDropdown({
         Name = "Select Regime Farm",
         Description = "Choose your farming method",
         Options = {"Farm Level Mastery", "Farm Level Mastery No Quest"},
@@ -3264,7 +3264,7 @@ if World1 or World2 then
 end
 
 if World3 then
-    local Dropdown = AutoFarm:AddDropdown({
+    local Dropdown = FarmTab:AddDropdown({
         Name = "Select Regime Farm",
         Description = "Choose your farming method",
         Options = {"Farm Level Mastery", "Farm Level Mastery No Quest", "Farm Bone Mastery", "Farm Cake Mastery"},
@@ -3276,7 +3276,7 @@ if World3 then
     })
 end
 
-AutoFarm:AddToggle({
+FarmTab:AddToggle({
     Name = "Auto Farm Mastery Fruit",
     Description = "Automatically farm for fruit mastery",
     Default = false,
@@ -3517,9 +3517,9 @@ spawn(function()
     end
 end)
 
-local Section = AutoFarm:AddSection("Auto Chest Farm")
+local Section = FarmTab:AddSection("Auto Chest Farm")
 
-AutoFarm:AddToggle({
+FarmTab:AddToggle({
     Name = "Auto Farm Chest",
     Description = "Nhặt rương tự động",
     Default = false,
@@ -3553,4 +3553,68 @@ spawn(function()
 			end
 		end
 	end
+end)
+
+local Section = FarmTab:AddSection("Auto Collect Berry")  
+
+FarmTab:AddToggle({
+    Name = "Auto Farm Berries",
+    Description = "Nhặt trái cây rớt",
+    Default = false,
+    Callback = function(value)
+        _G.CollectBerry = value 
+        StopTween(_G.CollectBerry)
+    end
+})
+
+spawn(function()
+    while wait() do
+        if _G.CollectBerry then
+            local Players = game:GetService("Players")
+            local Player = Players.LocalPlayer
+            local Character = Player.Character or Player.CharacterAdded:Wait()
+            local Position = Character:GetPivot().Position
+            local CollectionService = game:GetService("CollectionService")
+            local BerryBushes = CollectionService:GetTagged("BerryBush")
+            local Distance, NearestBush, NearestBerryName = math.huge, nil, nil
+
+            for _, Bush in ipairs(BerryBushes) do
+                for AttributeName, _ in pairs(Bush:GetAttributes()) do
+                    local Magnitude = (Bush.Parent:GetPivot().Position - Position).Magnitude
+                    if Magnitude < Distance then
+                        Distance = Magnitude
+                        NearestBush = Bush
+                        NearestBerryName = AttributeName
+                    end
+                end
+            end
+
+            if NearestBush and NearestBerryName then
+                local BushModel = NearestBush.Parent
+                local BushCenter = BushModel:GetPivot().Position
+
+                -- Bay vào trong bụi cây
+                TP1(CFrame.new(BushCenter + Vector3.new(0, 2, 0)))
+                task.wait(0.5)
+
+                -- Tìm object thật sự là trái berry (theo tên attribute)
+                local BerryPart = BushModel:FindFirstChild(NearestBerryName)
+                if BerryPart and BerryPart:IsA("BasePart") then
+                    -- Bay đến đúng vị trí trái berry
+                    TP1(BerryPart.CFrame + Vector3.new(0, 1, 0)) -- bay hơi trên trái berry một tí
+                    task.wait(0.3)
+
+                    -- Nhấn E để nhặt berry
+                    local VirtualInput = game:GetService("VirtualInputManager")
+                    VirtualInput:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+                    task.wait(0.1)
+                    VirtualInput:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+                end
+            else
+                if _G.CollectBerryHop then
+                    Hop()
+                end
+            end
+        end
+    end
 end)
