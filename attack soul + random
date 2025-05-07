@@ -1,4 +1,4 @@
--- Initialize Library
+]-- Initialize Library
 local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/Library-ui/refs/heads/main/Redzhubui"))()
 
 -- Create the main window
@@ -1979,48 +1979,9 @@ spawn(function()
 		end;
 	end);
 end);
--- Tạo Section trong Tab MainSettingsTab
-local MainSection = MainSettingsTab:Section({
-    Title = "Main",
-    TextXAlignment = "Left"
+MainSettingsTab:AddDiscordInvite({
+    Name = "Zush Hub | Community",
+    Description = "Join our discord community to receive information about the next update",
+    Logo = "rbxassetid://108644766679780",
+    Invite = "https://discord.gg/ADZ7H2rwk7",
 })
-
--- Tạo Paragraph cho Game Time
-local GameTimeParagraph = MainSettingsTab:AddParagraph({"Game Time", "0"})  -- Cập nhật Game Time
-
--- Cập nhật Game Time mỗi giây
-spawn(function()
-    while task.wait(1) do
-        pcall(function()
-            local GameTime = math.floor(workspace.DistributedGameTime + 0.5)
-            local Hour = math.floor(GameTime / 60 ^ 2) % 24
-            local Minute = math.floor(GameTime / 60 ^ 1) % 60
-            local Second = math.floor(GameTime / 60 ^ 0) % 60
-            GameTimeParagraph:SetDesc(Hour .. " Hours " .. Minute .. " Minute " .. Second .. " Second")
-        end)
-    end
-end)
-
--- Tạo Paragraph cho FPS
-local FpsParagraph = MainSettingsTab:AddParagraph({"Fps", "0"})  -- Cập nhật FPS
-
--- Cập nhật FPS mỗi giây
-spawn(function()
-    while task.wait(1) do
-        pcall(function()
-            FpsParagraph:SetDesc(workspace:GetRealPhysicsFPS())
-        end)
-    end
-end)
-
--- Tạo Paragraph cho Ping
-local PingParagraph = MainSettingsTab:AddParagraph({"Ping", "0"})  -- Cập nhật Ping
-
--- Cập nhật Ping mỗi giây
-spawn(function()
-    while task.wait(1) do
-        pcall(function()
-            PingParagraph:SetDesc((game:GetService("Stats")).Network.ServerStatsItem["Data Ping"]:GetValueString())
-        end)
-    end
-end)
