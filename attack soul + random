@@ -1992,13 +1992,13 @@ local LevelFarmSection = FarmTab:Section({
 
 local WeaponList = {"Melee", "Sword", "Fruit"}
 
-local ChooseWeaponDropdown = FarmTab:Dropdown({
+FarmTab:AddDropdown({
     Title = "Choose Weapon",
     Values = WeaponList,
     Value = _G.Settings.Main["Select Weapon"],
     Callback = function(option)
         _G.Settings.Main["Select Weapon"] = option
-        (getgenv()).SaveSetting()
+        (getgenv()).SaveSetting()  -- Lưu cài đặt khi thay đổi
     end
 })
 
@@ -2036,7 +2036,7 @@ end)
 
 local LevelFarmMethodList = {"Quest", "No Quest", "Nearest"}
 
-local LevelFarmMethodDropdown = FarmTab:Dropdown({
+FarmTab:AddDropdown({
     Title = "Choose Farm Level Method",
     Values = LevelFarmMethodList,
     Value = _G.Settings.Main["Farm Level Method"],
@@ -2046,13 +2046,13 @@ local LevelFarmMethodDropdown = FarmTab:Dropdown({
     end
 })
 
-local AutoLevelFarmToggle = FarmTab:Toggle({
+FarmTab:AddToggle({
     Title = "Auto Farm Level",
     Value = _G.Settings.Main["Auto Farm"],
     Callback = function(state)
         _G.Settings.Main["Auto Farm"] = state
         StopTween(_G.Settings.Main["Auto Farm"])
-        (getgenv()).SaveSetting()
+        (getgenv()).SaveSetting()  -- Lưu cài đặt khi thay đổi
     end
 })
 
