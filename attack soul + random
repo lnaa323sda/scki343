@@ -1979,18 +1979,14 @@ spawn(function()
 		end;
 	end);
 end);
+-- Tạo Section trong Tab MainSettingsTab
 local MainSection = MainSettingsTab:Section({
     Title = "Main",
     TextXAlignment = "Left"
 })
 
--- Tạo Paragraph hiển thị Game Time
-local GameTimeParagraph = MainSettingsTab:Paragraph({
-    Title = "Game Time",
-    Desc = "0",
-    Image = "timer",
-    ImageSize = 20
-})
+-- Tạo Paragraph cho Game Time
+local GameTimeParagraph = MainSettingsTab:AddParagraph({"Game Time", "0"})  -- Cập nhật Game Time
 
 -- Cập nhật Game Time mỗi giây
 spawn(function()
@@ -2005,13 +2001,8 @@ spawn(function()
     end
 end)
 
--- Tạo Paragraph hiển thị FPS
-local FpsParagraph = MainSettingsTab:Paragraph({
-    Title = "Fps",
-    Desc = "0",
-    Image = "monitor",
-    ImageSize = 20
-})
+-- Tạo Paragraph cho FPS
+local FpsParagraph = MainSettingsTab:AddParagraph({"Fps", "0"})  -- Cập nhật FPS
 
 -- Cập nhật FPS mỗi giây
 spawn(function()
@@ -2022,13 +2013,8 @@ spawn(function()
     end
 end)
 
--- Tạo Paragraph hiển thị Ping
-local PingParagraph = MainSettingsTab:Paragraph({
-    Title = "Ping",
-    Desc = "0",
-    Image = "signal",
-    ImageSize = 20
-})
+-- Tạo Paragraph cho Ping
+local PingParagraph = MainSettingsTab:AddParagraph({"Ping", "0"})  -- Cập nhật Ping
 
 -- Cập nhật Ping mỗi giây
 spawn(function()
