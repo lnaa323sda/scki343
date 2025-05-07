@@ -3517,7 +3517,7 @@ spawn(function()
     end
 end)
 
-local Section = FarmTab:AddSection("Auto Chest Farm")
+local Section = FarmTab:AddSection({"Auto Chest Farm"})
 
 FarmTab:AddToggle({
     Name = "Auto Farm Chest",
@@ -3555,7 +3555,7 @@ spawn(function()
 	end
 end)
 
-local Section = FarmTab:AddSection("Auto Collect Berry")  
+local Section = FarmTab:AddSection({"Auto Collect Berry"})  
 
 FarmTab:AddToggle({
     Name = "Auto Farm Berries",
