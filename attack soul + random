@@ -3619,8 +3619,7 @@ spawn(function()
     end
 end)
 
-if World3 then
-    local Section = FarmTab:AddSection({"Bone"})
+local Section = FarmTab:AddSection({"Bone"})
 
 FarmTab:AddToggle({
     Name = "Auto Farm Bone",
@@ -3897,3 +3896,4 @@ while task.wait() do
     end
 end
 end)
+
