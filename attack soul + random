@@ -4442,85 +4442,51 @@ local Section = FarmTab:AddSection({"Boss"})
 
 if World1 then
     _G.SelectBoss = "The Gorilla King"
-    
-    -- Sửa lại cấu hình dropdown theo kiểu bạn yêu cầu
-    local Dropdown = FarmTab:AddDropdown({
-        Name = "Tự động chọn Boss",  -- Tên của dropdown
-        Description = "Chọn boss bạn muốn đấu",  -- Mô tả cho dropdown
+    FarmTab:AddDropdown({
+        Name = "Tự động chọn Boss",
+        Description = "Chọn boss bạn muốn đấu",
         Options = {
-            "The Saw",  -- Danh sách các boss cho World1
-            "The Gorilla King",
-            "Bobby",
-            "Yeti",
-            "Mob Leader",
-            "Vice Admiral",
-            "Warden",
-            "Chief Warden",
-            "Swan",
-            "Magma Admiral",
-            "Fishman Lord",
-            "Wysper",
-            "Thunder God",
-            "Cyborg",
-            "Saber Expert"
+            "The Saw", "The Gorilla King", "Bobby", "Yeti", "Mob Leader", "Vice Admiral",
+            "Warden", "Chief Warden", "Swan", "Magma Admiral", "Fishman Lord",
+            "Wysper", "Thunder God", "Cyborg", "Saber Expert"
         },
-        Default = "The Gorilla King",  -- Giá trị mặc định được chọn
-        Flag = "SelectBossWorld1",  -- Cờ đánh dấu cho dropdown
+        Default = "The Gorilla King",
+        Flag = "SelectBossWorld1",
         Callback = function(Value)
-            _G.SelectBoss = Value  -- Cập nhật giá trị khi người dùng chọn
+            _G.SelectBoss = Value
         end
     })
 elseif World2 then
     _G.SelectBoss = "Diamond"
-    
-    -- Sửa lại cấu hình dropdown cho World2
-    local Dropdown = FarmTab:AddDropdown({
-        Name = "Tự động chọn Boss",  -- Tên của dropdown
-        Description = "Chọn boss bạn muốn đấu",  -- Mô tả cho dropdown
+    FarmTab:AddDropdown({
+        Name = "Tự động chọn Boss",
+        Description = "Chọn boss bạn muốn đấu",
         Options = {
-            "Diamond",  -- Danh sách các boss cho World2
-            "Jeremy",
-            "Fajita",
-            "Don Swan",
-            "Smoke Admiral",
-            "Cursed Captain",
-            "Darkbeard",
-            "Order",
-            "Awakened Ice Admiral",
-            "Tide Keeper"
+            "Diamond", "Jeremy", "Fajita", "Don Swan", "Smoke Admiral",
+            "Cursed Captain", "Darkbeard", "Order", "Awakened Ice Admiral", "Tide Keeper"
         },
-        Default = "Diamond",  -- Giá trị mặc định được chọn
-        Flag = "SelectBossWorld2",  -- Cờ đánh dấu cho dropdown
+        Default = "Diamond",
+        Flag = "SelectBossWorld2",
         Callback = function(Value)
-            _G.SelectBoss = Value  -- Cập nhật giá trị khi người dùng chọn
+            _G.SelectBoss = Value
         end
     })
 elseif World3 then
     _G.SelectBoss = "Stone"
-    
-    -- Sửa lại cấu hình dropdown cho World3
-    local Dropdown = FarmTab:AddDropdown({
-        Name = "Tự động chọn Boss",  -- Tên của dropdown
-        Description = "Chọn boss bạn muốn đấu",  -- Mô tả cho dropdown
+    FarmTab:AddDropdown({
+        Name = "Tự động chọn Boss",
+        Description = "Chọn boss bạn muốn đấu",
         Options = {
-            "Stone",  -- Danh sách các boss cho World3
-            "Island Empress",
-            "Rocket Admiral",
-            "Captain Elephant",
-            "Beautiful Pirate",
-            "rip_indra True Form",
-            "Longma",
-            "Soul Reaper",
-            "Cake Queen",
-            "Cake Prince",
-            "Dough King"
+            "Stone", "Island Empress", "Rocket Admiral", "Captain Elephant", "Beautiful Pirate",
+            "rip_indra True Form", "Longma", "Soul Reaper", "Cake Queen", "Cake Prince", "Dough King"
         },
-        Default = "Stone",  -- Giá trị mặc định được chọn
-        Flag = "SelectBossWorld3",  -- Cờ đánh dấu cho dropdown
+        Default = "Stone",
+        Flag = "SelectBossWorld3",
         Callback = function(Value)
-            _G.SelectBoss = Value  -- Cập nhật giá trị khi người dùng chọn
+            _G.SelectBoss = Value
         end
     })
+end
 
 spawn(
     function()
