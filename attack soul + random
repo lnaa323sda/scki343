@@ -4435,7 +4435,6 @@ spawn(
         end
     end
 )
-end
 
 local Section = FarmTab:AddSection({"Boss"})
 
@@ -4520,7 +4519,6 @@ elseif World3 then
             _G.SelectBoss = Value  -- Cập nhật giá trị khi người dùng chọn
         end
     })
-end
 
 spawn(
     function()
@@ -4983,7 +4981,6 @@ if World1 then
             end
         end
     )
-end
 
 if World2 then
     local Dropdown = FarmTab:AddDropdown({
@@ -5003,7 +5000,6 @@ if World2 then
             _G.SelectMaterial = Value  -- Cập nhật giá trị khi người dùng chọn
         end
     })
-end
 
     spawn(
         function()
@@ -5509,7 +5505,6 @@ end
             end
         end
     )
-end
 
 if World3 then
     local Dropdown = FarmTab:AddDropdown({
@@ -5528,7 +5523,6 @@ if World3 then
             _G.SelectMaterial = Value  -- Cập nhật giá trị khi người dùng chọn
         end
     })
-end
 
     spawn(
         function()
@@ -5878,94 +5872,87 @@ end
         end
     )
 
-    spawn(
-        function()
-            while wait() do
-                local Choccola = CFrame.new(87.94276428222656, 73.55451202392578, -12319.46484375)
-                if _G.AutoFarmMaterial and _G.SelectMaterial == "Farm Conjured Cocoa" then
-                    pcall(
-                        function()
-                            if BypassTP then
-                                if
-                                    (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Choccola.Position).Magnitude >
-                                        2000
-                                 then
-                                    BTP(Choccola)
+spawn(
+    function()
+        while wait() do
+            local Choccola = CFrame.new(87.94276428222656, 73.55451202392578, -12319.46484375)
+            if _G.AutoFarmMaterial and _G.SelectMaterial == "Farm Conjured Cocoa" then
+                pcall(
+                    function()
+                        if BypassTP then
+                            if
+                                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Choccola.Position).Magnitude >
+                                    2000
+                             then
+                                BTP(Choccola)
+                                wait(.1)
+                                for i = 1, 8 do
+                                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Choccola)
+                                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
                                     wait(.1)
-                                    for i = 1, 8 do
-                                        game.Players.localPlayer.Character.HumanoidRootPart.CFrame =
-                                            CFrame.new(Choccola)
-                                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(
-                                            "SetSpawnPoint"
-                                        )
-                                        wait(.1)
-                                    end
-                                elseif
-                                    (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Choccola.Position).Magnitude <
-                                        2000
-                                 then
-                                    TP1(Choccola)
                                 end
-                            else
+                            elseif
+                                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Choccola.Position).Magnitude <
+                                    2000
+                             then
                                 TP1(Choccola)
                             end
-                            if
-                                game:GetService("Workspace").Enemies:FindFirstChild("Chocolate Bar Battler") or
-                                    game:GetService("Workspace").Enemies:FindFirstChild("Cocoa Warrior") or
-                                    game:GetService("Workspace").Enemies:FindFirstChild("Sweet Thief") or
-                                    game:GetService("Workspace").Enemies:FindFirstChild("Candy Rebel")
-                             then
-                                for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                        else
+                            TP1(Choccola)
+                        end
+
+                        if
+                            game:GetService("Workspace").Enemies:FindFirstChild("Chocolate Bar Battler") or
+                                game:GetService("Workspace").Enemies:FindFirstChild("Cocoa Warrior") or
+                                game:GetService("Workspace").Enemies:FindFirstChild("Sweet Thief") or
+                                game:GetService("Workspace").Enemies:FindFirstChild("Candy Rebel")
+                         then
+                            for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                                if
+                                    v.Name == "Chocolate Bar Battler" or v.Name == "Cocoa Warrior" or
+                                        v.Name == "Sweet Thief" or
+                                        v.Name == "Candy Rebel"
+                                 then
                                     if
-                                        v.Name == "Chocolate Bar Battler" or v.Name == "Cocoa Warrior" or
-                                            v.Name == "Sweet Thief" or
-                                            v.Name == "Candy Rebel"
+                                        v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and
+                                            v.Humanoid.Health > 0
                                      then
-                                        if
-                                            v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and
-                                                v.Humanoid.Health > 0
-                                         then
-                                            repeat
-                                                task.wait()
-                                                AutoHaki()
-                                                NeedAttacking = true
-                                                EquipWeapon(_G.SelectWeapon)
-                                                v.HumanoidRootPart.CanCollide = false
-                                                v.Humanoid.WalkSpeed = 0
-                                                v.Head.CanCollide = false
-                                                StartBring = true
-                                                MonFarm = v.Name
-                                                PosMon = v.HumanoidRootPart.CFrame
-                                                topos(v.HumanoidRootPart.CFrame * CFrame.new(0, 30, 0))
-                                                sethiddenproperty(
-                                                    game.Players.LocalPlayer,
-                                                    "SimulationRadius",
-                                                    math.huge
-                                                )
-                                            until not _G.AutoFarmMaterial or not v.Parent or v.Humanoid.Health <= 0 or
-                                                not _G.SelectMaterial == "Farm Conjured Cocoa"
-                                        end
+                                        repeat
+                                            task.wait()
+                                            AutoHaki()
+                                            NeedAttacking = true
+                                            EquipWeapon(_G.SelectWeapon)
+                                            v.HumanoidRootPart.CanCollide = false
+                                            v.Humanoid.WalkSpeed = 0
+                                            v.Head.CanCollide = false
+                                            StartBring = true
+                                            MonFarm = v.Name
+                                            PosMon = v.HumanoidRootPart.CFrame
+                                            topos(v.HumanoidRootPart.CFrame * CFrame.new(0, 30, 0))
+                                            sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                                        until not _G.AutoFarmMaterial or not v.Parent or v.Humanoid.Health <= 0 or
+                                            not _G.SelectMaterial == "Farm Conjured Cocoa"
                                     end
                                 end
-                            else
-                                StartBring = false
-                                topos(CFrame.new(233.22836303710938, 29.876001358032227, -12201.2333984375))
-                                for i, v in pairs(game:GetService("ReplicatedStorage"):GetChildren()) do
-                                    if v.Name == "Chocolate Bar Battler" then
-                                        topos(v.HumanoidRootPart.CFrame * CFrame.new(2, 20, 2))
-                                    elseif v.Name == "Cocoa Warrior" then
-                                        topos(v.HumanoidRootPart.CFrame * CFrame.new(2, 20, 2))
-                                    elseif v.Name == "Sweet Thief" then
-                                        topos(v.HumanoidRootPart.CFrame * CFrame.new(2, 20, 2))
-                                    elseif v.Name == "Candy Rebel" then
-                                        topos(v.HumanoidRootPart.CFrame * CFrame.new(2, 20, 2))
-                                    end
+                            end
+                        else
+                            StartBring = false
+                            topos(CFrame.new(233.22836303710938, 29.876001358032227, -12201.2333984375))
+                            for i, v in pairs(game:GetService("ReplicatedStorage"):GetChildren()) do
+                                if v.Name == "Chocolate Bar Battler" then
+                                    topos(v.HumanoidRootPart.CFrame * CFrame.new(2, 20, 2))
+                                elseif v.Name == "Cocoa Warrior" then
+                                    topos(v.HumanoidRootPart.CFrame * CFrame.new(2, 20, 2))
+                                elseif v.Name == "Sweet Thief" then
+                                    topos(v.HumanoidRootPart.CFrame * CFrame.new(2, 20, 2))
+                                elseif v.Name == "Candy Rebel" then
+                                    topos(v.HumanoidRootPart.CFrame * CFrame.new(2, 20, 2))
                                 end
                             end
                         end
-                    )
-                end
+                    end
+                )
             end
         end
-    )
-end
+    end
+)
