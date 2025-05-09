@@ -3022,21 +3022,13 @@ Window:AddMinimizeButton({
 local MainSettingsTab = Window:MakeTab({"Info Hub", "info"}) -- Main settings tab
 local FarmTab = Window:MakeTab({"Farm", "home"}) -- Farming tab
 local ItemsTab = Window:MakeTab({"Items", "box"}) -- Items tab
-local SettingsTab = Window:MakeTab({"Settings", "settings"}) -- General settings tab
-local LocalPlayerTab = Window:MakeTab({"Local Player", "user"}) -- Local player settings
-local StatsTab = Window:MakeTab({"Stats", "chart-no-axes-column"}) -- Stats management
-local SeaEventTab = Window:MakeTab({"Sea Event", "anchor"}) -- Sea Event management
-local SeaStackTab = Window:MakeTab({"Sea Stack", "waves"}) -- Sea Stack section
-local DragonDojoTab = Window:MakeTab({"Dragon Dojo", "shield"}) -- Dragon Dojo section
-local RaceTab = Window:MakeTab({"Race", "bot"}) -- Race section
-local CombatTab = Window:MakeTab({"Combat", "sword"}) -- Combat section
+local SeaEventTab = Window:MakeTab({"Sea Event", "anchor"})
+local RaceTab = Window:MakeTab({"Race V4", "bot"})
 local RaidTab = Window:MakeTab({"Raid", "door-open"}) -- Raid section
-local EspTab = Window:MakeTab({"ESP", "scan-eye"}) -- ESP section
 local TeleportTab = Window:MakeTab({"Teleport", "map-pinned"}) -- Teleport section
 local ShopTab = Window:MakeTab({"Shop", "shopping-cart"}) -- Shop section
-local FruitTab = Window:MakeTab({"Fruit", "vegan"}) -- Fruit section
-local MiscTab = Window:MakeTab({"Misc", "layout-grid"}) -- Misc section
-local ServerTab = Window:MakeTab({"Server", "server"}) -- Server section
+local StatsTab = Window:MakeTab({"Status", "chart-no-axes-column"}) -- Stats management
+local SettingsTab = Window:MakeTab({"Settings", "settings"}) -- General settings tab
 
 MainSettingsTab:AddDiscordInvite({
     Name = "Zush Hub | Community",
@@ -5933,3 +5925,507 @@ if World3 then
         end
     )
 end
+
+FarmTab:AddToggle({
+    Name = "Cày nguyên liệu",
+    Description = "Tự động farm nguyên liệu",
+    Default = false,
+    Callback = function(value)
+        _G.AutoFarmMaterial = Value
+        StopTween(_G.AutoFarmMaterial)
+    end
+})
+
+--- tab settings
+
+KillPercent = "30"
+SettingsTab:AddDropdown({
+    Name = "Chọn % máu để cày",
+    Description = "Chọn phần trăm máu của quái để bắt đầu đánh",
+    Options = {"20", "25", "30", "35", "40", "45", "50", "55", "60", "65", "70", "75", "80"},
+    Default = "25",
+    Callback = function(Value)
+        KillPercent = Value
+    end
+})
+
+SettingsTab:AddToggle({
+    Name = "Dùng Skill Z",
+    Description = "Tự động dùng kỹ năng Z khi đánh",
+    Default = true,
+    Callback = function(value)
+        SkillZ = value
+    end
+})
+
+SettingsTab:AddToggle({
+    Name = "Dùng Skill X",
+    Description = "Tự động dùng kỹ năng X khi đánh",
+    Default = false,
+    Callback = function(value)
+        SkillX = value
+    end
+})
+
+SettingsTab:AddToggle({
+    Name = "Dùng Skill C",
+    Description = "Tự động dùng kỹ năng C khi đánh",
+    Default = false,
+    Callback = function(value)
+        SkillC = value
+    end
+})
+
+SettingsTab:AddToggle({
+    Name = "Dùng Skill V",
+    Description = "Tự động dùng kỹ năng V khi đánh",
+    Default = false,
+    Callback = function(value)
+        SkillV = value
+    end
+})
+
+SettingsTab:AddToggle({
+    Name = "Dùng Skill F",
+    Description = "Tự động dùng kỹ năng F khi đánh",
+    Default = false,
+    Callback = function(value)
+        SkillF = value -- Lưu ý: bạn ghi nhầm `SkillC = F` lúc đầu
+    end
+})
+
+local Section = SettingsTab:AddSection({"Cài đặt cày"})
+
+SettingsTab:AddToggle({
+    Name = "Gom quái",
+    Description = "Tự động gom quái lại một chỗ",
+    Default = true,
+    Callback = function(value)
+        _G.BringMonster = value
+        _G.BringMob = value
+    end
+})
+
+spawn(
+    function()
+        while task.wait() do
+            pcall(
+                function()
+                    CheckQuest()
+                    if _G.BringMonster and StartBring and PosMon then
+                        for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                            local isValid = (v.Name == MonFarm or v.Name == Mon)
+                            local hasPart =
+                                v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and
+                                v:FindFirstChild("Head")
+                            local isAlive = v.Humanoid and v.Humanoid.Health > 0
+                            local inRange =
+                                (v.HumanoidRootPart.Position -
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 350
+
+                            if isValid and hasPart and isAlive and inRange then
+                                local distToPosMon = (v.HumanoidRootPart.Position - PosMon.Position).Magnitude
+                                if distToPosMon <= 350 then
+                                    -- Gôm quái
+                                    v.HumanoidRootPart.CanCollide = false
+                                    v.Head.CanCollide = false
+                                    v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
+                                    v.HumanoidRootPart.CFrame = PosMon
+
+                                    -- Xoá Animator nếu có
+                                    if v.Humanoid:FindFirstChild("Animator") then
+                                        v.Humanoid.Animator:Destroy()
+                                    end
+                                end
+                            end
+                        end
+
+                        -- Set SimulationRadius một lần
+                        sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                    end
+                end
+            )
+        end
+    end
+)
+
+spawn(
+    function()
+        while wait() do
+            pcall(
+                function()
+                    for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                        if _G.BringMob and bringmob then
+                            if v.Name == MonFarm and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                                if v.Name == "Factory Staff" then
+                                    if (v.HumanoidRootPart.Position - FarmPos.Position).Magnitude <= 1000000000 then
+                                        v.Head.CanCollide = false
+                                        v.HumanoidRootPart.CanCollide = false
+                                        v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
+                                        v.HumanoidRootPart.CFrame = FarmPos
+                                        if v.Humanoid:FindFirstChild("Animator") then
+                                            v.Humanoid.Animator:Destroy()
+                                        end
+                                        sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                                    end
+                                elseif v.Name == MonFarm then
+                                    if (v.HumanoidRootPart.Position - FarmPos.Position).Magnitude <= 10000000000 then
+                                        v.HumanoidRootPart.CFrame = FarmPos
+                                        v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
+                                        v.HumanoidRootPart.Transparency = 1
+                                        v.Humanoid.JumpPower = 0
+                                        v.Humanoid.WalkSpeed = 0
+                                        if v.Humanoid:FindFirstChild("Animator") then
+                                            v.Humanoid.Animator:Destroy()
+                                        end
+                                        v.HumanoidRootPart.CanCollide = false
+                                        v.Head.CanCollide = false
+                                        v.Humanoid:ChangeState(11)
+                                        v.Humanoid:ChangeState(14)
+                                        sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            )
+        end
+    end
+)
+
+if not syn then
+    isnetworkowner = function()
+        return true
+    end
+end
+getgenv().BringMobs = function(F, z)
+    PosMon = F
+    NameMon = z
+end
+
+task.spawn(
+    function()
+        while task.wait() do
+            pcall(
+                function()
+                    if PosMon then
+                        CheckQuest()
+                        for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                            if syn then
+                                if
+                                    v.Name == NameMon and v.Name ~= "Ice Admiral" and v.Name ~= "Don Swan" and
+                                        v.Name ~= "Saber Expert" and
+                                        v.Name ~= "Longma" and
+                                        v:FindFirstChild("HumanoidRootPart") and
+                                        v:FindFirstChild("Humanoid") and
+                                        v.Humanoid.Health > 0 and
+                                        (v.HumanoidRootPart.Position -
+                                            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).magnitude <=
+                                            300
+                                 then
+                                    if isnetworkowner(v.HumanoidRootPart) then
+                                        v.HumanoidRootPart.CFrame = PosMon
+                                        v.Humanoid.JumpPower = 0
+                                        v.Humanoid.WalkSpeed = 0
+                                        v.HumanoidRootPart.CanCollide = false
+                                        v.HumanoidRootPart.Size = Vector3.new(2, 2, 2)
+                                        if v.Humanoid:FindFirstChild("Animator") then
+                                            v.Humanoid.Animator:Destroy()
+                                        end
+                                        sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                                        v.Humanoid:ChangeState(11)
+                                    end
+                                end
+                            else
+                                if
+                                    v.Name == NameMon and v.Name ~= "Ice Admiral" and v.Name ~= "Don Swan" and
+                                        v.Name ~= "Saber Expert" and
+                                        v.Name ~= "Longma" and
+                                        v:FindFirstChild("HumanoidRootPart") and
+                                        v:FindFirstChild("Humanoid") and
+                                        v.Humanoid.Health > 0 and
+                                        (v.HumanoidRootPart.Position -
+                                            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).magnitude <=
+                                            300
+                                 then
+                                    v.HumanoidRootPart.CFrame = PosMon
+                                    v.Humanoid.JumpPower = 0
+                                    v.Humanoid.WalkSpeed = 0
+                                    v.HumanoidRootPart.CanCollide = false
+                                    v.HumanoidRootPart.Size = Vector3.new(2, 2, 2)
+                                    if v.Humanoid:FindFirstChild("Animator") then
+                                        v.Humanoid.Animator:Destroy()
+                                    end
+                                    sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                                    v.Humanoid:ChangeState(11)
+                                end
+                            end
+                        end
+                    end
+                end
+            )
+        end
+    end
+)
+PosY = 35
+
+SettingsTab:AddToggle({
+    Name = "Đi trên nước",
+    Description = "Cho phép đứng trên mặt nước",
+    Default = true,
+    Callback = function(value)
+        _G.WalkWater = value
+    end
+})
+
+spawn(
+    function()
+        while task.wait() do
+            pcall(
+                function()
+                    if _G.WalkWater then
+                        game:GetService("Workspace").Map["WaterBase-Plane"].Size = Vector3.new(1000, 112, 1000)
+                    else
+                        game:GetService("Workspace").Map["WaterBase-Plane"].Size = Vector3.new(1000, 80, 1000)
+                    end
+                end
+            )
+        end
+    end
+)
+
+SettingsTab:AddToggle({
+    Name = "Tự đặt điểm hồi sinh",
+    Description = "Tự động đặt điểm hồi sinh gần nhất",
+    Default = false,
+    Callback = function(value)
+        _G.CheckPoint = value
+    end
+})
+
+spawn(
+    function()
+        while wait() do
+            if _G.CheckPoint then
+                game:GetService("SetSpawnPoint")
+            end
+        end
+    end
+)
+
+SettingsTab:AddToggle({
+    Name = "Bật haki vũ trang",
+    Description = "Tự động bật haki vũ trang khi đánh",
+    Default = true,
+    Callback = function(value)
+        _G.AutoHaki = value
+    end
+})
+
+spawn(
+    function()
+        while task.wait(0.1) do
+            if _G.AutoHaki then
+                pcall(AutoHaki)
+            end
+        end
+    end
+)
+
+SettingsTab:AddToggle({
+    Name = "Tự động bật tộc V3",
+    Description = "Kích hoạt kỹ năng chủng tộc V3",
+    Default = false,
+    Callback = function(value)
+        _G.AutoRaceV3 = value
+    end
+})
+
+spawn(
+    function()
+        while wait() do
+            pcall(
+                function()
+                    if _G.AutoRaceV3 then
+                        game:GetService("ReplicatedStorage").Remotes.CommE:FireServer("ActivateAbility")
+                    end
+                end
+            )
+        end
+    end
+)
+
+SettingsTab:AddToggle({
+    Name = "Tự động bật tộc V4",
+    Description = "Tự động nhấn Y để bật V4",
+    Default = false,
+    Callback = function(value)
+        _G.AutoRaceV4 = value
+    end
+})
+
+spawn(
+    function()
+        while wait() do
+            pcall(
+                function()
+                    if _G.AutoRaceV4 then
+                        game:GetService("VirtualInputManager"):SendKeyEvent(true, "Y", false, game)
+                        wait()
+                        game:GetService("VirtualInputManager"):SendKeyEvent(false, "Y", false, game)
+                    end
+                end
+            )
+        end
+    end
+)
+
+SettingsTab:AddToggle({
+    Name = "Soru vô hạn",
+    Description = "Loại bỏ hồi chiêu Soru",
+    Default = false,
+    Callback = function(value)
+        InfiniteSoru = value
+    end
+})
+
+spawn(
+    function()
+        while task.wait(1) do
+            if
+                InfiniteSoru and
+                    game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") ~= nil
+             then
+                pcall(
+                    function()
+                        for i, v in next, getgc() do
+                            if getfenv(v).script == game.Players.LocalPlayer.Character:WaitForChild("Soru") then
+                                for i2, v2 in pairs(debug.getupvalues(v)) do
+                                    if type(v2) == "table" then
+                                        if v2.LastUse then
+                                            repeat
+                                                task.wait(.1)
+                                                setupvalue(v, i2, {LastAfter = 0, LastUse = 0})
+                                            until not InfiniteSoru or
+                                                game:GetService("Players").LocalPlayer.Character.Humanoid.Health <= 0
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                )
+            end
+        end
+    end
+)
+
+SettingsTab:AddToggle({
+    Name = "Xoay vị trí",
+    Description = "Xoay camera theo vị trí mục tiêu",
+    Default = false,
+    Callback = function(value)
+        _G.SpinPos = value
+    end
+})
+
+PosY = 35
+
+SettingsTab:AddDropdown({
+    Name = "Khoảng cách farm",
+    Description = "Đặt khoảng cách đứng khi farm quái (trục Y)",
+    Options = {"20", "25", "30", "35", "40", "45", "50", "55", "60", "65", "70", "75", "80"},
+    Default = "50",
+    Callback = function(Value)
+        PosY = Value
+    end
+})
+
+SettingsTab:AddToggle({
+    Name = "Né không hồi chiêu",
+    Description = "Vô hiệu hoá thời gian hồi chiêu né",
+    Default = false,
+    Callback = function(value)
+        DodgewithoutCool = value
+    end
+})
+
+function NoCooldown()
+    for i, v in next, getgc() do
+        if typeof(v) == "function" then
+            if getfenv(v).script == game.Players.LocalPlayer.Character:WaitForChild("Dodge") then
+                for i2, v2 in next, getupvalues(v) do
+                    if tostring(v2) == "0.4" then
+                        setupvalue(v, i2, 0)
+                    end
+                end
+            end
+        end
+    end
+end
+spawn(
+    function()
+        while wait() do
+            if DodgewithoutCool then
+                pcall(
+                    function()
+                        NoCooldown()
+                    end
+                )
+            end
+        end
+    end
+)
+
+SettingsTab:AddToggle({
+    Name = "Geppo vô hạn",
+    Description = "Loại bỏ giới hạn nhảy Geppo",
+    Default = false,
+    Callback = function(value)
+        InfiniteGeppo = value
+    end
+})
+
+spawn(
+    function()
+        while task.wait(1) do
+            if InfiniteGeppo then
+                pcall(
+                    function()
+                        for i, v in next, getgc() do
+                            if getfenv(v).script == game.Players.LocalPlayer.Character:WaitForChild("Geppo") then
+                                for i2, v2 in next, getupvalues(v) do
+                                    if tostring(v2) == "0" then
+                                        repeat
+                                            wait(.1)
+                                            setupvalue(v, i2, 0)
+                                        until not InfiniteGeppo or
+                                            game:GetService("Players").LocalPlayer.Character.Humanoid.Health <= 0
+                                    end
+                                end
+                            end
+                        end
+                    end
+                )
+            end
+        end
+    end
+)
+
+SettingsTab:AddToggle({
+    Name = "Nhảy vô hạn",
+    Description = "Cho phép nhấn nhảy liên tục không giới hạn",
+    Default = false,
+    Callback = function(Cokka)
+        Infinite = Cokka
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if Infinite then
+                game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end
+})
+
+--- item
+
