@@ -174,6 +174,30 @@ function hoho:Window(hub, the_game_name, main_color)
 	Top_Bar.Size = UDim2.new(0, 450, 0, 24)
 	Top_Bar.ZIndex = 2
 	hoho:DraggingEnabled(Top_Bar)
+
+-- Tạo một nút riêng biệt nằm ngoài UI chính để ẩn/hiện toàn bộ giao diện
+local ToggleMainUI = Instance.new("ScreenGui")
+ToggleMainUI.Name = "ToggleMainUI"
+ToggleMainUI.Parent = game.CoreGui
+ToggleMainUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local ToggleButton = Instance.new("ImageButton")
+ToggleButton.Name = "ToggleButton"
+ToggleButton.Parent = ToggleMainUI
+ToggleButton.Size = UDim2.new(0, 35, 0, 35)
+ToggleButton.Position = UDim2.new(0, 10, 0.4, 0)
+ToggleButton.Image = "rbxassetid://108644766679780" -- icon con mắt
+ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.BackgroundTransparency = 0.4
+ToggleButton.ZIndex = 999
+
+local isVisible = true
+ToggleButton.MouseButton1Click:Connect(function()
+    isVisible = not isVisible
+    Top_Bar.Visible = isVisible
+end)
+
+
 	
 	local TrueGame = Instance.new("TextLabel")
 	TrueGame.Name = "TrueGame"
@@ -393,47 +417,6 @@ function hoho:Window(hub, the_game_name, main_color)
 			end
 		end
 	end)
-
-local ToggleUI = Instance.new("ImageButton")
-ToggleUI.Name = "ToggleUI"
-ToggleUI.Parent = Top_Bar
-ToggleUI.BackgroundTransparency = 1
-ToggleUI.Position = UDim2.new(0.01, 0, 0.125, 0)
-ToggleUI.Size = UDim2.new(0, 27, 0, 27)
-ToggleUI.Image = "rbxassetid://108644766679780"
-ToggleUI.ZIndex = 15
-
-ToggleUI.MouseButton1Click:Connect(function()
-    if not openning then
-        openning = true
-        if openned then
-            openned = false
-            NewDropShadow.Visible = false
-            tween:Create(VideoBackground, tweeninfo(0.5), {
-                Position = UDim2.new(-0, 0, 1, 0),
-                Size = UDim2.new(0, 450, 0, 6)
-            }):Play()
-            tween:Create(BlackBackground, tweeninfo(0.5), {
-                Position = UDim2.new(-0, 0, 1, 0),
-                Size = UDim2.new(0, 450, 0, 6)
-            }):Play()
-        else
-            openned = true
-            tween:Create(VideoBackground, tweeninfo(0.5), {
-                Position = UDim2.new(-0, 0, 1, 0),
-                Size = UDim2.new(0, 450, 0, 272)
-            }):Play()
-            tween:Create(BlackBackground, tweeninfo(0.5), {
-                Position = UDim2.new(-0, 0, 1, 0),
-                Size = UDim2.new(0, 450, 0, 272)
-            }):Play()
-            NewDropShadow.Visible = true
-        end
-        task.wait(0.5)
-        openning = false
-    end
-end)
-
 	
 	local ListNof = Instance.new("Frame")
 	local NofList = Instance.new("UIListLayout")
