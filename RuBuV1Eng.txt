@@ -1,66 +1,40 @@
+-- dự án key system 
 repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
-local StarterGui = game:GetService("StarterGui")
 
--- Lấy key và HWID
 local key = getgenv().Key or nil
-local hwid = (gethwid and gethwid()) or (tostring(Players.LocalPlayer.UserId) .. "-" .. tostring(os.time()))
+local hwid = gethwid and gethwid() or tostring(Players.LocalPlayer.UserId)
 
 if not key then
-    Players.LocalPlayer:Kick("Vui lòng nhập key!")
+    Players.LocalPlayer:Kick("dumemay vui lòng mua key")
     return
 end
 
--- Hàm gửi request đến API
-local function sendRequest(url, method, data)
-    local success, response = pcall(function()
-        return HttpService:RequestAsync({
-            Url = url,
-            Method = method,
-            Headers = {["Content-Type"] = "application/json"},
-            Body = data and HttpService:JSONEncode(data) or nil
-        })
-    end)
-    if success and response.Success then
-        return HttpService:JSONDecode(response.Body)
-    else
-        return {success = false, error = response.StatusMessage or "Request failed"}
-    end
-end
+local url = "http://stuckz.work.gd//api/check.php?key=" .. key .. "&hwid=" .. hwid -- Thay bằng URL API thực tế
 
--- Kiểm tra key và HWID
-local apiUrl = "http://stuckz.work.gd/index.php" -- Thay bằng URL API PHP
-local response = sendRequest(apiUrl, "POST", {key = key, hwid = hwid})
+local success, response = pcall(function()
+    return HttpService:JSONDecode(game:HttpGet(url))
+end)
 
-if not response.success then
-    Players.LocalPlayer:Kick("Lỗi server, vui lòng liên hệ admin (Mã lỗi: 500)")
+if not success then
+    Players.LocalPlayer:Kick("Error server, vui lòng liên hệ admin (Mã lỗi: 500)")
     return
 end
 
-if not response.valid then
-    Players.LocalPlayer:Kick(response.error or "Key sai hoặc HWID không hợp lệ!")
+if response.status ~= true then
+    Players.LocalPlayer:Kick("Key sai hoặc HWID sai: " .. (response.error or ""))
     return
 end
 
--- Lưu HWID nếu chưa có
-if response.hwid == nil then
-    local saveHwidResponse = sendRequest("http://stuckz.work.gd/index.php", "POST", {key = key, hwid = hwid})
-    if not saveHwidResponse.success then
-        Players.LocalPlayer:Kick("Lỗi khi lưu HWID: " .. (saveHwidResponse.error or "Unknown error"))
-        return
-    end
-end
+print("oke baby")
 
--- Hiển thị thông báo
-StarterGui:SetCore("SendNotification", {
+game.StarterGui:SetCore("SendNotification", {
     Title = "Zush Hub",
     Text = "Xác minh thành công",
     Duration = 5,
     Icon = "rbxassetid://121407840908698"
 })
 
--- Load script chính
-print("Xác minh thành công, đang load script...")
-loadstring(game:HttpGet("https://duckcode.sbs/bossfarm.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/stuckez999/main/refs/heads/main/tonghoproblox.lua"))()
