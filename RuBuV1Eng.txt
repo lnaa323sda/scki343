@@ -12,7 +12,7 @@ if not key then
     return
 end
 
-local url = "http://stuckz.work.gd/api/check.php?key=" .. key .. "&hwid=" .. hwid -- Thay bằng URL API thực tế
+local url = "http://stuckz.work.gd/api/check.php?key=" .. key .. "&hwid=" .. hwid
 
 local success, response = pcall(function()
     return HttpService:JSONDecode(game:HttpGet(url))
@@ -28,6 +28,18 @@ if response.status ~= true then
     return
 end
 
+if response.hwid == nil then
+    local saveUrl = "http://stuckz.work.gd/api/save_hwid.php"
+    local saveSuccess, saveResponse = pcall(function()
+        return HttpService:JSONDecode(game:HttpPost(saveUrl, HttpService:JSONEncode({key = key, hwid = hwid}), "application/json"))
+    end)
+
+    if not saveSuccess or not saveResponse.success then
+        Players.LocalPlayer:Kick("Lỗi từ hwid: " .. (saveResponse.error or "Unknown error"))
+        return
+    end
+end
+
 print("oke baby")
 
 game.StarterGui:SetCore("SendNotification", {
@@ -37,4 +49,4 @@ game.StarterGui:SetCore("SendNotification", {
     Icon = "rbxassetid://121407840908698"
 })
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/stuckez999/main/refs/heads/main/tonghoproblox.lua"))()
+loadstring(game:HttpGet("https://duckcode.sbs/bossfarm.lua"))()
