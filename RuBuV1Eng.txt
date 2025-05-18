@@ -12,7 +12,7 @@ if not key then
     return
 end
 
-local url = "http://stuckz.work.gd//api/check.php?key=" .. key .. "&hwid=" .. hwid -- Thay bằng URL API thực tế
+local url = "http://stuckz.work.gd/api/check.php?key=" .. key .. "&hwid=" .. hwid -- Thay bằng URL API thực tế
 
 local success, response = pcall(function()
     return HttpService:JSONDecode(game:HttpGet(url))
