@@ -1,5 +1,4 @@
--- local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))();
-local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/lnaa323sda/scki343/refs/heads/main/Autocc.lua"))();
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))();
 
 function gradient(text, startColor, endColor)
     local result = ""
@@ -45,10 +44,10 @@ repeat wait() until Confirmed
 
 
 local Window = WindUI:CreateWindow({
-    Title = "WindUI Library",
+    Title = "Zush Hub",
     Icon = "door-open",
-    Author = "Example UI",
-    Folder = "CloudHub",
+    Author = "Make by Stuckz999",
+    Folder = "ZushHub",
     Size = UDim2.fromOffset(580, 460),
     Transparent = true,
     Theme = "Dark",
@@ -68,113 +67,115 @@ local Window = WindUI:CreateWindow({
         --     Image = "rbxassetid://18220445082", -- rbxassetid only
         --     Title = "Thumbnail"
         -- },
-        URL = "https://github.com/Footagesus/WindUI", -- remove this if the key is not obtained from the link.
+        URL = "", -- remove this if the key is not obtained from the link.
         SaveKey = true, -- optional
     },
 });
 Window:EditOpenButton({
-    ImageId = "rbxassetid://120628056611747", -- Thay bằng ID hình ảnh của bạn
-    CornerRadius = UDim.new(1, 0), -- Bo tròn hoàn toàn
+    Title = "Zush Hub",
+    Icon = "monitor",
+    CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
-    Color = ColorSequence.new(
-        Color3.fromHex("FF0F7B"),
+    Color = ColorSequence.new( -- gradient
+        Color3.fromHex("FF0F7B"), 
         Color3.fromHex("F89B29")
     ),
-    Draggable = true
+    --Enabled = false,
+    Draggable = true,
 });
 local Tabs = {
 	MainTab = Window:Tab({
-		Title = "Main",
+		Title = "Tab Main",
 		Icon = "house",
 		Desc = "Main Section"
 	}),
 	OthersTab = Window:Tab({
-		Title = "Others",
+		Title = "Tab Others",
 		Icon = "inbox",
 		Desc = "Farming Section"
 	}),
 	ItemsTab = Window:Tab({
-		Title = "Items",
+		Title = "Tab Items",
 		Icon = "box",
 		Desc = "Items Section"
 	}),
 	SettingsTab = Window:Tab({
-		Title = "Settings",
+		Title = "Tab Settings",
 		Icon = "settings",
 		Desc = "Settings Section"
 	}),
 	LocalPlayerTab = Window:Tab({
-		Title = "Local Player",
+		Title = "Tab Local Player",
 		Icon = "user",
 		Desc = "Local Player Section"
 	}),
 	StatsTab = Window:Tab({
-		Title = "Stats",
+		Title = "Tab Stats",
 		Icon = "chart-no-axes-column",
 		Desc = "Stats Section"
 	}),
 	SeaEventTab = Window:Tab({
-		Title = "Sea Event",
+		Title = "Tab Sea Event",
 		Icon = "anchor",
 		Desc = "Sea Event Section"
 	}),
 	SeaStackTab = Window:Tab({
-		Title = "Sea Stack",
+		Title = "Tab Sea Stack",
 		Icon = "waves",
 		Desc = "Sea Stack Section"
 	}),
 	SeaSettingsTab = Window:Tab({
-		Title = "Sea Settings",
+		Title = "Tab Sea Settings",
 		Icon = "cog",
 		Desc = "Sea Settings Section"
 	}),
 	DragonDojoTab = Window:Tab({
-		Title = "Dragon Dojo",
+		Title = "Tab Dragon Dojo",
 		Icon = "shield",
 		Desc = "Dragon Dojo Section"
 	}),
 	RaceTab = Window:Tab({
-		Title = "Race",
+		Title = "Tab Race",
 		Icon = "bot",
 		Desc = "Race Section"
 	}),
 	CombatTab = Window:Tab({
-		Title = "Combat",
+		Title = "Tab Combat",
 		Icon = "sword",
 		Desc = "Combat Section"
 	}),
 	RaidTab = Window:Tab({
-		Title = "Raid",
+		Title = "Tab Raid",
 		Icon = "door-open",
 		Desc = "Raid Section"
 	}),
 	EspTab = Window:Tab({
-		Title = "Esp",
+		Title = "Tab Esp",
 		Icon = "scan-eye",
 		Desc = "Esp Section"
 	}),
 	TeleportTab = Window:Tab({
-		Title = "Teleport",
+		Title = "Tab Teleport",
 		Icon = "map-pinned",
 		Desc = "Teleport Section"
 	}),
 	ShopTab = Window:Tab({
-		Title = "Shop",
+		Title = "Tab Shop",
 		Icon = "shopping-cart",
 		Desc = "Shop Section"
 	}),
 	FruitTab = Window:Tab({
-		Title = "Fruit",
+		Title = "Tab Fruit",
 		Icon = "vegan",
 		Desc = "Fruit Section"
 	}),
 	MiscTab = Window:Tab({
-		Title = "Misc",
+		Title = "Tab Misc",
 		Icon = "layout-grid",
 		Desc = "Misc Section"
 	}),
 	ServerTab = Window:Tab({
-		Title = "Server",
+		Title = "Tab Server",
 		Icon = "server",
 		Desc = "Server Section"
 	})
