@@ -1,1 +1,140 @@
-ccc
+-- dự án key system switch
+repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
+
+local HttpService = game:GetService("HttpService")
+local hwid = gethwid and gethwid() or game:GetService("RbxAnalyticsService"):GetClientId() or "Unknown"
+local key = getgenv().Key or nil
+
+-- Thư mục lưu trữ
+local folder = "DemoHub"
+makefolder(folder)
+
+-- Đường dẫn file
+local keyFile = folder .. "/key.txt"
+local hwidFile = folder .. "/hwid.txt"
+local timeFile = folder .. "/time.txt"
+
+-- API URL (thay bằng URL của bạn)
+local baseUrl = "https://mobvip.cfd/api"
+local keyVerifyUrl = baseUrl .. "/check_key.php?key=" .. key
+local hwidCheckUrl = baseUrl .. "/check_hwid.php?hwid=" .. hwid .. "&key=" .. key
+local setHwidUrl = baseUrl .. "/set_hwid.php?hwid=" .. hwid .. "&key=" .. key
+
+-- Hàm lưu dữ liệu
+local function saveKey(key)
+    writefile(keyFile, key)
+end
+
+local function saveHwid()
+    writefile(hwidFile, hwid)
+end
+
+local function saveTime()
+    writefile(timeFile, tostring(os.time()))
+end
+
+-- Hàm đọc dữ liệu
+local function loadKey()
+    if isfile(keyFile) then
+        return readfile(keyFile)
+    end
+    return nil
+end
+
+local function loadHwid()
+    if isfile(hwidFile) then
+        return readfile(hwidFile)
+    end
+    return nil
+end
+
+local function loadTime()
+    if isfile(timeFile) then
+        return tonumber(readfile(timeFile))
+    end
+    return nil
+end
+
+-- Kiểm tra thời gian hết hạn
+local function isExpired()
+    local savedTime = loadTime()
+    if not savedTime then return true end
+    return (os.time() - savedTime) > 24 * 60 * 60 -- 24 giờ
+end
+
+-- Xóa file nếu hết hạn
+local function cleanExpired()
+    if isfile(keyFile) then delfile(keyFile) end
+    if isfile(hwidFile) then delfile(hwidFile) end
+    if isfile(timeFile) then delfile(timeFile) end
+end
+
+-- Kiểm tra key đã lưu
+if isExpired() then
+    cleanExpired()
+end
+
+local savedKey = loadKey()
+local savedHwid = loadHwid()
+if savedKey and savedHwid then
+    key = savedKey
+    hwid = savedHwid
+end
+
+-- Kick nếu không có key
+if not key then
+    game.Players.LocalPlayer:Kick("Chưa gắn key vô script")
+    return
+end
+
+-- Hàm lấy dữ liệu từ API
+local function getData(url)
+    for i = 1, 2 do 
+        local success, response = pcall(function()
+            return game:HttpGet(url)
+        end)
+
+        if success and response and response ~= "" then
+            local successDecode, data = pcall(function()
+                return HttpService:JSONDecode(response)
+            end)
+            if successDecode then
+                return data
+            end
+        end
+
+        wait(1)
+    end
+
+    return nil 
+end
+
+-- Check key 
+local verifyResponse = getData(keyVerifyUrl)
+if not verifyResponse or verifyResponse.status ~= "true" then
+    game.Players.LocalPlayer:Kick(verifyResponse and verifyResponse.msg or "⚠️ Invalid Key")
+    cleanExpired()
+    return
+end
+
+-- Check HWID
+local hwidResponse = getData(hwidCheckUrl)
+if not hwidResponse or hwidResponse.status ~= "true" then
+    local setHwidResponse = getData(setHwidUrl)
+    if setHwidResponse and setHwidResponse.status == "true" then
+        saveKey(key)
+        saveHwid()
+        saveTime()
+    else
+        game.Players.LocalPlayer:Kick(hwidResponse and hwidResponse.msg or "⚠️ Invalid HWID.")
+        cleanExpired()
+        return
+    end
+else
+    saveKey(key)
+    saveHwid()
+    saveTime()
+end
+
+-- Load script nếu hợp lệ
+loadstring(game:HttpGet("https://raw.githubusercontent.com/stuckez999/main/refs/heads/main/tonghoproblox.lua"))()
