@@ -1,1 +1,3 @@
-
+const validKeys = {
+  "TESTDEMO-19322": true
+};
