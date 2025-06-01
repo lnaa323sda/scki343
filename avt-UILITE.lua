@@ -47,3 +47,12 @@ if not hwidResponse or hwidResponse.status ~= "true" then
     game.Players.LocalPlayer:Kick(hwidResponse and hwidResponse.msg or "⚠️ Invalid HWID.")
     return
 end
+
+wait(3)
+
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Zush Hub",
+    Text = "Xác minh thành công",
+    Duration = 5,
+    Icon = "rbxassetid://108644766679780"
+})
