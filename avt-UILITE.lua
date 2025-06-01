@@ -9,7 +9,7 @@ if not key then
     return
 end
 
-local baseUrl = "http://yourdomain.com"
+local baseUrl = "http://mobvip.cfd"
 local keyVerifyUrl = baseUrl .. "/api/check_key.php?key=" .. key
 local hwidCheckUrl = baseUrl .. "/api/check_hwid.php?hwid=" .. hwid .. "&key=" .. key
 
