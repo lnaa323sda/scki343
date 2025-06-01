@@ -9,7 +9,7 @@ if not key then
     return
 end
 
-local baseUrl = "http://mobvip.cfd"
+local baseUrl = "http://yourdomain.com"
 local keyVerifyUrl = baseUrl .. "/api/check_key.php?key=" .. key
 local hwidCheckUrl = baseUrl .. "/api/check_hwid.php?hwid=" .. hwid .. "&key=" .. key
 
@@ -47,8 +47,6 @@ if not hwidResponse or hwidResponse.status ~= "true" then
     game.Players.LocalPlayer:Kick(hwidResponse and hwidResponse.msg or "⚠️ Invalid HWID.")
     return
 end
-
-wait(3)
 
 game.StarterGui:SetCore("SendNotification", {
     Title = "Zush Hub",
