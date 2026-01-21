@@ -1,5 +1,5 @@
---// Roblox UI Menu (Tabs + List + Switch + 3D Viewport + Logo Toggle)
---// Put this LocalScript in StarterPlayerScripts
+--// Roblox UI Menu (NO 3D) • Tabs • List chọn • Mini Switch • Logo bật/tắt
+--// Put this LocalScript in StarterPlayerScripts (recommended) or StarterGui
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
@@ -18,13 +18,13 @@ local function make(instType, props, parent)
 end
 
 local function roundify(uiObj, radius)
-	make("UICorner", {CornerRadius = UDim.new(0, radius or 10)}, uiObj)
+	make("UICorner", { CornerRadius = UDim.new(0, radius or 10) }, uiObj)
 end
 
 local function makeStroke(uiObj, t, transparency)
 	make("UIStroke", {
 		Thickness = t or 1,
-		Transparency = transparency or 0.4,
+		Transparency = transparency or 0.5,
 		ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	}, uiObj)
 end
@@ -42,7 +42,7 @@ end
 -- ScreenGui
 --========================
 local screenGui = make("ScreenGui", {
-	Name = "Menu3DUI",
+	Name = "MenuUI_No3D",
 	ResetOnSpawn = false,
 	ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 }, playerGui)
@@ -56,17 +56,17 @@ local logoBtn = make("ImageButton", {
 	Position = UDim2.new(0, 16, 0, 16),
 	BackgroundColor3 = Color3.fromRGB(25, 25, 28),
 	AutoButtonColor = true,
-	Image = "rbxassetid://0", -- <- đổi asset id logo của bạn
+	Image = "rbxassetid://70511817915018", -- <- thay ID logo của bạn
 }, screenGui)
 roundify(logoBtn, 14)
 makeStroke(logoBtn, 1, 0.35)
 
-local logoHint = make("TextLabel", {
+make("TextLabel", {
 	Name = "Hint",
 	Size = UDim2.new(1, 0, 0, 16),
 	Position = UDim2.new(0, 0, 1, 2),
 	BackgroundTransparency = 1,
-	Text = "MENU",
+	Text = "DIEVER HUB",
 	TextSize = 12,
 	Font = Enum.Font.GothamSemibold,
 	TextColor3 = Color3.fromRGB(235, 235, 235)
@@ -94,12 +94,12 @@ local topBar = make("Frame", {
 roundify(topBar, 14)
 makeStroke(topBar, 1, 0.55)
 
-local title = make("TextLabel", {
+make("TextLabel", {
 	Name = "Title",
 	Size = UDim2.new(1, -120, 1, 0),
 	Position = UDim2.new(0, 14, 0, 0),
 	BackgroundTransparency = 1,
-	Text = "Roblox Menu UI • Tabs • List • Switch • 3D",
+	Text = "Roblox Menu UI • Nova Roblox",
 	TextXAlignment = Enum.TextXAlignment.Left,
 	Font = Enum.Font.GothamBold,
 	TextSize = 16,
@@ -140,7 +140,10 @@ do
 	topBar.InputChanged:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
 			local delta = input.Position - dragStart
-			main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+			main.Position = UDim2.new(
+				startPos.X.Scale, startPos.X.Offset + delta.X,
+				startPos.Y.Scale, startPos.Y.Offset + delta.Y
+			)
 		end
 	end)
 end
@@ -167,47 +170,7 @@ local right = make("Frame", {
 }, body)
 
 --========================
--- Tabs row (right/top)
---========================
-local tabsRow = make("Frame", {
-	Name = "TabsRow",
-	Size = UDim2.new(1, -16, 0, 42),
-	Position = UDim2.new(0, 8, 0, 8),
-	BackgroundColor3 = Color3.fromRGB(24, 24, 28)
-}, right)
-roundify(tabsRow, 12)
-makeStroke(tabsRow, 1, 0.6)
-makePadding(tabsRow, 10, 10, 8, 8)
-
-local tabLayout = make("UIListLayout", {
-	FillDirection = Enum.FillDirection.Horizontal,
-	SortOrder = Enum.SortOrder.LayoutOrder,
-	Padding = UDim.new(0, 8)
-}, tabsRow)
-
---========================
--- Pages container (right/bottom)
---========================
-local pages = make("Frame", {
-	Name = "Pages",
-	Size = UDim2.new(1, -16, 1, -58),
-	Position = UDim2.new(0, 8, 0, 50),
-	BackgroundTransparency = 1
-}, right)
-
--- page factory
-local function createPage(pageName)
-	local page = make("Frame", {
-		Name = pageName,
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundTransparency = 1,
-		Visible = false
-	}, pages)
-	return page
-end
-
---========================
--- Left panel: List select (Scrolling list)
+-- Left: List chọn (Scrolling list)
 --========================
 local listBox = make("Frame", {
 	Name = "ListBox",
@@ -219,7 +182,7 @@ roundify(listBox, 12)
 makeStroke(listBox, 1, 0.6)
 makePadding(listBox, 10, 10, 10, 10)
 
-local listTitle = make("TextLabel", {
+make("TextLabel", {
 	Name = "ListTitle",
 	Size = UDim2.new(1, 0, 0, 22),
 	BackgroundTransparency = 1,
@@ -232,7 +195,7 @@ local listTitle = make("TextLabel", {
 
 local scroll = make("ScrollingFrame", {
 	Name = "Scroll",
-	Size = UDim2.new(1, 0, 1, -32),
+	Size = UDim2.new(1, 0, 1, -60),
 	Position = UDim2.new(0, 0, 0, 30),
 	BackgroundTransparency = 1,
 	BorderSizePixel = 0,
@@ -257,7 +220,6 @@ local selectedLabel = make("TextLabel", {
 	TextColor3 = Color3.fromRGB(200, 200, 200)
 }, listBox)
 
--- List items
 local items = {"Option A", "Option B", "Option C", "Option D", "Option E", "Option F", "Option G"}
 local currentSelected = nil
 
@@ -287,7 +249,6 @@ for _, it in ipairs(items) do
 	makeListItem(it)
 end
 
--- Auto canvas size for scroll
 local function updateCanvas()
 	task.wait()
 	scroll.CanvasSize = UDim2.new(0, 0, 0, scrollLayout.AbsoluteContentSize.Y + 6)
@@ -296,64 +257,96 @@ scrollLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanva
 updateCanvas()
 
 --========================
--- Switch (toggle) component
+-- Right: Tabs Row
 --========================
-local function createSwitch(parent, labelText, defaultOn, onChanged)
-	local row = make("Frame", {
-		Size = UDim2.new(1, 0, 0, 44),
-		BackgroundColor3 = Color3.fromRGB(24, 24, 28)
+local tabsRow = make("Frame", {
+	Name = "TabsRow",
+	Size = UDim2.new(1, -16, 0, 42),
+	Position = UDim2.new(0, 8, 0, 8),
+	BackgroundColor3 = Color3.fromRGB(24, 24, 28)
+}, right)
+roundify(tabsRow, 12)
+makeStroke(tabsRow, 1, 0.6)
+makePadding(tabsRow, 10, 10, 8, 8)
+
+make("UIListLayout", {
+	FillDirection = Enum.FillDirection.Horizontal,
+	SortOrder = Enum.SortOrder.LayoutOrder,
+	Padding = UDim.new(0, 8)
+}, tabsRow)
+
+-- Pages container
+local pages = make("Frame", {
+	Name = "Pages",
+	Size = UDim2.new(1, -16, 1, -58),
+	Position = UDim2.new(0, 8, 0, 50),
+	BackgroundTransparency = 1
+}, right)
+
+local function createPage(pageName)
+	return make("Frame", {
+		Name = pageName,
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+		Visible = false
+	}, pages)
+end
+
+--========================
+-- Mini Switch (gọn)
+--========================
+local function createMiniSwitch(parent, text, defaultOn, onChanged)
+	local frame = make("Frame", {
+		Size = UDim2.new(1, 0, 0, 34),
+		BackgroundTransparency = 1
 	}, parent)
-	roundify(row, 12)
-	makeStroke(row, 1, 0.65)
-	makePadding(row, 12, 12, 10, 10)
 
 	local label = make("TextLabel", {
-		Size = UDim2.new(1, -110, 1, 0),
+		Size = UDim2.new(1, -60, 1, 0),
 		BackgroundTransparency = 1,
-		Text = labelText,
+		Text = text,
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Font = Enum.Font.GothamSemibold,
+		Font = Enum.Font.GothamMedium,
 		TextSize = 14,
 		TextColor3 = Color3.fromRGB(235, 235, 235)
-	}, row)
+	}, frame)
 
-	local toggleBtn = make("TextButton", {
-		Size = UDim2.new(0, 92, 0, 26),
-		Position = UDim2.new(1, -92, 0.5, -13),
-		BackgroundColor3 = Color3.fromRGB(35, 35, 40),
+	local toggle = make("TextButton", {
+		Size = UDim2.new(0, 44, 0, 22),
+		Position = UDim2.new(1, -44, 0.5, -11),
 		Text = "",
-		AutoButtonColor = false
-	}, row)
-	roundify(toggleBtn, 13)
-	makeStroke(toggleBtn, 1, 0.7)
+		AutoButtonColor = false,
+		BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+	}, frame)
+	roundify(toggle, 999)
+	makeStroke(toggle, 1, 0.75)
 
 	local knob = make("Frame", {
-		Size = UDim2.new(0, 22, 0, 22),
-		Position = UDim2.new(0, 2, 0.5, -11),
+		Size = UDim2.new(0, 18, 0, 18),
+		Position = UDim2.new(0, 2, 0.5, -9),
 		BackgroundColor3 = Color3.fromRGB(240, 240, 240)
-	}, toggleBtn)
-	roundify(knob, 11)
+	}, toggle)
+	roundify(knob, 999)
 
 	local state = defaultOn and true or false
+
 	local function render()
 		if state then
-			toggleBtn.BackgroundColor3 = Color3.fromRGB(60, 110, 255)
-			knob.Position = UDim2.new(1, -24, 0.5, -11)
+			toggle.BackgroundColor3 = Color3.fromRGB(80, 160, 255)
+			knob.Position = UDim2.new(1, -20, 0.5, -9)
 		else
-			toggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
-			knob.Position = UDim2.new(0, 2, 0.5, -11)
+			toggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+			knob.Position = UDim2.new(0, 2, 0.5, -9)
 		end
 	end
 
-	local function setState(newVal)
-		state = newVal
+	local function setState(v)
+		state = (v == true)
 		render()
-		if onChanged then
-			onChanged(state)
-		end
+		if onChanged then onChanged(state) end
 	end
 
-	toggleBtn.MouseButton1Click:Connect(function()
+	toggle.MouseButton1Click:Connect(function()
 		setState(not state)
 	end)
 
@@ -361,86 +354,13 @@ local function createSwitch(parent, labelText, defaultOn, onChanged)
 	return {
 		Get = function() return state end,
 		Set = setState,
-		Row = row
+		Root = frame
 	}
 end
 
 --========================
--- 3D Viewport component
+-- Page cards
 --========================
-local function createViewport(parent, modelTemplate)
-	local box = make("Frame", {
-		Size = UDim2.new(1, 0, 0, 240),
-		BackgroundColor3 = Color3.fromRGB(24, 24, 28)
-	}, parent)
-	roundify(box, 12)
-	makeStroke(box, 1, 0.65)
-	makePadding(box, 10, 10, 10, 10)
-
-	local label = make("TextLabel", {
-		Size = UDim2.new(1, 0, 0, 22),
-		BackgroundTransparency = 1,
-		Text = "Preview 3D (ViewportFrame)",
-		TextXAlignment = Enum.TextXAlignment.Left,
-		Font = Enum.Font.GothamBold,
-		TextSize = 14,
-		TextColor3 = Color3.fromRGB(240, 240, 240)
-	}, box)
-
-	local viewport = make("ViewportFrame", {
-		Name = "Viewport",
-		Size = UDim2.new(1, 0, 1, -28),
-		Position = UDim2.new(0, 0, 0, 28),
-		BackgroundColor3 = Color3.fromRGB(18, 18, 22),
-		BorderSizePixel = 0
-	}, box)
-	roundify(viewport, 10)
-	makeStroke(viewport, 1, 0.75)
-
-	local cam = Instance.new("Camera")
-	cam.Parent = viewport
-	viewport.CurrentCamera = cam
-
-	-- Clone model into viewport
-	local model = modelTemplate:Clone()
-	model.Parent = viewport
-
-	-- Ensure PrimaryPart
-	if not model.PrimaryPart then
-		local pp = model:FindFirstChildWhichIsA("BasePart", true)
-		if pp then model.PrimaryPart = pp end
-	end
-
-	-- Simple placement + camera
-	if model.PrimaryPart then
-		model:PivotTo(CFrame.new(0, 0, 0))
-		local cf, size = model:GetBoundingBox()
-		local maxDim = math.max(size.X, size.Y, size.Z)
-		local dist = maxDim * 1.8 + 3
-		cam.CFrame = CFrame.new(cf.Position + Vector3.new(0, size.Y * 0.2, dist), cf.Position)
-	end
-
-	-- Spin slowly
-	task.spawn(function()
-		while viewport.Parent do
-			task.wait(0.03)
-			if model and model.PrimaryPart then
-				model:PivotTo(model:GetPivot() * CFrame.Angles(0, math.rad(1), 0))
-			end
-		end
-	end)
-
-	return box
-end
-
---========================
--- Pages content
---========================
-local pageHome = createPage("Home")
-local pageSettings = createPage("Settings")
-local pageAbout = createPage("About")
-
--- Common page container style
 local function pageCard(parent, h)
 	local card = make("Frame", {
 		Size = UDim2.new(1, 0, 0, h),
@@ -448,72 +368,68 @@ local function pageCard(parent, h)
 	}, parent)
 	roundify(card, 12)
 	makeStroke(card, 1, 0.65)
-	makePadding(card, 12, 12, 12, 12)
+	makePadding(card, 12, 12, 10, 10)
 	return card
 end
 
--- Layout pages
-for _, pg in ipairs({pageHome, pageSettings, pageAbout}) do
-	local layout = make("UIListLayout", {
+-- Layout for each page
+local function addPageLayout(pg)
+	make("UIListLayout", {
 		SortOrder = Enum.SortOrder.LayoutOrder,
 		Padding = UDim.new(0, 10)
 	}, pg)
+	makePadding(pg, 0, 0, 0, 0)
 end
 
--- HOME: switches + viewport
+--========================
+-- Create pages
+--========================
+local pageHome = createPage("Home")
+local pageSettings = createPage("Settings")
+local pageAbout = createPage("About")
+
+addPageLayout(pageHome)
+addPageLayout(pageSettings)
+addPageLayout(pageAbout)
+
+-- HOME content (NO 3D)
 do
-	local c1 = pageCard(pageHome, 44)
-	createSwitch(c1, "Bật hiệu ứng A", false, function(on)
-		-- TODO: xử lý bật/tắt
-		-- print("Effect A:", on)
-	end)
+	local c1 = pageCard(pageHome, 140)
 
-	local c2 = pageCard(pageHome, 44)
-	createSwitch(c2, "Bật tính năng B", true, function(on)
-		-- TODO: xử lý bật/tắt
-		-- print("Feature B:", on)
-	end)
-
-	-- Create a simple model for viewport if you don't have one in ReplicatedStorage
-	-- If you already have a model, replace this with: local template = ReplicatedStorage:WaitForChild("YourModel")
-	local template = Instance.new("Model")
-	template.Name = "PreviewModel"
-	local part = Instance.new("Part")
-	part.Size = Vector3.new(3, 3, 3)
-	part.Anchored = true
-	part.Name = "Cube"
-	part.Parent = template
-	template.PrimaryPart = part
-
-	local vpCard = make("Frame", {Size = UDim2.new(1, 0, 0, 240), BackgroundTransparency = 1}, pageHome)
-	createViewport(vpCard, template)
-	template:Destroy()
-end
-
--- SETTINGS: list selection info + switch
-do
-	local c1 = pageCard(pageSettings, 90)
-	local txt = make("TextLabel", {
-		Size = UDim2.new(1, 0, 1, 0),
+	make("TextLabel", {
+		Size = UDim2.new(1, 0, 0, 22),
 		BackgroundTransparency = 1,
+		Text = "Chức năng nhanh",
 		TextXAlignment = Enum.TextXAlignment.Left,
-		TextYAlignment = Enum.TextYAlignment.Top,
-		Font = Enum.Font.Gotham,
-		TextSize = 13,
-		TextColor3 = Color3.fromRGB(220, 220, 220),
-		Text = "Trang Settings.\n- Bạn có thể dùng 'Đang chọn' bên trái để áp dụng cấu hình.\n- Ví dụ: chọn Option A rồi bật switch để kích hoạt."
+		Font = Enum.Font.GothamBold,
+		TextSize = 14,
+		TextColor3 = Color3.fromRGB(240, 240, 240)
 	}, c1)
 
-	local c2 = pageCard(pageSettings, 44)
-	createSwitch(c2, "Áp dụng theo lựa chọn", false, function(on)
-		-- Ví dụ: dùng currentSelected
-		-- print("Apply selected:", currentSelected, "state:", on)
+	local listWrap = make("Frame", {
+		Size = UDim2.new(1, 0, 1, -28),
+		Position = UDim2.new(0, 0, 0, 28),
+		BackgroundTransparency = 1
+	}, c1)
+
+	local ll = make("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8) }, listWrap)
+
+	createMiniSwitch(listWrap, "Auto Run", false, function(on)
+		print("Auto Run:", on, "Selected:", currentSelected)
+	end)
+
+	createMiniSwitch(listWrap, "Boost", true, function(on)
+		print("Boost:", on, "Selected:", currentSelected)
+	end)
+
+	createMiniSwitch(listWrap, "Particles", false, function(on)
+		print("Particles:", on, "Selected:", currentSelected)
 	end)
 end
 
--- ABOUT
+-- SETTINGS content
 do
-	local c1 = pageCard(pageAbout, 120)
+	local c1 = pageCard(pageSettings, 120)
 	make("TextLabel", {
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = 1,
@@ -522,7 +438,48 @@ do
 		Font = Enum.Font.Gotham,
 		TextSize = 13,
 		TextColor3 = Color3.fromRGB(220, 220, 220),
-		Text = "About:\n- UI có Logo bật/tắt\n- Tabs\n- List chọn bên trái\n- Công tắc (switch)\n- ViewportFrame preview 3D\n\nBạn muốn thêm: dropdown, slider, keybind, hay save settings?"
+		Text = "Settings:\n- Bên trái chọn Option.\n- Bên phải bật/tắt tính năng.\n\nGợi ý: bạn có thể dùng currentSelected để áp dụng cấu hình theo lựa chọn."
+	}, c1)
+
+	local c2 = pageCard(pageSettings, 90)
+	make("TextLabel", {
+		Size = UDim2.new(1, 0, 0, 22),
+		BackgroundTransparency = 1,
+		Text = "Tùy chọn",
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Font = Enum.Font.GothamBold,
+		TextSize = 14,
+		TextColor3 = Color3.fromRGB(240, 240, 240)
+	}, c2)
+
+	local listWrap = make("Frame", {
+		Size = UDim2.new(1, 0, 1, -28),
+		Position = UDim2.new(0, 0, 0, 28),
+		BackgroundTransparency = 1
+	}, c2)
+	make("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8) }, listWrap)
+
+	createMiniSwitch(listWrap, "Apply theo lựa chọn", false, function(on)
+		print("Apply Selected:", on, "Selected:", currentSelected)
+	end)
+
+	createMiniSwitch(listWrap, "Notifications", true, function(on)
+		print("Notifications:", on)
+	end)
+end
+
+-- ABOUT content
+do
+	local c1 = pageCard(pageAbout, 150)
+	make("TextLabel", {
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextYAlignment = Enum.TextYAlignment.Top,
+		Font = Enum.Font.Gotham,
+		TextSize = 13,
+		TextColor3 = Color3.fromRGB(220, 220, 220),
+		Text = "About:\n- Logo click bật/tắt UI\n- Tabs: Home/Settings/About\n- List chọn bên trái (Scrolling)\n- Mini Switch gọn\n\nMuốn thêm: keybind mở UI (RightShift), slider, dropdown, hay save settings?"
 	}, c1)
 end
 
@@ -541,13 +498,13 @@ local function setPage(page)
 		b.BackgroundColor3 = Color3.fromRGB(32, 32, 38)
 	end
 	if tabButtons[page] then
-		tabButtons[page].BackgroundColor3 = Color3.fromRGB(60, 110, 255)
+		tabButtons[page].BackgroundColor3 = Color3.fromRGB(80, 160, 255)
 	end
 end
 
 local function createTab(name, page)
 	local btn = make("TextButton", {
-		Size = UDim2.new(0, 120, 1, -0),
+		Size = UDim2.new(0, 120, 1, 0),
 		BackgroundColor3 = Color3.fromRGB(32, 32, 38),
 		Text = name,
 		Font = Enum.Font.GothamSemibold,
