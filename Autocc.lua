@@ -1,6 +1,3 @@
---// Roblox UI Menu với Fly • Fixed Layout
---// Put this LocalScript in StarterPlayerScripts
-
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -8,32 +5,59 @@ local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
---========================
--- Fly Variables
---========================
-local flySpeed = 50
-local isFlying = false
-local bodyVelocity
-local bodyGyro
-local moveDirection = {
-	w = false,
-	a = false,
-	s = false,
-	d = false,
-	space = false,
-	shift = false
+-- Biến trạng thái cho từng option
+local optionStates = {
+	["Speed Boost"] = {
+		fly = false,
+		speed = false,
+		noclip = false,
+		speedValue = 100
+	},
+	["Fly Mode"] = {
+		fly = false,
+		speed = false,
+		noclip = false,
+		speedValue = 50
+	},
+	["Super Jump"] = {
+		fly = false,
+		speed = false,
+		noclip = false,
+		speedValue = 80,
+		jump = false,
+		jumpPower = 100
+	},
+	["Ghost Mode"] = {
+		fly = false,
+		speed = false,
+		noclip = false,
+		speedValue = 60
+	},
+	["Combat Mode"] = {
+		fly = false,
+		speed = false,
+		noclip = false,
+		speedValue = 120
+	}
 }
 
---========================
--- Helpers
---========================
+local currentOption = nil
+local flySpeed = 50
+local isFlying = false
+local isNoclip = false
+local bodyVelocity, bodyGyro
+local moveDirection = {
+	w = false, a = false, s = false, d = false,
+	space = false, shift = false
+}
+
+-- Helper functions
 local function make(instType, props, parent)
 	local obj = Instance.new(instType)
-	for k, v in pairs(props or {}) do
-		obj[k] = v
-	end
+	for k, v in pairs(props or {}) do obj[k] = v end
 	if parent then obj.Parent = parent end
 	return obj
 end
@@ -59,12 +83,9 @@ local function makePadding(uiObj, l, r, t, b)
 	}, uiObj)
 end
 
---========================
--- Fly Functions
---========================
+-- Fly function
 local function toggleFly(state)
 	isFlying = state
-	
 	if isFlying then
 		bodyVelocity = Instance.new("BodyVelocity")
 		bodyVelocity.Velocity = Vector3.new(0, 0, 0)
@@ -76,21 +97,32 @@ local function toggleFly(state)
 		bodyGyro.P = 9e4
 		bodyGyro.CFrame = humanoidRootPart.CFrame
 		bodyGyro.Parent = humanoidRootPart
-		
-		print("Fly: ON")
 	else
-		if bodyVelocity then
-			bodyVelocity:Destroy()
-			bodyVelocity = nil
-		end
-		if bodyGyro then
-			bodyGyro:Destroy()
-			bodyGyro = nil
-		end
-		print("Fly: OFF")
+		if bodyVelocity then bodyVelocity:Destroy() bodyVelocity = nil end
+		if bodyGyro then bodyGyro:Destroy() bodyGyro = nil end
 	end
 end
 
+-- Speed function
+local function setSpeed(value)
+	if humanoid then
+		humanoid.WalkSpeed = value
+	end
+end
+
+-- Noclip function
+local function toggleNoclip(state)
+	isNoclip = state
+end
+
+-- Jump function
+local function setJumpPower(value)
+	if humanoid then
+		humanoid.JumpPower = value
+	end
+end
+
+-- Input handling
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if gameProcessed then return end
 	local key = input.KeyCode.Name:lower()
@@ -106,57 +138,52 @@ UserInputService.InputEnded:Connect(function(input)
 	end
 end)
 
+-- Fly loop
 RunService.RenderStepped:Connect(function()
-	if not isFlying or not bodyVelocity or not bodyGyro then return end
-	
-	local camera = workspace.CurrentCamera
-	local cameraCFrame = camera.CFrame
-	local moveVector = Vector3.new(0, 0, 0)
-	
-	if moveDirection.w then
-		moveVector = moveVector + (cameraCFrame.LookVector * flySpeed)
-	end
-	if moveDirection.s then
-		moveVector = moveVector - (cameraCFrame.LookVector * flySpeed)
-	end
-	if moveDirection.a then
-		moveVector = moveVector - (cameraCFrame.RightVector * flySpeed)
-	end
-	if moveDirection.d then
-		moveVector = moveVector + (cameraCFrame.RightVector * flySpeed)
-	end
-	if moveDirection.space then
-		moveVector = moveVector + Vector3.new(0, flySpeed, 0)
-	end
-	if moveDirection.shift then
-		moveVector = moveVector - Vector3.new(0, flySpeed, 0)
+	if isFlying and bodyVelocity and bodyGyro then
+		local camera = workspace.CurrentCamera
+		local cameraCFrame = camera.CFrame
+		local moveVector = Vector3.new(0, 0, 0)
+		
+		if moveDirection.w then moveVector = moveVector + (cameraCFrame.LookVector * flySpeed) end
+		if moveDirection.s then moveVector = moveVector - (cameraCFrame.LookVector * flySpeed) end
+		if moveDirection.a then moveVector = moveVector - (cameraCFrame.RightVector * flySpeed) end
+		if moveDirection.d then moveVector = moveVector + (cameraCFrame.RightVector * flySpeed) end
+		if moveDirection.space then moveVector = moveVector + Vector3.new(0, flySpeed, 0) end
+		if moveDirection.shift then moveVector = moveVector - Vector3.new(0, flySpeed, 0) end
+		
+		bodyVelocity.Velocity = moveVector
+		bodyGyro.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + cameraCFrame.LookVector)
 	end
 	
-	bodyVelocity.Velocity = moveVector
-	bodyGyro.CFrame = CFrame.new(humanoidRootPart.Position, 
-		humanoidRootPart.Position + cameraCFrame.LookVector)
+	-- Noclip loop
+	if isNoclip then
+		for _, part in pairs(character:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.CanCollide = false
+			end
+		end
+	end
 end)
 
+-- Character respawn
 player.CharacterAdded:Connect(function(newCharacter)
 	character = newCharacter
+	humanoid = character:WaitForChild("Humanoid")
 	humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 	isFlying = false
+	isNoclip = false
 	if bodyVelocity then bodyVelocity:Destroy() end
 	if bodyGyro then bodyGyro:Destroy() end
 end)
 
---========================
--- ScreenGui
---========================
+-- UI Creation
 local screenGui = make("ScreenGui", {
 	Name = "MenuUI_Fly",
 	ResetOnSpawn = false,
 	ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 }, playerGui)
 
---========================
--- Logo button
---========================
 local logoBtn = make("ImageButton", {
 	Name = "LogoButton",
 	Size = UDim2.new(0, 56, 0, 56),
@@ -179,9 +206,6 @@ make("TextLabel", {
 	TextColor3 = Color3.fromRGB(235, 235, 235)
 }, logoBtn)
 
---========================
--- Main window
---========================
 local main = make("Frame", {
 	Name = "Main",
 	Size = UDim2.new(0, 720, 0, 420),
@@ -192,7 +216,6 @@ local main = make("Frame", {
 roundify(main, 14)
 makeStroke(main, 1, 0.35)
 
--- Top bar
 local topBar = make("Frame", {
 	Name = "TopBar",
 	Size = UDim2.new(1, 0, 0, 44),
@@ -206,7 +229,7 @@ make("TextLabel", {
 	Size = UDim2.new(1, -120, 1, 0),
 	Position = UDim2.new(0, 14, 0, 0),
 	BackgroundTransparency = 1,
-	Text = "Roblox Menu UI • Nova Roblox",
+	Text = "DIEVER HUB • Speed & Fly Menu",
 	TextXAlignment = Enum.TextXAlignment.Left,
 	Font = Enum.Font.GothamBold,
 	TextSize = 16,
@@ -255,7 +278,6 @@ do
 	end)
 end
 
--- Body
 local body = make("Frame", {
 	Name = "Body",
 	Size = UDim2.new(1, 0, 1, -44),
@@ -276,9 +298,6 @@ local right = make("Frame", {
 	BackgroundTransparency = 1
 }, body)
 
---========================
--- Left: List chọn
---========================
 local listBox = make("Frame", {
 	Name = "ListBox",
 	Size = UDim2.new(1, -16, 1, -16),
@@ -293,7 +312,7 @@ make("TextLabel", {
 	Name = "ListTitle",
 	Size = UDim2.new(1, 0, 0, 22),
 	BackgroundTransparency = 1,
-	Text = "Danh sách chọn",
+	Text = "Chọn chế độ",
 	TextXAlignment = Enum.TextXAlignment.Left,
 	Font = Enum.Font.GothamBold,
 	TextSize = 14,
@@ -327,99 +346,31 @@ local selectedLabel = make("TextLabel", {
 	TextColor3 = Color3.fromRGB(200, 200, 200)
 }, listBox)
 
-local items = {"Option A", "Option B", "Option C", "Option D", "Option E"}
-local currentSelected = nil
-
-local function makeListItem(text)
-	local btn = make("TextButton", {
-		Name = "Item",
-		Size = UDim2.new(1, 0, 0, 34),
-		BackgroundColor3 = Color3.fromRGB(32, 32, 38),
-		Text = text,
-		Font = Enum.Font.GothamSemibold,
-		TextSize = 13,
-		TextColor3 = Color3.fromRGB(235, 235, 235),
-		AutoButtonColor = true
-	}, scroll)
-	roundify(btn, 10)
-	makeStroke(btn, 1, 0.7)
-
-	btn.MouseButton1Click:Connect(function()
-		currentSelected = text
-		selectedLabel.Text = "Đang chọn: " .. text
-	end)
-
-	return btn
-end
-
-for _, it in ipairs(items) do
-	makeListItem(it)
-end
-
-local function updateCanvas()
-	task.wait()
-	scroll.CanvasSize = UDim2.new(0, 0, 0, scrollLayout.AbsoluteContentSize.Y + 6)
-end
-scrollLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
-updateCanvas()
-
---========================
--- Right: Tabs Row
---========================
-local tabsRow = make("Frame", {
-	Name = "TabsRow",
-	Size = UDim2.new(1, -16, 0, 42),
+-- Right side content frame
+local contentFrame = make("Frame", {
+	Name = "ContentFrame",
+	Size = UDim2.new(1, -16, 1, -16),
 	Position = UDim2.new(0, 8, 0, 8),
-	BackgroundColor3 = Color3.fromRGB(24, 24, 28)
+	BackgroundTransparency = 1
 }, right)
-roundify(tabsRow, 12)
-makeStroke(tabsRow, 1, 0.6)
-makePadding(tabsRow, 10, 10, 8, 8)
 
-make("UIListLayout", {
-	FillDirection = Enum.FillDirection.Horizontal,
-	SortOrder = Enum.SortOrder.LayoutOrder,
-	Padding = UDim.new(0, 8)
-}, tabsRow)
-
--- Pages container với ScrollingFrame
-local pagesScroll = make("ScrollingFrame", {
-	Name = "PagesScroll",
-	Size = UDim2.new(1, -16, 1, -58),
-	Position = UDim2.new(0, 8, 0, 50),
+local contentScroll = make("ScrollingFrame", {
+	Name = "ContentScroll",
+	Size = UDim2.new(1, 0, 1, 0),
 	BackgroundTransparency = 1,
 	BorderSizePixel = 0,
 	CanvasSize = UDim2.new(0, 0, 0, 0),
 	ScrollBarThickness = 6
-}, right)
+}, contentFrame)
 
-local function createPage(pageName)
-	local page = make("Frame", {
-		Name = pageName,
-		Size = UDim2.new(1, -6, 0, 0),
-		BackgroundTransparency = 1,
-		Visible = false,
-		AutomaticSize = Enum.AutomaticSize.Y
-	}, pagesScroll)
-	
-	local layout = make("UIListLayout", {
-		SortOrder = Enum.SortOrder.LayoutOrder,
-		Padding = UDim.new(0, 10)
-	}, page)
-	
-	-- Auto update canvas khi content thay đổi
-	layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-		task.wait()
-		page.Size = UDim2.new(1, -6, 0, layout.AbsoluteContentSize.Y)
-		pagesScroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
-	end)
-	
-	return page
-end
+local contentLayout = make("UIListLayout", {
+	SortOrder = Enum.SortOrder.LayoutOrder,
+	Padding = UDim.new(0, 10)
+}, contentScroll)
 
---========================
--- Mini Switch
---========================
+-- Store switches for each option
+local switchStorage = {}
+
 local function createMiniSwitch(parent, text, defaultOn, onChanged)
 	local frame = make("Frame", {
 		Size = UDim2.new(1, 0, 0, 34),
@@ -483,9 +434,6 @@ local function createMiniSwitch(parent, text, defaultOn, onChanged)
 	}
 end
 
---========================
--- Page cards
---========================
 local function pageCard(parent, title)
 	local card = make("Frame", {
 		Size = UDim2.new(1, 0, 0, 0),
@@ -511,186 +459,221 @@ local function pageCard(parent, title)
 	return card
 end
 
---========================
--- Create pages
---========================
-local pageHome = createPage("Home")
-local pageSettings = createPage("Settings")
-local pageAbout = createPage("About")
-
--- HOME: Fly + Quick Functions
-do
-	local flyCard = pageCard(pageHome, "Bay • Fly")
-	
-	local contentFrame = make("Frame", {
-		Size = UDim2.new(1, 0, 0, 0),
-		Position = UDim2.new(0, 0, 0, 28),
-		BackgroundTransparency = 1,
-		AutomaticSize = Enum.AutomaticSize.Y
-	}, flyCard)
-	
-	local layout = make("UIListLayout", {
-		SortOrder = Enum.SortOrder.LayoutOrder,
-		Padding = UDim.new(0, 8)
-	}, contentFrame)
-	
-	createMiniSwitch(contentFrame, "Bật Fly (WASD + Space/Shift)", false, function(on)
-		toggleFly(on)
-	end)
-	
-	-- Info text
-	make("TextLabel", {
-		Size = UDim2.new(1, 0, 0, 40),
-		BackgroundTransparency = 1,
-		Text = "W/A/S/D: Di chuyển • Space: Bay lên • Shift: Bay xuống",
-		TextWrapped = true,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextYAlignment = Enum.TextYAlignment.Top,
-		Font = Enum.Font.Gotham,
-		TextSize = 12,
-		TextColor3 = Color3.fromRGB(180, 180, 180)
-	}, contentFrame)
-	
-	-- Quick functions card
-	local quickCard = pageCard(pageHome, "Chức năng nhanh")
-	
-	local quickFrame = make("Frame", {
-		Size = UDim2.new(1, 0, 0, 0),
-		Position = UDim2.new(0, 0, 0, 28),
-		BackgroundTransparency = 1,
-		AutomaticSize = Enum.AutomaticSize.Y
-	}, quickCard)
-	
+-- Function to create content for each option
+local function createOptionContent(optionName)
+	contentScroll:ClearAllChildren()
 	make("UIListLayout", {
 		SortOrder = Enum.SortOrder.LayoutOrder,
-		Padding = UDim.new(0, 8)
-	}, quickFrame)
+		Padding = UDim.new(0, 10)
+	}, contentScroll)
 	
-	createMiniSwitch(quickFrame, "Auto Run", false, function(on)
-		print("Auto Run:", on, "Selected:", currentSelected)
-	end)
-	
-	createMiniSwitch(quickFrame, "Boost", false, function(on)
-		print("Boost:", on, "Selected:", currentSelected)
-	end)
-	
-	createMiniSwitch(quickFrame, "Particles", false, function(on)
-		print("Particles:", on, "Selected:", currentSelected)
-	end)
-end
-
--- SETTINGS
-do
-	local infoCard = pageCard(pageSettings, "Hướng dẫn")
-	
-	make("TextLabel", {
-		Size = UDim2.new(1, 0, 0, 60),
-		Position = UDim2.new(0, 0, 0, 28),
-		BackgroundTransparency = 1,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextYAlignment = Enum.TextYAlignment.Top,
-		TextWrapped = true,
-		Font = Enum.Font.Gotham,
-		TextSize = 13,
-		TextColor3 = Color3.fromRGB(220, 220, 220),
-		Text = "Chọn Option ở bên trái, sau đó bật/tắt các tính năng bên phải. Các tính năng sẽ áp dụng theo lựa chọn hiện tại."
-	}, infoCard)
-	
-	local optCard = pageCard(pageSettings, "Tùy chọn")
-	
-	local optFrame = make("Frame", {
-		Size = UDim2.new(1, 0, 0, 0),
-		Position = UDim2.new(0, 0, 0, 28),
-		BackgroundTransparency = 1,
-		AutomaticSize = Enum.AutomaticSize.Y
-	}, optCard)
-	
-	make("UIListLayout", {
-		SortOrder = Enum.SortOrder.LayoutOrder,
-		Padding = UDim.new(0, 8)
-	}, optFrame)
-	
-	createMiniSwitch(optFrame, "Apply theo lựa chọn", false, function(on)
-		print("Apply Selected:", on, "Selected:", currentSelected)
-	end)
-	
-	createMiniSwitch(optFrame, "Notifications", true, function(on)
-		print("Notifications:", on)
-	end)
-	
-	createMiniSwitch(optFrame, "Auto Save", false, function(on)
-		print("Auto Save:", on)
-	end)
-end
-
--- ABOUT
-do
-	local aboutCard = pageCard(pageAbout, "Thông tin")
-	
-	make("TextLabel", {
-		Size = UDim2.new(1, 0, 0, 120),
-		Position = UDim2.new(0, 0, 0, 28),
-		BackgroundTransparency = 1,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextYAlignment = Enum.TextYAlignment.Top,
-		TextWrapped = true,
-		Font = Enum.Font.Gotham,
-		TextSize = 13,
-		TextColor3 = Color3.fromRGB(220, 220, 220),
-		Text = "Menu UI với Fly\n\n• Click logo để bật/tắt UI\n• Tab Home: Bật fly bằng công tắc\n• List chọn bên trái\n• Tabs tự động hiện nội dung\n• Layout không bị tràn\n\nPhát triển bởi Nova Roblox"
-	}, aboutCard)
-end
-
---========================
--- Tabs behavior
---========================
-local currentPage = nil
-local tabButtons = {}
-
-local function setPage(page)
-	if currentPage then currentPage.Visible = false end
-	currentPage = page
-	currentPage.Visible = true
-	pagesScroll.CanvasPosition = Vector2.new(0, 0)
-	
-	for _, b in pairs(tabButtons) do
-		b.BackgroundColor3 = Color3.fromRGB(32, 32, 38)
+	local state = optionStates[optionName]
+	if not switchStorage[optionName] then
+		switchStorage[optionName] = {}
 	end
-	if tabButtons[page] then
-		tabButtons[page].BackgroundColor3 = Color3.fromRGB(80, 160, 255)
+	
+	if optionName == "Speed Boost" then
+		local card = pageCard(contentScroll, "⚡ Speed Boost")
+		local cf = make("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			Position = UDim2.new(0, 0, 0, 28),
+			BackgroundTransparency = 1,
+			AutomaticSize = Enum.AutomaticSize.Y
+		}, card)
+		make("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8) }, cf)
+		
+		switchStorage[optionName].speed = createMiniSwitch(cf, "Bật Speed Boost", state.speed, function(on)
+			state.speed = on
+			if on then setSpeed(state.speedValue) else setSpeed(16) end
+		end)
+		
+		make("TextLabel", {
+			Size = UDim2.new(1, 0, 0, 30),
+			BackgroundTransparency = 1,
+			Text = "Tốc độ chạy: x" .. state.speedValue,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Font = Enum.Font.Gotham,
+			TextSize = 12,
+			TextColor3 = Color3.fromRGB(180, 180, 180)
+		}, cf)
+		
+	elseif optionName == "Fly Mode" then
+		local card = pageCard(contentScroll, "✈️ Fly Mode")
+		local cf = make("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			Position = UDim2.new(0, 0, 0, 28),
+			BackgroundTransparency = 1,
+			AutomaticSize = Enum.AutomaticSize.Y
+		}, card)
+		make("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8) }, cf)
+		
+		switchStorage[optionName].fly = createMiniSwitch(cf, "Bật Fly (WASD + Space/Shift)", state.fly, function(on)
+			state.fly = on
+			toggleFly(on)
+		end)
+		
+		switchStorage[optionName].speed = createMiniSwitch(cf, "Speed khi bay", state.speed, function(on)
+			state.speed = on
+			if on then setSpeed(state.speedValue) else setSpeed(16) end
+		end)
+		
+		make("TextLabel", {
+			Size = UDim2.new(1, 0, 0, 40),
+			BackgroundTransparency = 1,
+			Text = "W/A/S/D: Di chuyển • Space: Bay lên • Shift: Bay xuống",
+			TextWrapped = true,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Font = Enum.Font.Gotham,
+			TextSize = 12,
+			TextColor3 = Color3.fromRGB(180, 180, 180)
+		}, cf)
+		
+	elseif optionName == "Super Jump" then
+		local card = pageCard(contentScroll, "🦘 Super Jump")
+		local cf = make("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			Position = UDim2.new(0, 0, 0, 28),
+			BackgroundTransparency = 1,
+			AutomaticSize = Enum.AutomaticSize.Y
+		}, card)
+		make("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8) }, cf)
+		
+		switchStorage[optionName].jump = createMiniSwitch(cf, "Bật Super Jump", state.jump, function(on)
+			state.jump = on
+			if on then setJumpPower(state.jumpPower) else setJumpPower(50) end
+		end)
+		
+		switchStorage[optionName].speed = createMiniSwitch(cf, "Bật Speed", state.speed, function(on)
+			state.speed = on
+			if on then setSpeed(state.speedValue) else setSpeed(16) end
+		end)
+		
+		make("TextLabel", {
+			Size = UDim2.new(1, 0, 0, 30),
+			BackgroundTransparency = 1,
+			Text = "Jump Power: " .. state.jumpPower .. " | Speed: x" .. state.speedValue,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Font = Enum.Font.Gotham,
+			TextSize = 12,
+			TextColor3 = Color3.fromRGB(180, 180, 180)
+		}, cf)
+		
+	elseif optionName == "Ghost Mode" then
+		local card = pageCard(contentScroll, "👻 Ghost Mode")
+		local cf = make("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			Position = UDim2.new(0, 0, 0, 28),
+			BackgroundTransparency = 1,
+			AutomaticSize = Enum.AutomaticSize.Y
+		}, card)
+		make("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8) }, cf)
+		
+		switchStorage[optionName].noclip = createMiniSwitch(cf, "Bật Noclip (đi xuyên tường)", state.noclip, function(on)
+			state.noclip = on
+			toggleNoclip(on)
+		end)
+		
+		switchStorage[optionName].speed = createMiniSwitch(cf, "Bật Speed", state.speed, function(on)
+			state.speed = on
+			if on then setSpeed(state.speedValue) else setSpeed(16) end
+		end)
+		
+		make("TextLabel", {
+			Size = UDim2.new(1, 0, 0, 30),
+			BackgroundTransparency = 1,
+			Text = "Đi xuyên tường + tốc độ nhanh",
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Font = Enum.Font.Gotham,
+			TextSize = 12,
+			TextColor3 = Color3.fromRGB(180, 180, 180)
+		}, cf)
+		
+	elseif optionName == "Combat Mode" then
+		local card = pageCard(contentScroll, "⚔️ Combat Mode")
+		local cf = make("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			Position = UDim2.new(0, 0, 0, 28),
+			BackgroundTransparency = 1,
+			AutomaticSize = Enum.AutomaticSize.Y
+		}, card)
+		make("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8) }, cf)
+		
+		switchStorage[optionName].speed = createMiniSwitch(cf, "Bật Super Speed", state.speed, function(on)
+			state.speed = on
+			if on then setSpeed(state.speedValue) else setSpeed(16) end
+		end)
+		
+		switchStorage[optionName].fly = createMiniSwitch(cf, "Bật Fly", state.fly, function(on)
+			state.fly = on
+			toggleFly(on)
+		end)
+		
+		switchStorage[optionName].noclip = createMiniSwitch(cf, "Bật Noclip", state.noclip, function(on)
+			state.noclip = on
+			toggleNoclip(on)
+		end)
+		
+		make("TextLabel", {
+			Size = UDim2.new(1, 0, 0, 40),
+			BackgroundTransparency = 1,
+			Text = "Chế độ chiến đấu với Speed x120 + Fly + Noclip",
+			TextWrapped = true,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Font = Enum.Font.Gotham,
+			TextSize = 12,
+			TextColor3 = Color3.fromRGB(180, 180, 180)
+		}, cf)
 	end
+	
+	task.wait()
+	contentScroll.CanvasSize = UDim2.new(0, 0, 0, contentLayout.AbsoluteContentSize.Y + 10)
 end
 
-local function createTab(name, page)
+-- Create list items
+local listItems = {}
+local function makeListItem(text)
 	local btn = make("TextButton", {
-		Size = UDim2.new(0, 120, 1, 0),
+		Name = "Item",
+		Size = UDim2.new(1, 0, 0, 34),
 		BackgroundColor3 = Color3.fromRGB(32, 32, 38),
-		Text = name,
+		Text = text,
 		Font = Enum.Font.GothamSemibold,
 		TextSize = 13,
-		TextColor3 = Color3.fromRGB(240, 240, 240),
+		TextColor3 = Color3.fromRGB(235, 235, 235),
 		AutoButtonColor = true
-	}, tabsRow)
-	roundify(btn, 12)
+	}, scroll)
+	roundify(btn, 10)
 	makeStroke(btn, 1, 0.7)
 
 	btn.MouseButton1Click:Connect(function()
-		setPage(page)
+		-- Deselect previous
+		for _, item in pairs(listItems) do
+			item.BackgroundColor3 = Color3.fromRGB(32, 32, 38)
+		end
+		-- Select current
+		btn.BackgroundColor3 = Color3.fromRGB(80, 160, 255)
+		currentOption = text
+		selectedLabel.Text = "Đang chọn: " .. text
+		createOptionContent(text)
 	end)
-
-	tabButtons[page] = btn
+	
+	table.insert(listItems, btn)
 	return btn
 end
 
-createTab("Home", pageHome)
-createTab("Settings", pageSettings)
-createTab("About", pageAbout)
+-- Create options
+for optionName, _ in pairs(optionStates) do
+	makeListItem(optionName)
+end
 
-setPage(pageHome)
+local function updateCanvas()
+	task.wait()
+	scroll.CanvasSize = UDim2.new(0, 0, 0, scrollLayout.AbsoluteContentSize.Y + 6)
+end
+scrollLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+updateCanvas()
 
---========================
--- Open/Close UI
---========================
+-- Buttons
 local function setVisible(on)
 	main.Visible = on
 end
@@ -703,4 +686,5 @@ closeBtn.MouseButton1Click:Connect(function()
 	setVisible(false)
 end)
 
-print("Menu UI loaded! Click logo to toggle.")
+print("DIEVER HUB loaded! Click logo to toggle.")
+print("Chọn option bên trái để xem các chức năng khác nhau!")
