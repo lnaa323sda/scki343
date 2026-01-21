@@ -434,6 +434,92 @@ local function createMiniSwitch(parent, text, defaultOn, onChanged)
 	}
 end
 
+local function createSpeedSlider(parent, text, minValue, maxValue, defaultValue, onChanged)
+	local frame = make("Frame", {
+		Size = UDim2.new(1, 0, 0, 70),
+		BackgroundTransparency = 1
+	}, parent)
+
+	local label = make("TextLabel", {
+		Size = UDim2.new(1, 0, 0, 20),
+		BackgroundTransparency = 1,
+		Text = text .. ": x" .. defaultValue,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Font = Enum.Font.GothamMedium,
+		TextSize = 14,
+		TextColor3 = Color3.fromRGB(235, 235, 235)
+	}, frame)
+
+	local sliderBg = make("Frame", {
+		Size = UDim2.new(1, 0, 0, 30),
+		Position = UDim2.new(0, 0, 0, 25),
+		BackgroundColor3 = Color3.fromRGB(40, 40, 46)
+	}, frame)
+	roundify(sliderBg, 8)
+	makeStroke(sliderBg, 1, 0.7)
+
+	local currentValue = defaultValue
+	local fillPercent = (currentValue - minValue) / (maxValue - minValue)
+	
+	local sliderFill = make("Frame", {
+		Size = UDim2.new(fillPercent, 0, 1, 0),
+		BackgroundColor3 = Color3.fromRGB(80, 160, 255)
+	}, sliderBg)
+	roundify(sliderFill, 8)
+
+	local valueLabel = make("TextLabel", {
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+		Text = "x" .. currentValue,
+		Font = Enum.Font.GothamBold,
+		TextSize = 14,
+		TextColor3 = Color3.fromRGB(255, 255, 255),
+		ZIndex = 2
+	}, sliderBg)
+
+	local dragging = false
+
+	local function updateSlider(inputPos)
+		local relativeX = math.clamp((inputPos - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
+		currentValue = math.floor(minValue + (relativeX * (maxValue - minValue)))
+		sliderFill.Size = UDim2.new(relativeX, 0, 1, 0)
+		valueLabel.Text = "x" .. currentValue
+		label.Text = text .. ": x" .. currentValue
+		if onChanged then onChanged(currentValue) end
+	end
+
+	sliderBg.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			updateSlider(input.Position.X)
+		end
+	end)
+
+	sliderBg.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+
+	sliderBg.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
+			updateSlider(input.Position.X)
+		end
+	end)
+
+	return {
+		GetValue = function() return currentValue end,
+		SetValue = function(v)
+			currentValue = math.clamp(v, minValue, maxValue)
+			local percent = (currentValue - minValue) / (maxValue - minValue)
+			sliderFill.Size = UDim2.new(percent, 0, 1, 0)
+			valueLabel.Text = "x" .. currentValue
+			label.Text = text .. ": x" .. currentValue
+		end,
+		Root = frame
+	}
+end
+
 local function pageCard(parent, title)
 	local card = make("Frame", {
 		Size = UDim2.new(1, 0, 0, 0),
@@ -487,15 +573,10 @@ local function createOptionContent(optionName)
 			if on then setSpeed(state.speedValue) else setSpeed(16) end
 		end)
 		
-		make("TextLabel", {
-			Size = UDim2.new(1, 0, 0, 30),
-			BackgroundTransparency = 1,
-			Text = "Tốc độ chạy: x" .. state.speedValue,
-			TextXAlignment = Enum.TextXAlignment.Left,
-			Font = Enum.Font.Gotham,
-			TextSize = 12,
-			TextColor3 = Color3.fromRGB(180, 180, 180)
-		}, cf)
+		switchStorage[optionName].slider = createSpeedSlider(cf, "Tốc độ", 16, 500, state.speedValue, function(value)
+			state.speedValue = value
+			if state.speed then setSpeed(value) end
+		end)
 		
 	elseif optionName == "Fly Mode" then
 		local card = pageCard(contentScroll, "✈️ Fly Mode")
@@ -515,6 +596,12 @@ local function createOptionContent(optionName)
 		switchStorage[optionName].speed = createMiniSwitch(cf, "Speed khi bay", state.speed, function(on)
 			state.speed = on
 			if on then setSpeed(state.speedValue) else setSpeed(16) end
+		end)
+		
+		switchStorage[optionName].slider = createSpeedSlider(cf, "Tốc độ bay", 16, 300, state.speedValue, function(value)
+			state.speedValue = value
+			flySpeed = value
+			if state.speed then setSpeed(value) end
 		end)
 		
 		make("TextLabel", {
@@ -543,20 +630,20 @@ local function createOptionContent(optionName)
 			if on then setJumpPower(state.jumpPower) else setJumpPower(50) end
 		end)
 		
+		switchStorage[optionName].jumpSlider = createSpeedSlider(cf, "Jump Power", 50, 500, state.jumpPower, function(value)
+			state.jumpPower = value
+			if state.jump then setJumpPower(value) end
+		end)
+		
 		switchStorage[optionName].speed = createMiniSwitch(cf, "Bật Speed", state.speed, function(on)
 			state.speed = on
 			if on then setSpeed(state.speedValue) else setSpeed(16) end
 		end)
 		
-		make("TextLabel", {
-			Size = UDim2.new(1, 0, 0, 30),
-			BackgroundTransparency = 1,
-			Text = "Jump Power: " .. state.jumpPower .. " | Speed: x" .. state.speedValue,
-			TextXAlignment = Enum.TextXAlignment.Left,
-			Font = Enum.Font.Gotham,
-			TextSize = 12,
-			TextColor3 = Color3.fromRGB(180, 180, 180)
-		}, cf)
+		switchStorage[optionName].slider = createSpeedSlider(cf, "Tốc độ", 16, 300, state.speedValue, function(value)
+			state.speedValue = value
+			if state.speed then setSpeed(value) end
+		end)
 		
 	elseif optionName == "Ghost Mode" then
 		local card = pageCard(contentScroll, "👻 Ghost Mode")
@@ -576,6 +663,11 @@ local function createOptionContent(optionName)
 		switchStorage[optionName].speed = createMiniSwitch(cf, "Bật Speed", state.speed, function(on)
 			state.speed = on
 			if on then setSpeed(state.speedValue) else setSpeed(16) end
+		end)
+		
+		switchStorage[optionName].slider = createSpeedSlider(cf, "Tốc độ", 16, 300, state.speedValue, function(value)
+			state.speedValue = value
+			if state.speed then setSpeed(value) end
 		end)
 		
 		make("TextLabel", {
@@ -603,6 +695,11 @@ local function createOptionContent(optionName)
 			if on then setSpeed(state.speedValue) else setSpeed(16) end
 		end)
 		
+		switchStorage[optionName].slider = createSpeedSlider(cf, "Tốc độ", 16, 500, state.speedValue, function(value)
+			state.speedValue = value
+			if state.speed then setSpeed(value) end
+		end)
+		
 		switchStorage[optionName].fly = createMiniSwitch(cf, "Bật Fly", state.fly, function(on)
 			state.fly = on
 			toggleFly(on)
@@ -616,7 +713,7 @@ local function createOptionContent(optionName)
 		make("TextLabel", {
 			Size = UDim2.new(1, 0, 0, 40),
 			BackgroundTransparency = 1,
-			Text = "Chế độ chiến đấu với Speed x120 + Fly + Noclip",
+			Text = "Chế độ chiến đấu với Speed tùy chỉnh + Fly + Noclip",
 			TextWrapped = true,
 			TextXAlignment = Enum.TextXAlignment.Left,
 			Font = Enum.Font.Gotham,
@@ -686,5 +783,14 @@ closeBtn.MouseButton1Click:Connect(function()
 	setVisible(false)
 end)
 
-print("DIEVER HUB loaded! Click logo to toggle.")
+-- Toggle UI with key
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+	if input.KeyCode == Enum.KeyCode.RightControl then
+		setVisible(not main.Visible)
+	end
+end)
+
+print("DIEVER HUB loaded!")
+print("Nhấn Right Ctrl hoặc click logo để bật/tắt menu")
 print("Chọn option bên trái để xem các chức năng khác nhau!")
