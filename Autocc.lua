@@ -1,3 +1,13 @@
+--// DieverHub.lua (FULL SOURCE)
+--// 1-file Hub UI Library: Tabs + Sections + Button/Toggle/Slider/Dropdown/List
+--// Features: Drag (Mouse+Touch), Center option, Auto scale to screen, Resize grip bottom-right
+--// Usage:
+--//   local Hub = loadstring(game:HttpGet(RAW_URL))()
+--//   local Win = Hub:CreateWindow({...})
+--//   local Tab = Win:Tab("Main")
+--//   local Sec = Tab:Section("Demo")
+--//   Sec:Button("Hi", function() print("Hello") end)
+
 local Hub = {}
 Hub.__index = Hub
 
@@ -9,6 +19,7 @@ local RunService = game:GetService("RunService")
 local LP = Players.LocalPlayer
 local PlayerGui = LP:WaitForChild("PlayerGui")
 
+--// ---------- Helpers ----------
 local function Create(className, props, parent)
 	local inst = Instance.new(className)
 	for k, v in pairs(props or {}) do
@@ -63,6 +74,7 @@ local function AutoCanvas(sf, layout, extra)
 	upd()
 end
 
+--// ---------- Theme Defaults ----------
 local DefaultTheme = {
 	Bg = Color3.fromRGB(20, 20, 24),
 	Panel = Color3.fromRGB(24, 24, 28),
@@ -74,6 +86,7 @@ local DefaultTheme = {
 	Accent = Color3.fromRGB(80, 160, 255),
 }
 
+--// ---------- Window ----------
 local Window = {}
 Window.__index = Window
 
@@ -87,6 +100,7 @@ function Hub:CreateWindow(cfg)
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	}, PlayerGui)
 
+	-- Mini logo toggle button
 	local logoBtn = Create("ImageButton", {
 		Name = "LogoButton",
 		Size = cfg.LogoButtonSize or UDim2.fromOffset(56, 56),
@@ -109,9 +123,11 @@ function Hub:CreateWindow(cfg)
 		TextColor3 = theme.Text
 	}, logoBtn)
 
+	-- Main window (responsive)
 	local main = Create("Frame", {
 		Name = "Main",
 		Size = cfg.Size or UDim2.fromOffset(720, 420),
+		AnchorPoint = Vector2.new(0, 0),
 		Position = cfg.Position or UDim2.new(0, 16, 0, 84),
 		BackgroundColor3 = theme.Bg,
 		Visible = (cfg.Visible ~= false),
@@ -119,6 +135,40 @@ function Hub:CreateWindow(cfg)
 	Corner(main, 14)
 	Stroke(main, 1, 0.35)
 
+	-- Center option
+	if cfg.Center == true then
+		main.AnchorPoint = Vector2.new(0.5, 0.5)
+		main.Position = UDim2.new(0.5, 0, 0.5, 0)
+	end
+
+	-- Scale + constraint
+	local uiScale = Create("UIScale", { Scale = 1 }, main)
+	Create("UISizeConstraint", {
+		MinSize = cfg.MinSize or Vector2.new(360, 260),
+		MaxSize = cfg.MaxSize or Vector2.new(1200, 800),
+	}, main)
+
+	-- Auto scale to fit small screens (simple + safe)
+	local lastVP = Vector2.new(0, 0)
+	local function updateScale()
+		local cam = workspace.CurrentCamera
+		if not cam then return end
+		local vp = cam.ViewportSize
+		if vp == lastVP then return end
+		lastVP = vp
+
+		local w, h = main.AbsoluteSize.X, main.AbsoluteSize.Y
+		local sx = vp.X / math.max(w, 1)
+		local sy = vp.Y / math.max(h, 1)
+		local s = math.min(1, sx, sy)
+		s = math.clamp(s * 0.95, 0.6, 1)
+		uiScale.Scale = s
+	end
+
+	updateScale()
+	RunService.RenderStepped:Connect(updateScale)
+
+	-- Top bar
 	local top = Create("Frame", {
 		Name = "TopBar",
 		Size = UDim2.new(1, 0, 0, 44),
@@ -152,6 +202,7 @@ function Hub:CreateWindow(cfg)
 	}, top)
 	Corner(close, 10)
 
+	-- Body split
 	local body = Create("Frame", {
 		Name = "Body",
 		Size = UDim2.new(1, 0, 1, -44),
@@ -159,19 +210,22 @@ function Hub:CreateWindow(cfg)
 		BackgroundTransparency = 1
 	}, main)
 
+	local leftWidth = cfg.LeftWidth or 230
+
 	local left = Create("Frame", {
 		Name = "Left",
-		Size = UDim2.new(0, cfg.LeftWidth or 230, 1, 0),
+		Size = UDim2.new(0, leftWidth, 1, 0),
 		BackgroundTransparency = 1
 	}, body)
 
 	local right = Create("Frame", {
 		Name = "Right",
-		Size = UDim2.new(1, -(cfg.LeftWidth or 230), 1, 0),
-		Position = UDim2.new(0, (cfg.LeftWidth or 230), 0, 0),
+		Size = UDim2.new(1, -leftWidth, 1, 0),
+		Position = UDim2.new(0, leftWidth, 0, 0),
 		BackgroundTransparency = 1
 	}, body)
 
+	-- Left: Tabs list
 	local listBox = Create("Frame", {
 		Name = "ListBox",
 		Size = UDim2.new(1, -16, 1, -16),
@@ -217,6 +271,7 @@ function Hub:CreateWindow(cfg)
 		TextColor3 = Color3.fromRGB(200, 200, 200)
 	}, listBox)
 
+	-- Right: Content scroll
 	local contentFrame = Create("Frame", {
 		Name = "ContentFrame",
 		Size = UDim2.new(1, -16, 1, -16),
@@ -235,14 +290,25 @@ function Hub:CreateWindow(cfg)
 	local contentLayout = ListLayout(contentScroll, 10)
 	AutoCanvas(contentScroll, contentLayout, 10)
 
+	-- Drag (Mouse + Touch)
 	do
 		local dragging = false
-		local dragStart, startPos
+		local dragInput, dragStart, startPos
+
+		local function update(input)
+			local delta = input.Position - dragStart
+			main.Position = UDim2.new(
+				startPos.X.Scale, startPos.X.Offset + delta.X,
+				startPos.Y.Scale, startPos.Y.Offset + delta.Y
+			)
+		end
+
 		top.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				dragging = true
 				dragStart = input.Position
 				startPos = main.Position
+
 				input.Changed:Connect(function()
 					if input.UserInputState == Enum.UserInputState.End then
 						dragging = false
@@ -250,14 +316,80 @@ function Hub:CreateWindow(cfg)
 				end)
 			end
 		end)
+
 		top.InputChanged:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
-				local delta = input.Position - dragStart
-				main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+				dragInput = input
+			end
+		end)
+
+		UIS.InputChanged:Connect(function(input)
+			if input == dragInput and dragging then
+				update(input)
 			end
 		end)
 	end
 
+	-- Resize grip (bottom-right)
+	do
+		local grip = Create("Frame", {
+			Name = "ResizeGrip",
+			Size = UDim2.fromOffset(22, 22),
+			Position = UDim2.new(1, -26, 1, -26),
+			BackgroundColor3 = Color3.fromRGB(45, 45, 52),
+			BorderSizePixel = 0,
+			ZIndex = 50,
+		}, main)
+		Corner(grip, 6)
+		Stroke(grip, 1, 0.65)
+
+		Create("TextLabel", {
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundTransparency = 1,
+			Text = "↘",
+			Font = Enum.Font.GothamBold,
+			TextSize = 14,
+			TextColor3 = theme.SubText,
+			ZIndex = 51,
+		}, grip)
+
+		local resizing = false
+		local startMouse
+
+		local function beginResize(input)
+			resizing = true
+			startMouse = input.Position
+			local conn; conn = input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					resizing = false
+					if conn then conn:Disconnect() end
+				end
+			end)
+		end
+
+		grip.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				beginResize(input)
+			end
+		end)
+
+		UIS.InputChanged:Connect(function(input)
+			if not resizing then return end
+			if input.UserInputType ~= Enum.UserInputType.MouseMovement and input.UserInputType ~= Enum.UserInputType.Touch then return end
+
+			local delta = input.Position - startMouse
+			local minS = cfg.MinSize or Vector2.new(360, 260)
+			local maxS = cfg.MaxSize or Vector2.new(1200, 800)
+
+			local newX = math.clamp(main.AbsoluteSize.X + delta.X, minS.X, maxS.X)
+			local newY = math.clamp(main.AbsoluteSize.Y + delta.Y, minS.Y, maxS.Y)
+
+			main.Size = UDim2.fromOffset(newX, newY)
+			startMouse = input.Position
+		end)
+	end
+
+	-- show/hide
 	local function setVisible(v) main.Visible = v end
 	logoBtn.MouseButton1Click:Connect(function() setVisible(not main.Visible) end)
 	close.MouseButton1Click:Connect(function() setVisible(false) end)
@@ -285,6 +417,7 @@ function Hub:CreateWindow(cfg)
 	return self
 end
 
+--// ---------- UI Blocks ----------
 local function Card(parent, theme, title)
 	local card = Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 0),
@@ -334,19 +467,16 @@ local function MakeTabButton(win, name)
 	Stroke(btn, 1, 0.7)
 
 	btn.MouseEnter:Connect(function()
-		if win.__activeTab ~= name then
-			btn.BackgroundColor3 = theme.ItemHover
-		end
+		if win.__activeTab ~= name then btn.BackgroundColor3 = theme.ItemHover end
 	end)
 	btn.MouseLeave:Connect(function()
-		if win.__activeTab ~= name then
-			btn.BackgroundColor3 = theme.Item
-		end
+		if win.__activeTab ~= name then btn.BackgroundColor3 = theme.Item end
 	end)
 
 	return btn
 end
 
+--// ---------- Tab / Section ----------
 local Tab = {}
 Tab.__index = Tab
 
@@ -356,8 +486,6 @@ Section.__index = Section
 function Window:Tab(name)
 	assert(type(name) == "string" and #name > 0, "Tab name must be string")
 
-	local theme = self.__theme
-
 	local page = Create("Frame", {
 		Name = "TabPage_" .. name,
 		Size = UDim2.new(1, 0, 0, 0),
@@ -366,14 +494,12 @@ function Window:Tab(name)
 		Visible = false
 	}, self.__contentScroll)
 
-	local pageLayout = ListLayout(page, 10)
+	ListLayout(page, 10)
 
 	local tabObj = setmetatable({
 		__win = self,
 		__name = name,
 		__page = page,
-		__layout = pageLayout,
-		__sections = {},
 	}, Tab)
 
 	self.__tabs[name] = tabObj
@@ -395,10 +521,10 @@ end
 function Window:SelectTab(name)
 	if self.__activeTab == name then return end
 
-	for tabName, tabObj in pairs(self.__tabs) do
+	for _, tabObj in pairs(self.__tabs) do
 		tabObj.__page.Visible = false
 	end
-	for tabName, btn in pairs(self.__tabButtons) do
+	for _, btn in pairs(self.__tabButtons) do
 		btn.BackgroundColor3 = self.__theme.Item
 	end
 
@@ -414,15 +540,14 @@ end
 function Tab:Section(title)
 	local theme = self.__win.__theme
 	local card, inner = Card(self.__page, theme, title or "Section")
-	local sectionObj = setmetatable({
+	return setmetatable({
 		__tab = self,
 		__card = card,
 		__inner = inner,
 	}, Section)
-	table.insert(self.__sections, sectionObj)
-	return sectionObj
 end
 
+--// ---------- Controls ----------
 function Section:Label(text)
 	local theme = self.__tab.__win.__theme
 	return Create("TextLabel", {
@@ -453,11 +578,7 @@ function Section:Button(text, callback)
 	btn.MouseEnter:Connect(function() btn.BackgroundColor3 = theme.ItemHover end)
 	btn.MouseLeave:Connect(function() btn.BackgroundColor3 = theme.Item end)
 	btn.MouseButton1Click:Connect(function()
-		if callback then
-			task.spawn(function()
-				pcall(callback)
-			end)
-		end
+		if callback then task.spawn(function() pcall(callback) end) end
 	end)
 
 	return btn
@@ -465,12 +586,9 @@ end
 
 function Section:Toggle(text, defaultOn, callback)
 	local theme = self.__tab.__win.__theme
-	local frame = Create("Frame", {
-		Size = UDim2.new(1, 0, 0, 34),
-		BackgroundTransparency = 1,
-	}, self.__inner)
+	local frame = Create("Frame", { Size = UDim2.new(1, 0, 0, 34), BackgroundTransparency = 1 }, self.__inner)
 
-	local label = Create("TextLabel", {
+	Create("TextLabel", {
 		Size = UDim2.new(1, -60, 1, 0),
 		BackgroundTransparency = 1,
 		Text = text or "Toggle",
@@ -511,26 +629,15 @@ function Section:Toggle(text, defaultOn, callback)
 	end
 
 	local function set(v)
-		state = v == true
+		state = (v == true)
 		render()
-		if callback then
-			task.spawn(function()
-				pcall(callback, state)
-			end)
-		end
+		if callback then task.spawn(function() pcall(callback, state) end) end
 	end
 
-	toggle.MouseButton1Click:Connect(function()
-		set(not state)
-	end)
-
+	toggle.MouseButton1Click:Connect(function() set(not state) end)
 	render()
 
-	return {
-		Set = set,
-		Get = function() return state end,
-		Root = frame,
-	}
+	return { Set = set, Get = function() return state end, Root = frame }
 end
 
 function Section:Slider(text, minValue, maxValue, defaultValue, callback)
@@ -540,10 +647,7 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 	defaultValue = tonumber(defaultValue) or minValue
 	defaultValue = math.clamp(defaultValue, minValue, maxValue)
 
-	local frame = Create("Frame", {
-		Size = UDim2.new(1, 0, 0, 70),
-		BackgroundTransparency = 1,
-	}, self.__inner)
+	local frame = Create("Frame", { Size = UDim2.new(1, 0, 0, 70), BackgroundTransparency = 1 }, self.__inner)
 
 	local label = Create("TextLabel", {
 		Size = UDim2.new(1, 0, 0, 20),
@@ -563,10 +667,7 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 	Corner(bg, 8)
 	Stroke(bg, 1, 0.7)
 
-	local fill = Create("Frame", {
-		Size = UDim2.new(0, 0, 1, 0),
-		BackgroundColor3 = theme.Accent,
-	}, bg)
+	local fill = Create("Frame", { Size = UDim2.new(0, 0, 1, 0), BackgroundColor3 = theme.Accent }, bg)
 	Corner(fill, 8)
 
 	local valLabel = Create("TextLabel", {
@@ -575,66 +676,56 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 		Text = tostring(defaultValue),
 		Font = Enum.Font.GothamBold,
 		TextSize = 14,
-		TextColor3 = Color3.new(1,1,1),
-		ZIndex = 2,
+		TextColor3 = Color3.new(1, 1, 1),
+		ZIndex = 2
 	}, bg)
 
 	local value = defaultValue
 	local dragging = false
 
-	local function setValue(v)
+	local function setValue(v, fire)
 		value = math.clamp(math.floor(v + 0.5), minValue, maxValue)
-		local alpha = (value - minValue) / (maxValue - minValue)
+		local alpha = (value - minValue) / math.max((maxValue - minValue), 1)
 		fill.Size = UDim2.new(alpha, 0, 1, 0)
 		valLabel.Text = tostring(value)
 		label.Text = (text or "Slider") .. ": " .. tostring(value)
-		if callback then
-			task.spawn(function()
-				pcall(callback, value)
-			end)
-		end
+		if fire and callback then task.spawn(function() pcall(callback, value) end) end
 	end
 
 	local function updateFromX(x)
 		local rel = math.clamp((x - bg.AbsolutePosition.X) / bg.AbsoluteSize.X, 0, 1)
 		local v = minValue + rel * (maxValue - minValue)
-		setValue(v)
+		setValue(v, true)
 	end
 
 	bg.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = true
 			updateFromX(input.Position.X)
 		end
 	end)
 	bg.InputEnded:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = false
 		end
 	end)
 	bg.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
+		if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and dragging then
 			updateFromX(input.Position.X)
 		end
 	end)
 
-	setValue(defaultValue)
+	setValue(defaultValue, false)
 
-	return {
-		Set = setValue,
-		Get = function() return value end,
-		Root = frame,
-	}
+	return { Set = function(v) setValue(v, false) end, Get = function() return value end, Root = frame }
 end
 
 function Section:Dropdown(text, options, defaultValue, callback)
 	local theme = self.__tab.__win.__theme
 	options = options or {}
+	local value = defaultValue or options[1] or "(none)"
 
-	local frame = Create("Frame", {
-		Size = UDim2.new(1, 0, 0, 34),
-		BackgroundTransparency = 1
-	}, self.__inner)
+	local frame = Create("Frame", { Size = UDim2.new(1, 0, 0, 34), BackgroundTransparency = 1 }, self.__inner)
 
 	local btn = Create("TextButton", {
 		Size = UDim2.new(1, 0, 0, 34),
@@ -656,7 +747,7 @@ function Section:Dropdown(text, options, defaultValue, callback)
 		Font = Enum.Font.GothamSemibold,
 		TextSize = 13,
 		TextColor3 = theme.Text,
-		Text = (text or "Dropdown") .. ": " .. tostring(defaultValue or options[1] or "(none)"),
+		Text = (text or "Dropdown") .. ": " .. tostring(value),
 	}, btn)
 
 	Create("TextLabel", {
@@ -687,32 +778,27 @@ function Section:Dropdown(text, options, defaultValue, callback)
 		ScrollBarThickness = 6,
 		CanvasSize = UDim2.new(0, 0, 0, 0),
 	}, list)
-
 	local lo = ListLayout(sf, 6)
 	AutoCanvas(sf, lo, 8)
 
 	local open = false
-	local value = defaultValue or options[1]
+	local info = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
 	local function set(v)
 		value = v
 		label.Text = (text or "Dropdown") .. ": " .. tostring(value)
-		if callback then
-			task.spawn(function()
-				pcall(callback, value)
-			end)
-		end
+		if callback then task.spawn(function() pcall(callback, value) end) end
 	end
 
 	local function setOpen(v)
 		open = v == true
-		list.Visible = open
+		list.Visible = true
 		if open then
 			local h = math.clamp(lo.AbsoluteContentSize.Y + 16, 40, 170)
 			list.Size = UDim2.new(1, 0, 0, 0)
-			Tween(list, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(1, 0, 0, h) })
+			Tween(list, info, { Size = UDim2.new(1, 0, 0, h) })
 		else
-			Tween(list, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(1, 0, 0, 0) })
+			Tween(list, info, { Size = UDim2.new(1, 0, 0, 0) })
 			task.delay(0.16, function()
 				if not open then list.Visible = false end
 			end)
@@ -721,12 +807,9 @@ function Section:Dropdown(text, options, defaultValue, callback)
 
 	btn.MouseEnter:Connect(function() btn.BackgroundColor3 = theme.ItemHover end)
 	btn.MouseLeave:Connect(function() btn.BackgroundColor3 = theme.Item end)
-	btn.MouseButton1Click:Connect(function()
-		setOpen(not open)
-	end)
+	btn.MouseButton1Click:Connect(function() setOpen(not open) end)
 
-	sf:ClearAllChildren()
-	lo.Parent = sf
+	-- build options
 	for _, opt in ipairs(options) do
 		local o = tostring(opt)
 		local oBtn = Create("TextButton", {
@@ -745,33 +828,30 @@ function Section:Dropdown(text, options, defaultValue, callback)
 		oBtn.MouseLeave:Connect(function() oBtn.BackgroundColor3 = theme.Item end)
 		oBtn.MouseButton1Click:Connect(function()
 			set(o)
+			open = true
 			setOpen(false)
 		end)
 	end
 
-	if value ~= nil then set(value) end
+	set(value)
 
-	return {
-		Set = set,
-		Get = function() return value end,
-		Open = function() setOpen(true) end,
-		Close = function() setOpen(false) end,
-		Root = frame
-	}
+	return { Set = set, Get = function() return value end, Root = frame }
 end
 
 function Section:List(text, options, defaultValue, callback)
 	local theme = self.__tab.__win.__theme
 	options = options or {}
-
-	local card, inner = Card(self.__inner, theme, text or "List")
 	local selected = defaultValue or options[1]
 
-	local function makeItem(opt)
+	local card, inner = Card(self.__inner, theme, text or "List Select")
+
+	local items = {}
+	for _, opt in ipairs(options) do
+		local val = tostring(opt)
 		local b = Create("TextButton", {
 			Size = UDim2.new(1, 0, 0, 30),
 			BackgroundColor3 = theme.Item,
-			Text = tostring(opt),
+			Text = val,
 			Font = Enum.Font.GothamMedium,
 			TextSize = 13,
 			TextColor3 = theme.Text,
@@ -779,36 +859,26 @@ function Section:List(text, options, defaultValue, callback)
 		}, inner)
 		Corner(b, 8)
 		Stroke(b, 1, 0.75)
-		return b
-	end
-
-	local items = {}
-	for _, opt in ipairs(options) do
-		local b = makeItem(opt)
-		items[b] = tostring(opt)
+		items[b] = val
 
 		b.MouseEnter:Connect(function()
-			if selected ~= items[b] then b.BackgroundColor3 = theme.ItemHover end
+			if selected ~= val then b.BackgroundColor3 = theme.ItemHover end
 		end)
 		b.MouseLeave:Connect(function()
-			if selected ~= items[b] then b.BackgroundColor3 = theme.Item end
+			if selected ~= val then b.BackgroundColor3 = theme.Item end
 		end)
 		b.MouseButton1Click:Connect(function()
-			selected = items[b]
-			for btn, val in pairs(items) do
-				btn.BackgroundColor3 = (val == selected) and theme.Accent or theme.Item
+			selected = val
+			for btn, v in pairs(items) do
+				btn.BackgroundColor3 = (v == selected) and theme.Accent or theme.Item
 			end
-			if callback then
-				task.spawn(function()
-					pcall(callback, selected)
-				end)
-			end
+			if callback then task.spawn(function() pcall(callback, selected) end) end
 		end)
 	end
 
 	task.defer(function()
-		for btn, val in pairs(items) do
-			btn.BackgroundColor3 = (val == selected) and theme.Accent or theme.Item
+		for btn, v in pairs(items) do
+			btn.BackgroundColor3 = (v == selected) and theme.Accent or theme.Item
 		end
 	end)
 
@@ -825,16 +895,12 @@ function Section:List(text, options, defaultValue, callback)
 end
 
 function Window:Destroy()
-	if self.__gui then
-		self.__gui:Destroy()
-	end
+	if self.__gui then self.__gui:Destroy() end
 end
 
 Hub.Window = Window
 setmetatable(Hub, Hub)
 
 return setmetatable(Hub, {
-	__call = function()
-		return Hub
-	end
+	__call = function() return Hub end
 })
