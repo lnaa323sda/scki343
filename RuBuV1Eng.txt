@@ -1,5 +1,5 @@
 --// DIEVER Stats Checker (LEGIT - for your own game) //--
--- Put this LocalScript in: StarterPlayer > StarterPlayerScripts
+-- Place this LocalScript at: StarterPlayer > StarterPlayerScripts
 
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
@@ -9,31 +9,35 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
 --========================================================
--- 1) DATA MODEL (You control these in YOUR game)
--- Option A: Attributes on Player:
---   player:SetAttribute("Level", 2450)
---   player:SetAttribute("Sea", 3)
---   player:SetAttribute("Beli", 1234567)
---   player:SetAttribute("Fragments", 9999)
---   player:SetAttribute("Race", "Human")
---   player:SetAttribute("Has_MirrorFractal", true)   -- item flags
--- Option B: Folder values on Player:
---   player.Stats.Level (IntValue), player.Stats.Sea (IntValue), etc.
---   player.Items.Has_MirrorFractal (BoolValue), etc.
+-- DATA YOU PROVIDE (choose either Attributes or Folder Values)
+-- A) Attributes on Player:
+--    player:SetAttribute("Level", 2601)
+--    player:SetAttribute("Sea", 3)
+--    player:SetAttribute("Beli", 19512643)
+--    player:SetAttribute("Fragments", 13445)
+--    player:SetAttribute("Race", "Human")
+--    player:SetAttribute("Has_MirrorFractal", true)
+--
+-- B) Folder values on Player:
+--    player.Stats.Level (IntValue), player.Stats.Sea (IntValue), ...
+--    player.Items.Has_MirrorFractal (BoolValue), ...
 --========================================================
 
+-- Item flag keys (YOU must set these true/false)
 local ITEM_FLAGS = {
-	-- key = labelText
-	Has_GodHuman = "GodHuman",
-	Has_CDK = "Curse Dual Katana",
-	Has_SkullGuitar = "Skull Guitar",
+	Has_GodHuman      = "GodHuman",
+	Has_CDK           = "Curse Dual Katana",
+	Has_ValkyrieHelm  = "Valkyrie Helm",
+	Has_SkullGuitar   = "Skull Guitar",
 	Has_MirrorFractal = "Mirror Fractal",
-	Has_ValkyrieHelm = "Valkyrie Helm",
-	Has_PullLever = "Pull Lever",
+	Has_PullLever     = "Pull Lever",
 }
 
-local function getValueFromFolder(pathFolderName: string, valueName: string)
-	local folder = player:FindFirstChild(pathFolderName)
+--========================================================
+-- Helpers: read from Attributes first, fallback to Folder Values
+--========================================================
+local function getValueFromFolder(folderName: string, valueName: string)
+	local folder = player:FindFirstChild(folderName)
 	if not folder then return nil end
 	local obj = folder:FindFirstChild(valueName)
 	if not obj then return nil end
@@ -43,28 +47,22 @@ local function getValueFromFolder(pathFolderName: string, valueName: string)
 	return nil
 end
 
-local function getFlag(flagName: string): boolean
-	-- Prefer attribute
-	local attr = player:GetAttribute(flagName)
-	if type(attr) == "boolean" then return attr end
+local function getStat(statName: string)
+	local a = player:GetAttribute(statName)
+	if a ~= nil then return a end
+	return getValueFromFolder("Stats", statName)
+end
 
-	-- Fallback: BoolValue in Items folder
+local function getFlag(flagName: string): boolean
+	local a = player:GetAttribute(flagName)
+	if type(a) == "boolean" then return a end
 	local v = getValueFromFolder("Items", flagName)
 	if type(v) == "boolean" then return v end
 	return false
 end
 
-local function getStat(statName: string)
-	-- Prefer attribute
-	local attr = player:GetAttribute(statName)
-	if attr ~= nil then return attr end
-
-	-- Fallback: value in Stats folder
-	return getValueFromFolder("Stats", statName)
-end
-
 --========================================================
--- 2) EFFECTS
+-- Blur
 --========================================================
 local blur = Instance.new("BlurEffect")
 blur.Name = "CameraBlur"
@@ -72,7 +70,7 @@ blur.Size = 0
 blur.Parent = Lighting
 
 --========================================================
--- 3) UI: CoinCard (Main)
+-- UI: Main Card
 --========================================================
 local CoinCard = Instance.new("ScreenGui")
 CoinCard.Name = "CoinCard"
@@ -102,122 +100,130 @@ DropShadow.Image = "rbxassetid://6015897843"
 DropShadow.ImageTransparency = 0.25
 DropShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
 
-local MainCard = Instance.new("Frame")
-MainCard.Name = "Main"
-MainCard.Parent = DropShadowHolder
-MainCard.AnchorPoint = Vector2.new(0.5, 0.5)
-MainCard.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-MainCard.BackgroundTransparency = 0.5
-MainCard.Position = UDim2.new(0.5, 0, 0.5, 0)
-MainCard.Size = UDim2.new(1, -47, 1, -47)
-MainCard.ZIndex = 1
+local Card = Instance.new("Frame")
+Card.Name = "Main"
+Card.Parent = DropShadowHolder
+Card.AnchorPoint = Vector2.new(0.5, 0.5)
+Card.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Card.BackgroundTransparency = 0.5
+Card.Position = UDim2.new(0.5, 0, 0.5, 0)
+Card.Size = UDim2.new(1, -47, 1, -47)
+Card.ZIndex = 1
 
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 5)
-corner.Parent = MainCard
+local CardCorner = Instance.new("UICorner")
+CardCorner.CornerRadius = UDim.new(0, 5)
+CardCorner.Parent = Card
 
-local stroke = Instance.new("UIStroke")
-stroke.Color = Color3.fromRGB(255, 80, 80)
-stroke.Thickness = 2.5
-stroke.Parent = MainCard
+local CardStroke = Instance.new("UIStroke")
+CardStroke.Color = Color3.fromRGB(255, 80, 80)
+CardStroke.Thickness = 2.5
+CardStroke.Parent = Card
 
-local divider1 = Instance.new("Frame")
-divider1.Name = "Divider1"
-divider1.Parent = MainCard
-divider1.BorderSizePixel = 0
-divider1.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
-divider1.Position = UDim2.new(0.15, 0, 0.15, 0)
-divider1.Size = UDim2.new(0.7, 0, 0, 2)
-divider1.BackgroundTransparency = 0.3
+local Divider1 = Instance.new("Frame")
+Divider1.Name = "Divider1"
+Divider1.Parent = Card
+Divider1.BorderSizePixel = 0
+Divider1.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+Divider1.Position = UDim2.new(0.15, 0, 0.15, 0)
+Divider1.Size = UDim2.new(0.7, 0, 0, 2)
+Divider1.BackgroundTransparency = 0.3
 
-local divider2 = Instance.new("Frame")
-divider2.Name = "Divider2"
-divider2.Parent = MainCard
-divider2.BorderSizePixel = 0
-divider2.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
-divider2.Position = UDim2.new(0.1, 0, 0.75, 0)
-divider2.Size = UDim2.new(0.8, 0, 0, 2)
-divider2.BackgroundTransparency = 0.3
+local Divider2 = Instance.new("Frame")
+Divider2.Name = "Divider2"
+Divider2.Parent = Card
+Divider2.BorderSizePixel = 0
+Divider2.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+Divider2.Position = UDim2.new(0.1, 0, 0.75, 0)
+Divider2.Size = UDim2.new(0.8, 0, 0, 2)
+Divider2.BackgroundTransparency = 0.3
 
-local function mkText(parent, name, pos, text, color)
+local function mkText(parent, name, pos, size, text, color, xAlign)
 	local t = Instance.new("TextLabel")
 	t.Name = name
 	t.Parent = parent
 	t.BackgroundTransparency = 1
 	t.Position = pos
-	t.Size = UDim2.new(0, 0, 0, 18)
+	t.Size = size or UDim2.new(0, 0, 0, 18)
 	t.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-	t.Text = text
+	t.Text = text or ""
 	t.TextColor3 = color or Color3.fromRGB(255, 255, 255)
 	t.TextSize = 16
-	t.TextXAlignment = Enum.TextXAlignment.Left
+	t.TextXAlignment = xAlign or Enum.TextXAlignment.Left
 	t.TextYAlignment = Enum.TextYAlignment.Bottom
+	t.RichText = false
 	return t
 end
 
-local TopTitle = Instance.new("TextLabel")
-TopTitle.Name = "Top"
-TopTitle.Parent = MainCard
-TopTitle.BackgroundTransparency = 1
-TopTitle.Position = UDim2.new(0.5, 0, 0.05, 0)
+local TopTitle = mkText(
+	Card, "Top",
+	UDim2.new(0.5, 0, 0.05, 0),
+	UDim2.new(0, 400, 0, 18),
+	"DIEVER Stats Checker",
+	Color3.fromRGB(255, 255, 255),
+	Enum.TextXAlignment.Center
+)
 TopTitle.AnchorPoint = Vector2.new(0.5, 0)
-TopTitle.Size = UDim2.new(0, 400, 0, 18)
-TopTitle.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-TopTitle.Text = "DIEVER Stats Checker"
-TopTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-TopTitle.TextSize = 16
-TopTitle.TextYAlignment = Enum.TextYAlignment.Bottom
 
-local underLeft = Instance.new("TextLabel")
-underLeft.Name = "UnderLeft"
-underLeft.Parent = MainCard
-underLeft.BackgroundTransparency = 1
-underLeft.Position = UDim2.new(0.2, 0, 0.25, 0)
-underLeft.AnchorPoint = Vector2.new(0.5, 0)
-underLeft.Size = UDim2.new(0, 200, 0, 18)
-underLeft.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-underLeft.Text = "Account Stats"
-underLeft.TextColor3 = Color3.fromRGB(255, 255, 255)
-underLeft.TextSize = 16
+local UnderLeft = mkText(
+	Card, "UnderLeft",
+	UDim2.new(0.2, 0, 0.25, 0),
+	UDim2.new(0, 220, 0, 18),
+	"Account Stats"
+)
+UnderLeft.AnchorPoint = Vector2.new(0.5, 0)
+UnderLeft.TextXAlignment = Enum.TextXAlignment.Center
 
-local underRight = Instance.new("TextLabel")
-underRight.Name = "UnderRight"
-underRight.Parent = MainCard
-underRight.BackgroundTransparency = 1
-underRight.Position = UDim2.new(0.75, 0, 0.25, 0)
-underRight.AnchorPoint = Vector2.new(0.5, 0)
-underRight.Size = UDim2.new(0, 200, 0, 18)
-underRight.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-underRight.Text = "Account Items"
-underRight.TextColor3 = Color3.fromRGB(255, 255, 255)
-underRight.TextSize = 16
+local UnderRight = mkText(
+	Card, "UnderRight",
+	UDim2.new(0.75, 0, 0.25, 0),
+	UDim2.new(0, 220, 0, 18),
+	"Account Items"
+)
+UnderRight.AnchorPoint = Vector2.new(0.5, 0)
+UnderRight.TextXAlignment = Enum.TextXAlignment.Center
 
 -- Stats labels
-local LevelLabel = mkText(MainCard, "LevelLabel", UDim2.new(0.07, 0, 0.35, 0), "Level: N/A    Sea: N/A", nil)
-local RaceLabel  = mkText(MainCard, "RaceLabel",  UDim2.new(0.07, 0, 0.45, 0), "Race: N/A", nil)
-local BeliLabel  = mkText(MainCard, "BeliLabel",  UDim2.new(0.07, 0, 0.55, 0), "Beli: N/A", nil)
-local FragLabel  = mkText(MainCard, "FragLabel",  UDim2.new(0.07, 0, 0.65, 0), "Frag: N/A", nil)
+local LevelLabel = mkText(Card, "LevelLabel", UDim2.new(0.07, 0, 0.35, 0), UDim2.new(0, 0, 0, 18), "Level: N/A    Sea: N/A")
+local RaceLabel  = mkText(Card, "RaceLabel",  UDim2.new(0.07, 0, 0.45, 0), UDim2.new(0, 0, 0, 18), "Race: N/A")
+local BeliLabel  = mkText(Card, "BeliLabel",  UDim2.new(0.07, 0, 0.55, 0), UDim2.new(0, 0, 0, 18), "Beli: N/A")
+local FragLabel  = mkText(Card, "FragLabel",  UDim2.new(0.07, 0, 0.65, 0), UDim2.new(0, 0, 0, 18), "Frag: N/A")
 
--- Item status labels (bottom area like your layout)
-local ItemStatusLeft1  = mkText(MainCard, "ItemStatusLeft1",  UDim2.new(0.07, 0, 0.80, 0), "🔴 GodHuman", nil)
-local ItemStatusMid1   = mkText(MainCard, "ItemStatusMid1",   UDim2.new(0.40, 0, 0.80, 0), "🔴 Curse Dual Katana", nil)
-local ItemStatusRight1 = mkText(MainCard, "ItemStatusRight1", UDim2.new(0.75, 0, 0.80, 0), "🔴 Valkyrie Helm", nil)
+-- Item labels (use RichText dot color)
+local Item1 = mkText(Card, "Item1", UDim2.new(0.07, 0, 0.80, 0), UDim2.new(0, 260, 0, 18), "")
+local Item2 = mkText(Card, "Item2", UDim2.new(0.40, 0, 0.80, 0), UDim2.new(0, 260, 0, 18), "")
+local Item3 = mkText(Card, "Item3", UDim2.new(0.75, 0, 0.80, 0), UDim2.new(0, 260, 0, 18), "")
 
-local ItemStatusLeft2  = mkText(MainCard, "ItemStatusLeft2",  UDim2.new(0.07, 0, 0.90, 0), "🔴 Skull Guitar", nil)
-local ItemStatusMid2   = mkText(MainCard, "ItemStatusMid2",   UDim2.new(0.40, 0, 0.90, 0), "🔴 Mirror Fractal", nil)
-local ItemStatusRight2 = mkText(MainCard, "ItemStatusRight2", UDim2.new(0.75, 0, 0.90, 0), "🔴 Pull Lever", nil)
+local Item4 = mkText(Card, "Item4", UDim2.new(0.07, 0, 0.90, 0), UDim2.new(0, 260, 0, 18), "")
+local Item5 = mkText(Card, "Item5", UDim2.new(0.40, 0, 0.90, 0), UDim2.new(0, 260, 0, 18), "")
+local Item6 = mkText(Card, "Item6", UDim2.new(0.75, 0, 0.90, 0), UDim2.new(0, 260, 0, 18), "")
 
 local itemLabelMap = {
-	Has_GodHuman       = ItemStatusLeft1,
-	Has_CDK            = ItemStatusMid1,
-	Has_ValkyrieHelm   = ItemStatusRight1,
-	Has_SkullGuitar    = ItemStatusLeft2,
-	Has_MirrorFractal  = ItemStatusMid2,
-	Has_PullLever      = ItemStatusRight2,
+	Has_GodHuman      = Item1,
+	Has_CDK           = Item2,
+	Has_ValkyrieHelm  = Item3,
+	Has_SkullGuitar   = Item4,
+	Has_MirrorFractal = Item5,
+	Has_PullLever     = Item6,
 }
 
+for _, lbl in pairs(itemLabelMap) do
+	lbl.RichText = true
+end
+
+-- RichText dot colors (match your UI vibe)
+local RED_DOT   = 'rgb(255,80,80)'
+local GREEN_DOT = 'rgb(0,255,120)'
+
+local function setItemRich(label: TextLabel, hasIt: boolean, name: string)
+	local dotColor = hasIt and GREEN_DOT or RED_DOT
+	label.Text = string.format(
+		'<font color="%s">●</font> <font color="rgb(255,255,255)">%s</font>',
+		dotColor, name
+	)
+end
+
 --========================================================
--- 4) UI: Status Top (keep as you asked)
+-- UI: Status Top (keep)
 --========================================================
 local StatusGui = Instance.new("ScreenGui")
 StatusGui.Name = "Status"
@@ -225,78 +231,74 @@ StatusGui.Parent = playerGui
 StatusGui.ResetOnSpawn = false
 StatusGui.DisplayOrder = 10
 
-local topHolder = Instance.new("Frame")
-topHolder.Parent = StatusGui
-topHolder.AnchorPoint = Vector2.new(0.5, 0.5)
-topHolder.BackgroundTransparency = 1
-topHolder.Position = UDim2.new(0.5, 0, 0.05, 0)
-topHolder.Size = UDim2.new(0, 320, 0, 68)
+local StatusHolder = Instance.new("Frame")
+StatusHolder.Parent = StatusGui
+StatusHolder.AnchorPoint = Vector2.new(0.5, 0.5)
+StatusHolder.BackgroundTransparency = 1
+StatusHolder.Position = UDim2.new(0.5, 0, 0.05, 0)
+StatusHolder.Size = UDim2.new(0, 320, 0, 68)
 
-local topShadow = Instance.new("ImageLabel")
-topShadow.Parent = topHolder
-topShadow.AnchorPoint = Vector2.new(0.5, 0.5)
-topShadow.BackgroundTransparency = 1
-topShadow.Position = UDim2.new(0.5, 0, 0.35, 0)
-topShadow.Size = UDim2.new(1, 47, 1, 47)
-topShadow.Image = "rbxassetid://6015897843"
-topShadow.ImageTransparency = 0.5
-topShadow.ScaleType = Enum.ScaleType.Slice
-topShadow.SliceCenter = Rect.new(49, 49, 450, 450)
+local StatusShadow = Instance.new("ImageLabel")
+StatusShadow.Parent = StatusHolder
+StatusShadow.AnchorPoint = Vector2.new(0.5, 0.5)
+StatusShadow.BackgroundTransparency = 1
+StatusShadow.Position = UDim2.new(0.5, 0, 0.35, 0)
+StatusShadow.Size = UDim2.new(1, 47, 1, 47)
+StatusShadow.Image = "rbxassetid://6015897843"
+StatusShadow.ImageTransparency = 0.5
+StatusShadow.ScaleType = Enum.ScaleType.Slice
+StatusShadow.SliceCenter = Rect.new(49, 49, 450, 450)
 
-local topMain = Instance.new("Frame")
-topMain.Parent = topShadow
-topMain.AnchorPoint = Vector2.new(0.5, 0.5)
-topMain.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-topMain.BackgroundTransparency = 0.5
-topMain.BorderSizePixel = 0
-topMain.Position = UDim2.new(0.5, 0, 0.5, 0)
-topMain.Size = UDim2.new(1, -50, 1, -55)
+local StatusMain = Instance.new("Frame")
+StatusMain.Parent = StatusShadow
+StatusMain.AnchorPoint = Vector2.new(0.5, 0.5)
+StatusMain.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+StatusMain.BackgroundTransparency = 0.5
+StatusMain.BorderSizePixel = 0
+StatusMain.Position = UDim2.new(0.5, 0, 0.5, 0)
+StatusMain.Size = UDim2.new(1, -50, 1, -55)
 
-local topStroke = Instance.new("UIStroke")
-topStroke.Parent = topMain
-topStroke.Color = Color3.fromRGB(100, 220, 240)
-topStroke.Thickness = 2.5
+local StatusStroke = Instance.new("UIStroke")
+StatusStroke.Parent = StatusMain
+StatusStroke.Color = Color3.fromRGB(100, 220, 240)
+StatusStroke.Thickness = 2.5
 
-local StatusText = Instance.new("TextLabel")
-StatusText.Parent = topMain
+local StatusText = mkText(
+	StatusMain, "Top2",
+	UDim2.new(0.5, 0, 0, 10),
+	UDim2.new(0, 300, 0, 18),
+	"Status: Waiting for available room to join...",
+	Color3.fromRGB(100, 220, 240),
+	Enum.TextXAlignment.Center
+)
 StatusText.AnchorPoint = Vector2.new(0.5, 0)
-StatusText.BackgroundTransparency = 1
-StatusText.Position = UDim2.new(0.5, 0, 0, 10)
-StatusText.Size = UDim2.new(0, 300, 0, 18)
-StatusText.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-StatusText.Text = "Status: Waiting for available room to join..."
-StatusText.TextColor3 = Color3.fromRGB(100, 220, 240)
-StatusText.TextSize = 16
-StatusText.TextWrapped = true
 
-local FarmText = Instance.new("TextLabel")
-FarmText.Parent = topMain
+local FarmText = mkText(
+	StatusMain, "Under",
+	UDim2.new(0.5, 0, 0, 30),
+	UDim2.new(0, 450, 0, 18),
+	"Status Farm: N/A",
+	Color3.fromRGB(100, 220, 240),
+	Enum.TextXAlignment.Center
+)
 FarmText.AnchorPoint = Vector2.new(0.5, 0)
-FarmText.BackgroundTransparency = 1
-FarmText.Position = UDim2.new(0.5, 0, 0, 30)
-FarmText.Size = UDim2.new(0, 450, 0, 18)
-FarmText.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-FarmText.Text = "Status Farm: N/A"
-FarmText.TextColor3 = Color3.fromRGB(100, 220, 240)
-FarmText.TextSize = 16
 
-local DiscordTag = Instance.new("TextLabel")
-DiscordTag.Parent = StatusGui
+local DiscordTag = mkText(
+	StatusGui, "Discord",
+	UDim2.new(0.5, 0, -0.025, 0),
+	UDim2.new(0, 210, 0, 50),
+	"discord.gg/yourcode",
+	Color3.fromRGB(100, 220, 240),
+	Enum.TextXAlignment.Center
+)
 DiscordTag.AnchorPoint = Vector2.new(0.5, 0.5)
-DiscordTag.BackgroundTransparency = 1
-DiscordTag.Position = UDim2.new(0.5, 0, -0.025, 0)
-DiscordTag.Size = UDim2.new(0, 210, 0, 50)
-DiscordTag.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-DiscordTag.Text = "discord.gg/yourcode"
-DiscordTag.TextColor3 = Color3.fromRGB(100, 220, 240)
-DiscordTag.TextSize = 16
 
-local dStroke = Instance.new("UIStroke")
-dStroke.Parent = DiscordTag
-dStroke.Thickness = 1
+local DiscordStroke = Instance.new("UIStroke")
+DiscordStroke.Parent = DiscordTag
+DiscordStroke.Thickness = 1
 
 --========================================================
--- 5) UI: Toggle Button (SQUARE)
+-- UI: Toggle Button (SQUARE)
 --========================================================
 local ToggleGui = Instance.new("ScreenGui")
 ToggleGui.Name = "DIEVER HUB Btn"
@@ -304,34 +306,32 @@ ToggleGui.Parent = playerGui
 ToggleGui.ResetOnSpawn = false
 ToggleGui.DisplayOrder = 30
 
-local btnFrame = Instance.new("Frame")
-btnFrame.Name = "ToggleFrame"
-btnFrame.Parent = ToggleGui
-btnFrame.AnchorPoint = Vector2.new(0.1, 0.1)
-btnFrame.Position = UDim2.new(0, 20, 0.1, -6)
-btnFrame.Size = UDim2.new(0, 50, 0, 50)
-btnFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-btnFrame.Active = true
-btnFrame.Draggable = true
+local BtnFrame = Instance.new("Frame")
+BtnFrame.Name = "ToggleFrame"
+BtnFrame.Parent = ToggleGui
+BtnFrame.AnchorPoint = Vector2.new(0.1, 0.1)
+BtnFrame.Position = UDim2.new(0, 20, 0.1, -6)
+BtnFrame.Size = UDim2.new(0, 50, 0, 50)
+BtnFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+BtnFrame.BackgroundTransparency = 0
+BtnFrame.Active = true
+BtnFrame.Draggable = true
 
--- Square: NO UICorner (or set radius 0)
--- local btnCorner = Instance.new("UICorner")
--- btnCorner.CornerRadius = UDim.new(0, 0)
--- btnCorner.Parent = btnFrame
+-- Square: no UICorner (keep it square). If you want slight round, add UICorner radius 4-6.
 
-local btnImage = Instance.new("ImageLabel")
-btnImage.Parent = btnFrame
-btnImage.AnchorPoint = Vector2.new(0.5, 0.5)
-btnImage.BackgroundTransparency = 1
-btnImage.Position = UDim2.new(0.5, 0, 0.5, 0)
-btnImage.Size = UDim2.new(0, 40, 0, 40)
-btnImage.Image = "rbxassetid://70511817915018"
+local BtnIcon = Instance.new("ImageLabel")
+BtnIcon.Parent = BtnFrame
+BtnIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+BtnIcon.BackgroundTransparency = 1
+BtnIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+BtnIcon.Size = UDim2.new(0, 40, 0, 40)
+BtnIcon.Image = "rbxassetid://70511817915018"
 
-local btn = Instance.new("TextButton")
-btn.Parent = btnFrame
-btn.BackgroundTransparency = 1
-btn.Size = UDim2.new(1, 0, 1, 0)
-btn.Text = ""
+local Btn = Instance.new("TextButton")
+Btn.Parent = BtnFrame
+Btn.BackgroundTransparency = 1
+Btn.Size = UDim2.new(1, 0, 1, 0)
+Btn.Text = ""
 
 local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local originalSize = UDim2.new(0, 40, 0, 40)
@@ -339,36 +339,12 @@ local zoomedSize   = UDim2.new(0, 30, 0, 30)
 
 local faded = false
 local zoomedIn = false
-local fadeInTween  = TweenService:Create(btnFrame, tweenInfo, {BackgroundTransparency = 0.25})
-local fadeOutTween = TweenService:Create(btnFrame, tweenInfo, {BackgroundTransparency = 0})
-
-local function toggleUI()
-	-- animate icon size
-	if zoomedIn then
-		TweenService:Create(btnImage, tweenInfo, {Size = originalSize}):Play()
-	else
-		TweenService:Create(btnImage, tweenInfo, {Size = zoomedSize}):Play()
-	end
-	zoomedIn = not zoomedIn
-
-	-- animate bg alpha
-	if faded then fadeOutTween:Play() else fadeInTween:Play() end
-	faded = not faded
-
-	-- toggle card + blur
-	CoinCard.Enabled = not CoinCard.Enabled
-	blur.Size = CoinCard.Enabled and 24 or 0
-end
-
-btn.MouseButton1Down:Connect(toggleUI)
+local fadeInTween  = TweenService:Create(BtnFrame, tweenInfo, {BackgroundTransparency = 0.25})
+local fadeOutTween = TweenService:Create(BtnFrame, tweenInfo, {BackgroundTransparency = 0})
 
 --========================================================
--- 6) UPDATE LOGIC (stats + items -> 🔴/🟢)
+-- UPDATE LOGIC
 --========================================================
-local function icon(hasIt: boolean)
-	return hasIt and "🟢" or "🔴"
-end
-
 local function updateAll()
 	local level = getStat("Level")
 	local sea = getStat("Sea")
@@ -381,26 +357,44 @@ local function updateAll()
 	BeliLabel.Text  = ("Beli: %s"):format(tostring(beli or "N/A"))
 	FragLabel.Text  = ("Frag: %s"):format(tostring(frags or "N/A"))
 
+	-- items: red/green dot
 	for flagName, label in pairs(itemLabelMap) do
 		local hasIt = getFlag(flagName)
 		local display = ITEM_FLAGS[flagName] or flagName
-		label.Text = ("%s %s"):format(icon(hasIt), display)
+		setItemRich(label, hasIt, display)
 	end
 end
 
--- Watch attribute changes (if you use Attributes)
-local function hookAttributes()
-	local attrsToWatch = { "Level", "Sea", "Race", "Beli", "Fragments" }
-	for flagName in pairs(ITEM_FLAGS) do
-		table.insert(attrsToWatch, flagName)
+local function toggleUI()
+	if zoomedIn then
+		TweenService:Create(BtnIcon, tweenInfo, {Size = originalSize}):Play()
+	else
+		TweenService:Create(BtnIcon, tweenInfo, {Size = zoomedSize}):Play()
 	end
+	zoomedIn = not zoomedIn
 
-	for _, a in ipairs(attrsToWatch) do
+	if faded then fadeOutTween:Play() else fadeInTween:Play() end
+	faded = not faded
+
+	CoinCard.Enabled = not CoinCard.Enabled
+	blur.Size = CoinCard.Enabled and 24 or 0
+end
+
+Btn.MouseButton1Down:Connect(toggleUI)
+
+--========================================================
+-- Auto reactivity: Attributes + Folder Values
+--========================================================
+local function hookAttributes()
+	local watch = { "Level", "Sea", "Race", "Beli", "Fragments" }
+	for k in pairs(ITEM_FLAGS) do
+		table.insert(watch, k)
+	end
+	for _, a in ipairs(watch) do
 		player:GetAttributeChangedSignal(a):Connect(updateAll)
 	end
 end
 
--- Watch value changes in folders (if you use Stats/Items folders)
 local function hookFolderValues(folderName: string)
 	local folder = player:FindFirstChild(folderName)
 	if not folder then return end
@@ -411,7 +405,9 @@ local function hookFolderValues(folderName: string)
 		end
 	end
 
-	for _, ch in ipairs(folder:GetChildren()) do hookChild(ch) end
+	for _, ch in ipairs(folder:GetChildren()) do
+		hookChild(ch)
+	end
 	folder.ChildAdded:Connect(hookChild)
 end
 
@@ -422,5 +418,17 @@ hookFolderValues("Stats")
 hookFolderValues("Items")
 
 --========================================================
--- END
+-- QUICK TEST (optional) - uncomment for Studio test
 --========================================================
+--[[
+task.wait(1)
+player:SetAttribute("Level", 2601)
+player:SetAttribute("Sea", 3)
+player:SetAttribute("Beli", 19512643)
+player:SetAttribute("Fragments", 13445)
+player:SetAttribute("Race", "Human")
+
+player:SetAttribute("Has_MirrorFractal", true)
+player:SetAttribute("Has_CDK", true)
+updateAll()
+]]
