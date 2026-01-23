@@ -1,12 +1,9 @@
---// DieverHub.lua (FULL SOURCE)
---// 1-file Hub UI Library: Tabs + Sections + Button/Toggle/Slider/Dropdown/List
---// Features: Drag (Mouse+Touch), Center option, Auto scale to screen, Resize grip bottom-right
+--// DieverHub.lua (FULL SOURCE - FIXED)
+--// Tabs + Sections + Button/Toggle/Slider/Dropdown/ListSelect (collapsible)
+--// Drag (Mouse+Touch), Center, Auto scale, Resize grip bottom-right (smooth/free)
 --// Usage:
 --//   local Hub = loadstring(game:HttpGet(RAW_URL))()
 --//   local Win = Hub:CreateWindow({...})
---//   local Tab = Win:Tab("Main")
---//   local Sec = Tab:Section("Demo")
---//   Sec:Button("Hi", function() print("Hello") end)
 
 local Hub = {}
 Hub.__index = Hub
@@ -123,7 +120,7 @@ function Hub:CreateWindow(cfg)
 		TextColor3 = theme.Text
 	}, logoBtn)
 
-	-- Main window (responsive)
+	-- Main window
 	local main = Create("Frame", {
 		Name = "Main",
 		Size = cfg.Size or UDim2.fromOffset(720, 420),
@@ -141,14 +138,17 @@ function Hub:CreateWindow(cfg)
 		main.Position = UDim2.new(0.5, 0, 0.5, 0)
 	end
 
-	-- Scale + constraint
-	local uiScale = Create("UIScale", { Scale = 1 }, main)
+	-- Constraints
+	local minS = cfg.MinSize or Vector2.new(360, 260)
+	local maxS = cfg.MaxSize or Vector2.new(1400, 900)
+
 	Create("UISizeConstraint", {
-		MinSize = cfg.MinSize or Vector2.new(360, 260),
-		MaxSize = cfg.MaxSize or Vector2.new(1200, 800),
+		MinSize = minS,
+		MaxSize = maxS,
 	}, main)
 
-	-- Auto scale to fit small screens (simple + safe)
+	-- Auto scale to fit small screens (only when viewport changes)
+	local uiScale = Create("UIScale", { Scale = 1 }, main)
 	local lastVP = Vector2.new(0, 0)
 	local function updateScale()
 		local cam = workspace.CurrentCamera
@@ -164,7 +164,6 @@ function Hub:CreateWindow(cfg)
 		s = math.clamp(s * 0.95, 0.6, 1)
 		uiScale.Scale = s
 	end
-
 	updateScale()
 	RunService.RenderStepped:Connect(updateScale)
 
@@ -330,7 +329,7 @@ function Hub:CreateWindow(cfg)
 		end)
 	end
 
-	-- Resize grip (bottom-right)
+	-- Resize grip (smooth/free resize)
 	do
 		local grip = Create("Frame", {
 			Name = "ResizeGrip",
@@ -354,11 +353,14 @@ function Hub:CreateWindow(cfg)
 		}, grip)
 
 		local resizing = false
-		local startMouse
+		local startMousePos = Vector2.new(0, 0)
+		local startSizePx = Vector2.new(0, 0)
 
 		local function beginResize(input)
 			resizing = true
-			startMouse = input.Position
+			startMousePos = Vector2.new(input.Position.X, input.Position.Y)
+			startSizePx = Vector2.new(main.AbsoluteSize.X, main.AbsoluteSize.Y)
+
 			local conn; conn = input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
 					resizing = false
@@ -377,15 +379,14 @@ function Hub:CreateWindow(cfg)
 			if not resizing then return end
 			if input.UserInputType ~= Enum.UserInputType.MouseMovement and input.UserInputType ~= Enum.UserInputType.Touch then return end
 
-			local delta = input.Position - startMouse
-			local minS = cfg.MinSize or Vector2.new(360, 260)
-			local maxS = cfg.MaxSize or Vector2.new(1200, 800)
+			-- NEW: true free resize = startSize + delta (no incremental jump)
+			local now = Vector2.new(input.Position.X, input.Position.Y)
+			local delta = now - startMousePos
 
-			local newX = math.clamp(main.AbsoluteSize.X + delta.X, minS.X, maxS.X)
-			local newY = math.clamp(main.AbsoluteSize.Y + delta.Y, minS.Y, maxS.Y)
+			local newX = math.clamp(startSizePx.X + delta.X, minS.X, maxS.X)
+			local newY = math.clamp(startSizePx.Y + delta.Y, minS.Y, maxS.Y)
 
 			main.Size = UDim2.fromOffset(newX, newY)
-			startMouse = input.Position
 		end)
 	end
 
@@ -716,7 +717,6 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 	end)
 
 	setValue(defaultValue, false)
-
 	return { Set = function(v) setValue(v, false) end, Get = function() return value end, Root = frame }
 end
 
@@ -809,7 +809,6 @@ function Section:Dropdown(text, options, defaultValue, callback)
 	btn.MouseLeave:Connect(function() btn.BackgroundColor3 = theme.Item end)
 	btn.MouseButton1Click:Connect(function() setOpen(not open) end)
 
-	-- build options
 	for _, opt in ipairs(options) do
 		local o = tostring(opt)
 		local oBtn = Create("TextButton", {
@@ -828,24 +827,116 @@ function Section:Dropdown(text, options, defaultValue, callback)
 		oBtn.MouseLeave:Connect(function() oBtn.BackgroundColor3 = theme.Item end)
 		oBtn.MouseButton1Click:Connect(function()
 			set(o)
-			open = true
 			setOpen(false)
 		end)
 	end
 
 	set(value)
-
 	return { Set = set, Get = function() return value end, Root = frame }
 end
 
+-- ✅ List chọn THU GỌN (click mở list, chọn xong tự đóng)
 function Section:List(text, options, defaultValue, callback)
 	local theme = self.__tab.__win.__theme
 	options = options or {}
-	local selected = defaultValue or options[1]
+	local selected = defaultValue or options[1] or "(none)"
 
-	local card, inner = Card(self.__inner, theme, text or "List Select")
+	local frame = Create("Frame", {
+		Size = UDim2.new(1, 0, 0, 34),
+		BackgroundTransparency = 1,
+	}, self.__inner)
 
-	local items = {}
+	-- header button
+	local header = Create("TextButton", {
+		Size = UDim2.new(1, 0, 0, 34),
+		BackgroundColor3 = theme.Item,
+		Text = "",
+		AutoButtonColor = false,
+	}, frame)
+	Corner(header, 10)
+	Stroke(header, 1, 0.7)
+
+	local label = Create("TextLabel", {
+		Size = UDim2.new(1, -30, 1, 0),
+		Position = UDim2.new(0, 10, 0, 0),
+		BackgroundTransparency = 1,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Font = Enum.Font.GothamSemibold,
+		TextSize = 13,
+		TextColor3 = theme.Text,
+		Text = (text or "List") .. ": " .. tostring(selected),
+	}, header)
+
+	local arrow = Create("TextLabel", {
+		Size = UDim2.new(0, 20, 1, 0),
+		Position = UDim2.new(1, -26, 0, 0),
+		BackgroundTransparency = 1,
+		Text = "▾",
+		Font = Enum.Font.GothamBold,
+		TextSize = 14,
+		TextColor3 = theme.SubText
+	}, header)
+
+	header.MouseEnter:Connect(function() header.BackgroundColor3 = theme.ItemHover end)
+	header.MouseLeave:Connect(function() header.BackgroundColor3 = theme.Item end)
+
+	-- list panel
+	local panel = Create("Frame", {
+		Size = UDim2.new(1, 0, 0, 0),
+		Position = UDim2.new(0, 0, 0, 38),
+		BackgroundColor3 = theme.Panel,
+		Visible = false,
+		ClipsDescendants = true,
+	}, frame)
+	Corner(panel, 10)
+	Stroke(panel, 1, 0.65)
+	Pad(panel, 8, 8, 8, 8)
+
+	local sf = Create("ScrollingFrame", {
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		ScrollBarThickness = 6,
+		CanvasSize = UDim2.new(0, 0, 0, 0),
+	}, panel)
+	local lo = ListLayout(sf, 6)
+	AutoCanvas(sf, lo, 8)
+
+	local open = false
+	local info = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local maxH = 180 -- bạn đổi nếu muốn
+
+	local function renderSelected()
+		label.Text = (text or "List") .. ": " .. tostring(selected)
+	end
+
+	local function setOpen(v)
+		open = v == true
+		panel.Visible = true
+		if open then
+			arrow.Text = "▴"
+			local h = math.clamp(lo.AbsoluteContentSize.Y + 16, 40, maxH)
+			panel.Size = UDim2.new(1, 0, 0, 0)
+			Tween(panel, info, { Size = UDim2.new(1, 0, 0, h) })
+		else
+			arrow.Text = "▾"
+			Tween(panel, info, { Size = UDim2.new(1, 0, 0, 0) })
+			task.delay(0.16, function()
+				if not open then panel.Visible = false end
+			end)
+		end
+	end
+
+	local function set(v)
+		selected = tostring(v)
+		renderSelected()
+		if callback then task.spawn(function() pcall(callback, selected) end) end
+	end
+
+	header.MouseButton1Click:Connect(function()
+		setOpen(not open)
+	end)
+
 	for _, opt in ipairs(options) do
 		local val = tostring(opt)
 		local b = Create("TextButton", {
@@ -856,43 +947,45 @@ function Section:List(text, options, defaultValue, callback)
 			TextSize = 13,
 			TextColor3 = theme.Text,
 			AutoButtonColor = false
-		}, inner)
+		}, sf)
 		Corner(b, 8)
 		Stroke(b, 1, 0.75)
-		items[b] = val
 
-		b.MouseEnter:Connect(function()
-			if selected ~= val then b.BackgroundColor3 = theme.ItemHover end
-		end)
-		b.MouseLeave:Connect(function()
-			if selected ~= val then b.BackgroundColor3 = theme.Item end
-		end)
+		b.MouseEnter:Connect(function() b.BackgroundColor3 = theme.ItemHover end)
+		b.MouseLeave:Connect(function() b.BackgroundColor3 = theme.Item end)
 		b.MouseButton1Click:Connect(function()
-			selected = val
-			for btn, v in pairs(items) do
-				btn.BackgroundColor3 = (v == selected) and theme.Accent or theme.Item
-			end
-			if callback then task.spawn(function() pcall(callback, selected) end) end
+			set(val)
+			setOpen(false) -- chọn xong tự thu gọn
 		end)
 	end
 
-	task.defer(function()
-		for btn, v in pairs(items) do
-			btn.BackgroundColor3 = (v == selected) and theme.Accent or theme.Item
+	renderSelected()
+
+	-- Important: increase control height when open (so it won't overlap next controls)
+	-- This makes it behave like a real collapsible list.
+	local function syncFrameHeight()
+		if open then
+			frame.Size = UDim2.new(1, 0, 0, 34 + panel.AbsoluteSize.Y + 6)
+		else
+			frame.Size = UDim2.new(1, 0, 0, 34)
 		end
-	end)
+	end
+
+	-- watch panel size to adjust frame height
+	panel:GetPropertyChangedSignal("AbsoluteSize"):Connect(syncFrameHeight)
+	syncFrameHeight()
 
 	return {
-		Set = function(v)
-			selected = tostring(v)
-			for btn, val in pairs(items) do
-				btn.BackgroundColor3 = (val == selected) and theme.Accent or theme.Item
-			end
-		end,
+		Set = set,
 		Get = function() return selected end,
-		Root = card
+		Open = function() setOpen(true) end,
+		Close = function() setOpen(false) end,
+		Root = frame
 	}
 end
+
+-- alias: ListSelect (nếu bạn muốn gọi tên rõ ràng)
+Section.ListSelect = Section.List
 
 function Window:Destroy()
 	if self.__gui then self.__gui:Destroy() end
@@ -901,6 +994,7 @@ end
 Hub.Window = Window
 setmetatable(Hub, Hub)
 
-return setmetatable(Hub, {
-	__call = function() return Hub end
-})
+-- ✅ Return safe for: loadstring(game:HttpGet(url))()
+return function()
+	return Hub
+end
