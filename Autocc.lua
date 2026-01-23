@@ -618,7 +618,7 @@ function Hub:CreateWindow(cfg)
 	function self:Notify(title, text, duration, iconImage)
 		duration = tonumber(duration) or 2.0
 		local t = self.__theme
-		local WIDTH = 250
+		local WIDTH = 320
 
 		local card = Create("Frame", {
 			Size = UDim2.new(0, WIDTH, 0, 0),
@@ -644,49 +644,55 @@ function Hub:CreateWindow(cfg)
 			VerticalAlignment = Enum.VerticalAlignment.Top,
 		}, row)
 
-		local icon = Create("ImageLabel", {
-			Size = UDim2.fromOffset(28, 28),
-			BackgroundTransparency = 1,
-			Image = iconImage or self.__logo or "rbxassetid://0",
-			ZIndex = 10000,
-		}, row)
-		Corner(icon, 8)
+local icon = Create("ImageLabel", {
+	Size = UDim2.fromOffset(34, 34), -- (trước là 28,28)
+	BackgroundTransparency = 1,
+	Image = iconImage or self.__logo or "rbxassetid://0",
+	ZIndex = 10000,
+}, row)
+Corner(icon, 10)
 
-		local textBox = Create("Frame", {
-			Size = UDim2.new(1, -40, 0, 0),
-			AutomaticSize = Enum.AutomaticSize.Y,
-			BackgroundTransparency = 1,
-		}, row)
+local textBox = Create("Frame", {
+	Size = UDim2.new(1, -40, 0, 0),
+	AutomaticSize = Enum.AutomaticSize.Y,
+	BackgroundTransparency = 1,
+}, row)
 
-		local titleLb = Create("TextLabel", {
-			Size = UDim2.new(1, 0, 0, 16),
-			BackgroundTransparency = 1,
-			Text = tostring(title or "Notice"),
-			TextXAlignment = Enum.TextXAlignment.Left,
-			Font = Enum.Font.GothamBold,
-			TextSize = 13,
-			TextColor3 = t.Text,
-			TextTruncate = Enum.TextTruncate.AtEnd,
-			ZIndex = 10000
-		}, textBox)
+-- ✅ thêm layout dọc để title + body không đè nhau
+Create("UIListLayout", {
+	SortOrder = Enum.SortOrder.LayoutOrder,
+	Padding = UDim.new(0, 3),
+}, textBox)
 
-		local bodyLb = Create("TextLabel", {
-			Size = UDim2.new(1, 0, 0, 0),
-			AutomaticSize = Enum.AutomaticSize.Y,
-			BackgroundTransparency = 1,
-			Text = tostring(text or ""),
-			TextWrapped = true,
-			TextXAlignment = Enum.TextXAlignment.Left,
-			Font = Enum.Font.Gotham,
-			TextSize = 12,
-			TextColor3 = t.SubText,
-			ZIndex = 10000
-		}, textBox)
+local titleLb = Create("TextLabel", {
+	Size = UDim2.new(1, 0, 0, 18), -- cao hơn chút
+	BackgroundTransparency = 1,
+	Text = tostring(title or "Notice"),
+	TextXAlignment = Enum.TextXAlignment.Left,
+	Font = Enum.Font.GothamBold,
+	TextSize = 14, -- to hơn
+	TextColor3 = t.Text,
+	TextTruncate = Enum.TextTruncate.AtEnd,
+	ZIndex = 10000
+}, textBox)
+
+local bodyLb = Create("TextLabel", {
+	Size = UDim2.new(1, 0, 0, 0),
+	AutomaticSize = Enum.AutomaticSize.Y,
+	BackgroundTransparency = 1,
+	Text = tostring(text or ""),
+	TextWrapped = true,
+	TextXAlignment = Enum.TextXAlignment.Left,
+	Font = Enum.Font.Gotham,
+	TextSize = 13, -- to hơn
+	TextColor3 = t.SubText,
+	ZIndex = 10000
+}, textBox)
 
 		-- clamp to 2 lines max (avoid long notify)
 		task.defer(function()
 			local lineH = bodyLb.TextSize + 2
-			local maxH = lineH * 2
+			local maxH = lineH * 3
 			if bodyLb.AbsoluteSize.Y > maxH then
 				bodyLb.AutomaticSize = Enum.AutomaticSize.None
 				bodyLb.Size = UDim2.new(1, 0, 0, maxH)
