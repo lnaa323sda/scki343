@@ -1,557 +1,486 @@
--- 🌌 Auto Jump Script
--- Bật lên = nhảy liên tục
--- Tắt đi = dừng nhảy (chỉ cần rejoin game)
+-- // UI Large \\ --
+local Lighting = game:GetService("Lighting")
 
-local player = game.Players.LocalPlayer
-local UserInputService = game:GetService("UserInputService")
+local blur = Instance.new("BlurEffect")
+blur.Name = "CameraBlur"
+blur.Size = 24
+blur.Parent = Lighting
 
-task.spawn(function()
-    while task.wait(1) do
-        if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
-            player.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
-        end
-    end
-end)
+local CoinCard_1 = Instance.new("ScreenGui")
+local DropShadowHolder_1 = Instance.new("Frame")
+local Main_1 = Instance.new("Frame")
+local UICorner_1 = Instance.new("UICorner")
+local UIStroke_1 = Instance.new("UIStroke")
+local Divider_1 = Instance.new("Frame")
+local Divider_2 = Instance.new("Frame")
+local TypeAccountScroll_1 = Instance.new("Frame")
+local ItemLabel1_1 = Instance.new("TextLabel")
+local ItemLabel2_1 = Instance.new("TextLabel")
+local ItemLabel1_2 = Instance.new("TextLabel")
+local BeliLabel_1 = Instance.new("TextLabel")
+local LevelLabel_1 = Instance.new("TextLabel")
+local RaceLabel_1 = Instance.new("TextLabel")
+local TextLabel_1 = Instance.new("TextLabel")
+local TextLabel_2 = Instance.new("TextLabel")
+local TextLabel_3 = Instance.new("TextLabel")
+local TextLabel_4 = Instance.new("TextLabel")
+local TextLabel_5 = Instance.new("TextLabel")
+local TextLabel_6 = Instance.new("TextLabel")
+local TextLabel_7 = Instance.new("TextLabel")
+local Top_1 = Instance.new("TextLabel")
+local UIGradient_1 = Instance.new("UIGradient")
+local Under_1 = Instance.new("TextLabel")
+local UIGradient_2 = Instance.new("UIGradient")
+local Under_2 = Instance.new("TextLabel")
+local UIGradient_3 = Instance.new("UIGradient")
+local DropShadow_1 = Instance.new("ImageLabel")
 
--- 🌌 Purple Cosmic UI Banner - HNC Hub
--- By HNC Hub
+CoinCard_1.Name = "CoinCard"
+CoinCard_1.Parent = game:GetService("CoreGui")
+CoinCard_1.ResetOnSpawn = false
+CoinCard_1.DisplayOrder = 20
 
-local TweenService = game:GetService("TweenService")
-local CoreGui = game:GetService("CoreGui")
+DropShadowHolder_1.AnchorPoint = Vector2.new(0.5, 0.5)
+DropShadowHolder_1.BackgroundColor3 = Color3.fromRGB(163, 163, 163)
+DropShadowHolder_1.BackgroundTransparency = 1
+DropShadowHolder_1.BorderColor3 = Color3.fromRGB(27, 42, 53)
+DropShadowHolder_1.Name = "DropShadowHolder"
+DropShadowHolder_1.Parent = CoinCard_1
+DropShadowHolder_1.Position = UDim2.new(0.5, 0, 0.5, 0)
+DropShadowHolder_1.Size = UDim2.new(0, 600, 0, 400)
+DropShadowHolder_1.ZIndex = 1
+DropShadowHolder_1.Selectable = false
 
--- Xoá UI cũ nếu có
-if CoreGui:FindFirstChild("HNC_Purple_UI") then
-    CoreGui.HNC_Purple_UI:Destroy()
-end
+Main_1.AnchorPoint = Vector2.new(0.5, 0.5)
+Main_1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Main_1.BackgroundTransparency = 0.5
+Main_1.Name = "Main"
+Main_1.Parent = DropShadowHolder_1
+Main_1.Position = UDim2.new(0.5, 0, 0.5, 0)
+Main_1.Size = UDim2.new(1, -47, 1, -47)
+Main_1.Selectable = false
 
-local gui = Instance.new("ScreenGui")
-gui.Name = "HNC_Purple_UI"
-gui.IgnoreGuiInset = true
-gui.ResetOnSpawn = false
-gui.Parent = CoreGui
+UICorner_1.CornerRadius = UDim.new(0, 5)
+UICorner_1.Parent = Main_1
 
--- Khung chính (cao hơn)
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0.45, 0, 0.1, 0)
-frame.Position = UDim2.new(0.5, 0, 0.15, 0)
-frame.AnchorPoint = Vector2.new(0.5, 0.5)
-frame.BackgroundColor3 = Color3.fromRGB(20, 20, 35)
-frame.BackgroundTransparency = 0.3
-frame.BorderSizePixel = 0
-frame.Parent = gui
-frame.Visible = false
+UIStroke_1.Color = Color3.fromRGB(255, 80, 80)
+UIStroke_1.Thickness = 2.5
+UIStroke_1.Parent = Main_1
 
--- Bo góc
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 25)
-corner.Parent = frame
+Divider_1.BorderColor3 = Color3.fromRGB(27, 42, 53)
+Divider_1.Name = "Divider"
+Divider_1.Parent = Main_1
+Divider_1.Position = UDim2.new(0.15000000596046448, 0, 0.15000000596046448, 0)
+Divider_1.Size = UDim2.new(0.699999988079071, 0, 0, 2)
+Divider_1.Selectable = false
 
--- Viền tím neon
-local stroke = Instance.new("UIStroke")
-stroke.Thickness = 2
-stroke.Color = Color3.fromRGB(170, 0, 255)
-stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-stroke.Parent = frame
+Divider_2.BorderColor3 = Color3.fromRGB(27, 42, 53)
+Divider_2.Name = "Divider"
+Divider_2.Parent = Main_1
+Divider_2.Position = UDim2.new(0.10000000149011612, 0, 0.75, 0)
+Divider_2.Size = UDim2.new(0.800000011920929, 0, 0, 2)
+Divider_2.Selectable = false
 
--- Glow tím
-local glow = Instance.new("ImageLabel")
-glow.Size = UDim2.new(1.4, 0, 2, 0)
-glow.Position = UDim2.new(-0.2, 0, -0.5, 0)
-glow.BackgroundTransparency = 1
-glow.Image = "rbxassetid://125106574805976"
-glow.ImageColor3 = Color3.fromRGB(170, 0, 255)
-glow.ImageTransparency = 0.55
-glow.ZIndex = -1
-glow.Parent = frame
+TypeAccountScroll_1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TypeAccountScroll_1.BackgroundTransparency = 1
+TypeAccountScroll_1.BorderColor3 = Color3.fromRGB(27, 42, 53)
+TypeAccountScroll_1.Name = "TypeAccountScroll"
+TypeAccountScroll_1.Parent = Main_1
+TypeAccountScroll_1.Position = UDim2.new(0.550000011920929, 0, 0.3499999940395355, 0)
+TypeAccountScroll_1.Size = UDim2.new(0.4000000059604645, 0, 0.3499999940395355, 0)
+TypeAccountScroll_1.Selectable = false
 
--- Gradient nền nhẹ
-local gradient = Instance.new("UIGradient")
-gradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 0, 40)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 0, 25))
-}
-gradient.Rotation = 45
-gradient.Parent = frame
+ItemLabel1_1.BackgroundTransparency = 1
+ItemLabel1_1.Name = "ItemLabel1"
+ItemLabel1_1.Parent = TypeAccountScroll_1
+ItemLabel1_1.Size = UDim2.new(1, 0, 0, 18)
+ItemLabel1_1.Selectable = false
+ItemLabel1_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+ItemLabel1_1.Text = "Item 1"
+ItemLabel1_1.TextColor3 = Color3.fromRGB(255, 255, 255)
+ItemLabel1_1.TextSize = 16
 
--- Chữ
-local text = Instance.new("TextLabel")
-text.Size = UDim2.new(1, 0, 1, 0)
-text.BackgroundTransparency = 1
-text.Text = "Skira Hub - Auto Collect Chest"
-text.TextColor3 = Color3.fromRGB(200, 0, 255)
-text.Font = Enum.Font.GothamBlack
-text.TextScaled = true
-text.TextStrokeTransparency = 0.5
-text.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-text.Parent = frame
+ItemLabel2_1.BackgroundTransparency = 1
+ItemLabel2_1.Name = "ItemLabel2"
+ItemLabel2_1.Parent = TypeAccountScroll_1
+ItemLabel2_1.Position = UDim2.new(0, 0, 0, 20)
+ItemLabel2_1.Size = UDim2.new(1, 0, 0, 18)
+ItemLabel2_1.Selectable = false
+ItemLabel2_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+ItemLabel2_1.Text = "Item 2"
+ItemLabel2_1.TextColor3 = Color3.fromRGB(255, 255, 255)
+ItemLabel2_1.TextSize = 16
 
--- Animation hiện ra
-frame.Visible = true
-frame.BackgroundTransparency = 1
-frame.Size = UDim2.new(0.2, 0, 0.05, 0)
-text.TextTransparency = 1
-stroke.Thickness = 0
-glow.ImageTransparency = 1
+ItemLabel1_2.BackgroundTransparency = 1
+ItemLabel1_2.Name = "ItemLabel1"
+ItemLabel1_2.Parent = TypeAccountScroll_1
+ItemLabel1_2.Position = UDim2.new(0, 0, 0, 40)
+ItemLabel1_2.Size = UDim2.new(1, 0, 0, 18)
+ItemLabel1_2.Selectable = false
+ItemLabel1_2.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+ItemLabel1_2.Text = "Item 3"
+ItemLabel1_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+ItemLabel1_2.TextSize = 16
 
-TweenService:Create(frame, TweenInfo.new(1, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-    BackgroundTransparency = 0.3,
-    Size = UDim2.new(0.45, 0, 0.1, 0)
-}):Play()
+BeliLabel_1.BackgroundTransparency = 1
+BeliLabel_1.Name = "BeliLabel"
+BeliLabel_1.Parent = Main_1
+BeliLabel_1.Position = UDim2.new(0.07000000029802322, 0, 0.550000011920929, 0)
+BeliLabel_1.Size = UDim2.new(0, 0, 0, 18)
+BeliLabel_1.Selectable = false
+BeliLabel_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+BeliLabel_1.Text = "Beli: N/A"
+BeliLabel_1.TextColor3 = Color3.fromRGB(255, 255, 255)
+BeliLabel_1.TextSize = 16
+BeliLabel_1.TextXAlignment = Enum.TextXAlignment.Left
+BeliLabel_1.TextYAlignment = Enum.TextYAlignment.Bottom
 
-TweenService:Create(text, TweenInfo.new(1, Enum.EasingStyle.Quad), {
-    TextTransparency = 0
-}):Play()
+LevelLabel_1.BackgroundTransparency = 1
+LevelLabel_1.Name = "LevelLabel"
+LevelLabel_1.Parent = Main_1
+LevelLabel_1.Position = UDim2.new(0.07000000029802322, 0, 0.3499999940395355, 0)
+LevelLabel_1.Size = UDim2.new(0, 0, 0, 18)
+LevelLabel_1.Selectable = false
+LevelLabel_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+LevelLabel_1.Text = "Level: N/A    Third Sea : ❌"
+LevelLabel_1.TextColor3 = Color3.fromRGB(255, 255, 255)
+LevelLabel_1.TextSize = 16
+LevelLabel_1.TextXAlignment = Enum.TextXAlignment.Left
+LevelLabel_1.TextYAlignment = Enum.TextYAlignment.Bottom
 
-TweenService:Create(stroke, TweenInfo.new(1, Enum.EasingStyle.Quad), {
-    Thickness = 2
-}):Play()
+RaceLabel_1.BackgroundTransparency = 1
+RaceLabel_1.Name = "RaceLabel"
+RaceLabel_1.Parent = Main_1
+RaceLabel_1.Position = UDim2.new(0.07000000029802322, 0, 0.44999998807907104, 0)
+RaceLabel_1.Size = UDim2.new(0, 0, 0, 18)
+RaceLabel_1.Selectable = false
+RaceLabel_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+RaceLabel_1.Text = "Race: N/A"
+RaceLabel_1.TextColor3 = Color3.fromRGB(255, 255, 255)
+RaceLabel_1.TextSize = 16
+RaceLabel_1.TextXAlignment = Enum.TextXAlignment.Left
+RaceLabel_1.TextYAlignment = Enum.TextYAlignment.Bottom
 
-TweenService:Create(glow, TweenInfo.new(1, Enum.EasingStyle.Quad), {
-    ImageTransparency = 0.55
-}):Play()
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+TextLabel_1.BackgroundTransparency = 1
+TextLabel_1.Parent = Main_1
+TextLabel_1.Position = UDim2.new(0.07000000029802322, 0, 0.800000011920929, 0)
+TextLabel_1.Size = UDim2.new(0, 0, 0, 18)
+TextLabel_1.Selectable = false
+TextLabel_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+TextLabel_1.Text = "🔴 GodHuman"
+TextLabel_1.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_1.TextSize = 16
+TextLabel_1.TextXAlignment = Enum.TextXAlignment.Left
+TextLabel_1.TextYAlignment = Enum.TextYAlignment.Bottom
 
--- Hàm tạo aura tím phủ toàn thân
-local function applyPurpleAura(char)
-    if not char then return end
-    
-    -- Xóa aura cũ nếu có
-    if char:FindFirstChild("PurpleAura") then
-        char.PurpleAura:Destroy()
-    end
+TextLabel_2.BackgroundTransparency = 1
+TextLabel_2.Parent = Main_1
+TextLabel_2.Position = UDim2.new(0.75, 0, 0.8999999761581421, 0)
+TextLabel_2.Size = UDim2.new(0, 0, 0, 18)
+TextLabel_2.Selectable = false
+TextLabel_2.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+TextLabel_2.Text = "🔴 Pull Lever"
+TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_2.TextSize = 16
+TextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+TextLabel_2.TextYAlignment = Enum.TextYAlignment.Bottom
 
-    -- Highlight toàn cơ thể
-    local aura = Instance.new("Highlight")
-    aura.Name = "PurpleAura"
-    aura.FillColor = Color3.fromRGB(170, 0, 255)   -- tím neon
-    aura.OutlineColor = Color3.fromRGB(200, 100, 255)
-    aura.FillTransparency = 0.3                    -- trong mờ nhìn xuyên
-    aura.OutlineTransparency = 0                   -- viền sáng rõ
-    aura.Parent = char
-end
+TextLabel_3.BackgroundTransparency = 1
+TextLabel_3.Parent = Main_1
+TextLabel_3.Position = UDim2.new(0.75, 0, 0.800000011920929, 0)
+TextLabel_3.Size = UDim2.new(0, 0, 0, 18)
+TextLabel_3.Selectable = false
+TextLabel_3.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+TextLabel_3.Text = "🔴 Valkyrie Helm"
+TextLabel_3.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_3.TextSize = 16
+TextLabel_3.TextXAlignment = Enum.TextXAlignment.Left
+TextLabel_3.TextYAlignment = Enum.TextYAlignment.Bottom
 
--- Áp ngay lập tức khi đang sống
-if LocalPlayer.Character then
-    applyPurpleAura(LocalPlayer.Character)
-end
+TextLabel_4.BackgroundTransparency = 1
+TextLabel_4.Parent = Main_1
+TextLabel_4.Position = UDim2.new(0.4000000059604645, 0, 0.8999999761581421, 0)
+TextLabel_4.Size = UDim2.new(0, 0, 0, 18)
+TextLabel_4.Selectable = false
+TextLabel_4.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+TextLabel_4.Text = "🔴 Mirror Fractal"
+TextLabel_4.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_4.TextSize = 16
+TextLabel_4.TextXAlignment = Enum.TextXAlignment.Left
+TextLabel_4.TextYAlignment = Enum.TextYAlignment.Bottom
 
--- Tự áp lại khi respawn
-LocalPlayer.CharacterAdded:Connect(function(char)
-    char:WaitForChild("HumanoidRootPart")
-    task.wait(1)
-    applyPurpleAura(char)
-end)
+TextLabel_5.BackgroundTransparency = 1
+TextLabel_5.Parent = Main_1
+TextLabel_5.Position = UDim2.new(0.07000000029802322, 0, 0.8999999761581421, 0)
+TextLabel_5.Size = UDim2.new(0, 0, 0, 18)
+TextLabel_5.Selectable = false
+TextLabel_5.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+TextLabel_5.Text = "🔴 Skull Guitar"
+TextLabel_5.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_5.TextSize = 16
+TextLabel_5.TextXAlignment = Enum.TextXAlignment.Left
+TextLabel_5.TextYAlignment = Enum.TextYAlignment.Bottom
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
+TextLabel_6.BackgroundTransparency = 1
+TextLabel_6.Parent = Main_1
+TextLabel_6.Position = UDim2.new(0.07000000029802322, 0, 0.6499999761581421, 0)
+TextLabel_6.Size = UDim2.new(0, 33, 0, 18)
+TextLabel_6.Selectable = false
+TextLabel_6.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+TextLabel_6.Text = "Frag: N/A"
+TextLabel_6.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_6.TextSize = 16
+TextLabel_6.TextXAlignment = Enum.TextXAlignment.Left
+TextLabel_6.TextYAlignment = Enum.TextYAlignment.Bottom
 
-local player = Players.LocalPlayer
+TextLabel_7.BackgroundTransparency = 1
+TextLabel_7.Parent = Main_1
+TextLabel_7.Position = UDim2.new(0.4000000059604645, 0, 0.800000011920929, 0)
+TextLabel_7.Size = UDim2.new(0, 0, 0, 18)
+TextLabel_7.Selectable = false
+TextLabel_7.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+TextLabel_7.Text = "🔴 Curse Dual Katana"
+TextLabel_7.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_7.TextSize = 16
+TextLabel_7.TextXAlignment = Enum.TextXAlignment.Left
+TextLabel_7.TextYAlignment = Enum.TextYAlignment.Bottom
 
--- Tùy chỉnh
-local TEXT = "Skira Hub"
-local TEXT_SIZE = 18                 -- kích thước chữ (không quá to)
-local GUI_OFFSET = Vector3.new(0, 1.8, 0) -- khoảng cách so với đầu
-local RAINBOW_SPEED = 1.0           -- tốc độ đổi màu (1 = bình thường, tăng để nhanh hơn)
+Top_1.BackgroundTransparency = 0.9990000128746033
+Top_1.Name = "Top"
+Top_1.Parent = Main_1
+Top_1.Position = UDim2.new(0.5, 0, 0.05000000074505806, 0)
+Top_1.Size = UDim2.new(0, 0, 0, 18)
+Top_1.Selectable = false
+Top_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Top_1.Text = "Lonely Stats Checker"
+Top_1.TextColor3 = Color3.fromRGB(255, 255, 255)
+Top_1.TextSize = 16
+Top_1.TextYAlignment = Enum.TextYAlignment.Bottom
 
-local function createBillboardFor(character)
-    if not character then return end
-    local head = character:FindFirstChild("Head") or character:FindFirstChildWhichIsA("BasePart")
-    if not head then return end
+UIGradient_1.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 80, 80)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 80, 80)), }
+UIGradient_1.Parent = Top_1
 
-    -- Nếu đã có Billboard do script tạo thì hủy trước
-    local existing = head:FindFirstChild("HNC_FastAttack_Label")
-    if existing then existing:Destroy() end
+Under_1.BackgroundTransparency = 0.9990000128746033
+Under_1.Name = "Under"
+Under_1.Parent = Main_1
+Under_1.Position = UDim2.new(0.20000000298023224, 0, 0.25, 0)
+Under_1.Size = UDim2.new(0, 0, 0, 18)
+Under_1.Selectable = false
+Under_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Under_1.Text = "Account Stats"
+Under_1.TextColor3 = Color3.fromRGB(255, 255, 255)
+Under_1.TextSize = 16
+Under_1.TextYAlignment = Enum.TextYAlignment.Bottom
 
-    local billboard = Instance.new("BillboardGui")
-    billboard.Name = "HNC_FastAttack_Label"
-    billboard.Adornee = head
-    billboard.AlwaysOnTop = true
-    billboard.Size = UDim2.new(0, 200, 0, 40) -- kích thước GUI
-    billboard.StudsOffset = GUI_OFFSET
-    billboard.Parent = head
+UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 80, 80)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 80, 80)), }
+UIGradient_2.Parent = Under_1
 
-    local textLabel = Instance.new("TextLabel")
-    textLabel.Name = "Label"
-    textLabel.Size = UDim2.new(1, 0, 1, 0)
-    textLabel.BackgroundTransparency = 1
-    textLabel.Text = TEXT
-    textLabel.Font = Enum.Font.SourceSansBold
-    textLabel.TextSize = TEXT_SIZE
-    textLabel.TextStrokeTransparency = 0.6
-    textLabel.TextTransparency = 0
-    textLabel.TextScaled = false
-    textLabel.Parent = billboard
+Under_2.BackgroundTransparency = 0.9990000128746033
+Under_2.Name = "Under"
+Under_2.Parent = Main_1
+Under_2.Position = UDim2.new(0.75, 0, 0.25, 0)
+Under_2.Size = UDim2.new(0, 0, 0, 18)
+Under_2.Selectable = false
+Under_2.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Under_2.Text = "Account Items"
+Under_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+Under_2.TextSize = 16
+Under_2.TextYAlignment = Enum.TextYAlignment.Bottom
 
-    -- rainbow loop
-    local hue = 0
-    local con
-    con = RunService.RenderStepped:Connect(function(dt)
-        hue = (hue + dt * RAINBOW_SPEED) % 1
-        local rgb = Color3.fromHSV(hue, 0.9, 1)
-        if textLabel and textLabel.Parent then
-            textLabel.TextColor3 = rgb
+UIGradient_3.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 80, 80)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 80, 80)), }
+UIGradient_3.Parent = Under_2
+
+DropShadow_1.AnchorPoint = Vector2.new(0.5, 0.5)
+DropShadow_1.BackgroundColor3 = Color3.fromRGB(163, 162, 165)
+DropShadow_1.BackgroundTransparency = 1
+DropShadow_1.BorderColor3 = Color3.fromRGB(27, 42, 53)
+DropShadow_1.Name = "DropShadow"
+DropShadow_1.Parent = DropShadowHolder_1
+DropShadow_1.Position = UDim2.new(0.5, 0, 0.5, 0)
+DropShadow_1.Size = UDim2.new(1, 47, 1, 47)
+DropShadow_1.ZIndex = 0
+DropShadow_1.Image = "rbxassetid://6015897843"
+DropShadow_1.ImageTransparency = 0.25
+DropShadow_1.ImageColor3 = Color3.fromRGB(0, 0, 0)
+
+-- // UI Top \\ --
+
+local Status = Instance.new("ScreenGui")
+Status.Name = "Status"
+Status.Parent = game:GetService("CoreGui")
+Status.ResetOnSpawn = false
+Status.DisplayOrder = 10
+
+local DropShadow2Holder2_1 = Instance.new("Frame")
+DropShadow2Holder2_1.Name = "DropShadow2Holder2"
+DropShadow2Holder2_1.Parent = Status
+DropShadow2Holder2_1.AnchorPoint = Vector2.new(0.5, 0.5)
+DropShadow2Holder2_1.BackgroundColor3 = Color3.fromRGB(163,163,163)
+DropShadow2Holder2_1.BackgroundTransparency = 1
+DropShadow2Holder2_1.BorderSizePixel = 0
+DropShadow2Holder2_1.Position = UDim2.new(0.5, 0,0.0500000007, 0)
+DropShadow2Holder2_1.Size = UDim2.new(0, 320,0, 68)
+DropShadow2Holder2_1.ZIndex = 0
+
+local DropShadow2_1 = Instance.new("ImageLabel")
+DropShadow2_1.Name = "DropShadow2"
+DropShadow2_1.Parent = DropShadow2Holder2_1
+DropShadow2_1.AnchorPoint = Vector2.new(0.5, 0.5)
+DropShadow2_1.BackgroundColor3 = Color3.fromRGB(163,162,165)
+DropShadow2_1.BackgroundTransparency = 1
+DropShadow2_1.BorderSizePixel = 0
+DropShadow2_1.Position = UDim2.new(0.5, 0,0.349999994, 0)
+DropShadow2_1.Size = UDim2.new(1, 47,1, 47)
+DropShadow2_1.ZIndex = 0
+DropShadow2_1.Image = "rbxassetid://6015897843"
+DropShadow2_1.ImageColor3 = Color3.fromRGB(0,0,0)
+DropShadow2_1.ImageTransparency = 0.5
+DropShadow2_1.ScaleType = Enum.ScaleType.Slice
+DropShadow2_1.SliceCenter = Rect.new(49, 49, 450, 450)
+
+local Main_1 = Instance.new("Frame")
+Main_1.Name = "Main"
+Main_1.Parent = DropShadow2_1
+Main_1.AnchorPoint = Vector2.new(0.5, 0.5)
+Main_1.BackgroundColor3 = Color3.fromRGB(0,0,0)
+Main_1.BackgroundTransparency = 0.5
+Main_1.BorderColor3 = Color3.fromRGB(0,0,0)
+Main_1.BorderSizePixel = 0
+Main_1.Position = UDim2.new(0.5, 0,0.5, 0)
+Main_1.Size = UDim2.new(1, -50,1, -55)
+
+local UIStroke_1 = Instance.new("UIStroke")
+UIStroke_1.Parent = Main_1
+UIStroke_1.Color = Color3.fromRGB(233,80,80)
+UIStroke_1.Thickness = 2.5
+
+local Top2_1 = Instance.new("TextLabel")
+Top2_1.Name = "Top2"
+Top2_1.Parent = Main_1
+Top2_1.AnchorPoint = Vector2.new(0.5, 0)
+Top2_1.BackgroundColor3 = Color3.fromRGB(163,162,165)
+Top2_1.BackgroundTransparency = 1
+Top2_1.Position = UDim2.new(0.5, 0,0, 10)
+Top2_1.Size = UDim2.new(0, 300,0, 18)
+Top2_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Top2_1.Text = "Status: Waiting for available room to join..."
+Top2_1.TextColor3 = Color3.fromRGB(233,80,80)
+Top2_1.TextSize = 16
+Top2_1.TextWrapped = true
+
+local Under_1 = Instance.new("TextLabel")
+Under_1.Name = "Under"
+Under_1.Parent = Main_1
+Under_1.AnchorPoint = Vector2.new(0.5, 0)
+Under_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+Under_1.BackgroundTransparency = 0.9990000128746033
+Under_1.BorderColor3 = Color3.fromRGB(0,0,0)
+Under_1.BorderSizePixel = 0
+Under_1.Position = UDim2.new(0.5, 0,0, 30)
+Under_1.Size = UDim2.new(0, 450,0, 18)
+Under_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Under_1.Text = "Status Farm: N/A"
+Under_1.TextColor3 = Color3.fromRGB(233,80,80)
+Under_1.TextSize = 16
+
+local TextLabel_1 = Instance.new("TextLabel")
+TextLabel_1.Parent = Status
+TextLabel_1.AnchorPoint = Vector2.new(0.5, 0.5)
+TextLabel_1.BackgroundColor3 = Color3.fromRGB(163,162,165)
+TextLabel_1.BackgroundTransparency = 1
+TextLabel_1.BorderSizePixel = 0
+TextLabel_1.Position = UDim2.new(0.5, 0,-0.0250000004, 0)
+TextLabel_1.Size = UDim2.new(0, 210,0, 50)
+TextLabel_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+TextLabel_1.Text = "discord.gg/2anc7nHw6b"
+TextLabel_1.TextColor3 = Color3.fromRGB(233,80,80)
+TextLabel_1.TextSize = 16
+
+local UIStroke_2 = Instance.new("UIStroke")
+UIStroke_2.Parent = TextLabel_1
+UIStroke_2.Thickness = 1
+
+local UIGradient_1 = Instance.new("UIGradient")
+UIGradient_1.Parent = UIStroke_2
+UIGradient_1.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0)}
+
+-- // Toggle UI \\ --
+
+local LonelyHubBtn = Instance.new("ScreenGui")
+local dutdit = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local ImageLabel = Instance.new("ImageLabel")
+local TextButton = Instance.new("TextButton")
+
+LonelyHubBtn.Name = "Lonely Hub Btn"  
+LonelyHubBtn.Parent = game:GetService("CoreGui")
+LonelyHubBtn.ZIndexBehavior = Enum.ZIndexBehavior.Sibling  
+LonelyHubBtn.DisplayOrder = 10
+
+dutdit.Name = "dut dit"  
+dutdit.Parent = LonelyHubBtn  
+dutdit.AnchorPoint = Vector2.new(0.1, 0.1)  
+dutdit.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  
+dutdit.Position = UDim2.new(0, 20, 0.1, -6)  
+dutdit.Size = UDim2.new(0, 50, 0, 50)  
+dutdit.Active = true
+dutdit.Draggable = true
+
+UICorner.CornerRadius = UDim.new(1, 0)  
+UICorner.Parent = dutdit  
+
+ImageLabel.Parent = dutdit  
+ImageLabel.AnchorPoint = Vector2.new(0.5, 0.5)  
+ImageLabel.BackgroundTransparency = 1.0  
+ImageLabel.Position = UDim2.new(0.5, 0, 0.5, 0)  
+ImageLabel.Size = UDim2.new(0, 40, 0, 40)  
+ImageLabel.Image = "rbxassetid://112485471724320"  
+
+TextButton.Parent = dutdit  
+TextButton.BackgroundTransparency = 1.0  
+TextButton.Size = UDim2.new(1, 0, 1, 0)  
+TextButton.Font = Enum.Font.SourceSans  
+TextButton.Text = ""  
+TextButton.TextColor3 = Color3.fromRGB(27, 42, 53)  
+
+local TweenService = game:GetService("TweenService")  
+local VirtualInputManager = game:GetService("VirtualInputManager")  
+
+local zoomedIn = false  
+local originalSize = UDim2.new(0, 40, 0, 40)  
+local zoomedSize = UDim2.new(0, 30, 0, 30)  
+local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)  
+
+local faded = false  
+local fadeInTween = TweenService:Create(dutdit, tweenInfo, {BackgroundTransparency = 0.25})  
+local fadeOutTween = TweenService:Create(dutdit, tweenInfo, {BackgroundTransparency = 0})  
+
+TextButton.MouseButton1Down:Connect(  
+    function()  
+        if zoomedIn then  
+            TweenService:Create(ImageLabel, tweenInfo, {Size = originalSize}):Play()  
+        else  
+            TweenService:Create(ImageLabel, tweenInfo, {Size = zoomedSize}):Play()  
+        end  
+        zoomedIn = not zoomedIn  
+
+        if faded then  
+            fadeOutTween:Play()  
+        else  
+            fadeInTween:Play()  
+        end  
+        faded = not faded  
+        
+        if CoinCard_1.Enabled == false then
+            CoinCard_1.Enabled = true
         else
-            if con then con:Disconnect() end
+            CoinCard_1.Enabled = false
         end
-    end)
-end
-
--- khi spawn/respawn character
-local function onCharacterAdded(character)
-    -- đợi head xuất hiện
-    if not character.Parent then
-        character.AncestryChanged:Wait()
-    end
-    -- tạo sau 0.1s để head chắc chắn có
-    wait(0.1)
-    createBillboardFor(character)
-end
-
--- kết nối
-if player.Character then
-    onCharacterAdded(player.Character)
-end
-player.CharacterAdded:Connect(onCharacterAdded)
-
--- optional: nếu muốn tắt khi rời game (cleanup)
-player.AncestryChanged:Connect(function(_, parent)
-    if not parent then
-        -- client đang bị remove, nothing to do
-    end
-end)
-local LocalPlayer = game:GetService("Players").LocalPlayer
-local Locations = workspace._WorldOrigin.Locations
-
-local function getCharacter()
-    if not LocalPlayer.Character then
-        LocalPlayer.CharacterAdded:Wait()
-    end
-    LocalPlayer.Character:WaitForChild("HumanoidRootPart")
-    return LocalPlayer.Character
-end
-
-local function DistanceFromPlrSort(ObjectList: table)
-    local RootPart = getCharacter().LowerTorso
-    table.sort(ObjectList, function(ChestA, ChestB)
-        local RootPos = RootPart.Position
-        local DistanceA = (RootPos - ChestA.Position).Magnitude
-        local DistanceB = (RootPos - ChestB.Position).Magnitude
-        return DistanceA < DistanceB
-    end)
-end
-
-local UncheckedChests, FirstRun = {}, true
-local function getChestsSorted()
-    if FirstRun then
-        FirstRun = false
-        for _, Object in pairs(game:GetDescendants()) do
-            if Object.Name:find("Chest") and Object.ClassName == "Part" then
-                table.insert(UncheckedChests, Object)
-            end
-        end
-    end
-    local Chests = {}
-    for _, Chest in pairs(UncheckedChests) do
-        if Chest:FindFirstChild("TouchInterest") then
-            table.insert(Chests, Chest)
-        end
-    end
-    DistanceFromPlrSort(Chests)
-    return Chests
-end
-
-local function toggleNoclip(Toggle: boolean)
-    for _, v in pairs(getCharacter():GetChildren()) do
-        if v:IsA("BasePart") then
-            v.CanCollide = not Toggle
-        end
-    end
-end
-
-local function Teleport(Goal: CFrame)
-    local RootPart = getCharacter().HumanoidRootPart
-    toggleNoclip(true)
-    RootPart.CFrame = Goal + Vector3.new(0, 3, 0)
-    toggleNoclip(false)
-end
-
--- Auto farm loop (restart khi respawn)
-local function startFarm()
-    task.spawn(function()
-        while task.wait() do
-            local Chests = getChestsSorted()
-            if #Chests > 0 then
-                Teleport(Chests[1].CFrame)
-            else
-                -- serverhop ở đây nếu muốn
-            end
-        end
-    end)
-end
-
--- Auto đổi team sang Hải Quân liên tục
-task.spawn(function()
-    local rs = game:GetService("ReplicatedStorage")
-    while task.wait() do
-        pcall(function()
-            rs.Remotes.CommF_:InvokeServer("SetTeam","Marines")
-        end)
-    end
-end)
-
--- Khi respawn thì tự động khởi động farm lại
-LocalPlayer.CharacterAdded:Connect(function()
-    task.wait() -- chờ nhân vật load
-    startFarm()
-end)
-
--- Chạy farm lần đầu
-startFarm()
-
--- 🌍 Auto Server Hop sau 60 giây + Hiệu ứng màn hình đen
--- By HNC Hub
-
-repeat task.wait(2) until game:IsLoaded()
-
-local HttpService = game:GetService("HttpService")
-local TeleportService = game:GetService("TeleportService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local PlaceID = game.PlaceId
-
-local AllIDs = {}
-local foundAnything = ""
-local actualHour = os.date("!*t").hour
-
--- Đọc file server đã join
-local success = pcall(function()
-    AllIDs = HttpService:JSONDecode(readfile("NotSameServers.json"))
-end)
-
-if not success then
-    table.insert(AllIDs, actualHour)
-    writefile("NotSameServers.json", HttpService:JSONEncode(AllIDs))
-end
-
--- ⚡ Hàm hiện màn hình đen + text
-local function ShowBlackScreen()
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "HNC_Hub_HopUI"
-    gui.ResetOnSpawn = false
-    gui.IgnoreGuiInset = true
-    gui.Parent = game:GetService("CoreGui")
-
-    local bg = Instance.new("Frame")
-    bg.Size = UDim2.new(1,0,1,0)
-    bg.BackgroundColor3 = Color3.new(0,0,0)
-    bg.BorderSizePixel = 0
-    bg.BackgroundTransparency = 0
-    bg.Parent = gui
-
-    local text1 = Instance.new("TextLabel")
-    text1.Size = UDim2.new(1,0,0.2,0)
-    text1.Position = UDim2.new(0,0,0.35,0)
-    text1.BackgroundTransparency = 1
-    text1.Text = "HNC Hub - Auto Collect Chest"
-    text1.TextColor3 = Color3.new(1,1,1)
-    text1.Font = Enum.Font.SourceSansBold
-    text1.TextScaled = true
-    text1.Parent = bg
-
-    local text2 = Instance.new("TextLabel")
-    text2.Size = UDim2.new(1,0,0.2,0)
-    text2.Position = UDim2.new(0,0,0.5,0)
-    text2.BackgroundTransparency = 1
-    text2.Text = "Hopping"
-    text2.TextColor3 = Color3.fromRGB(255, 170, 0)
-    text2.Font = Enum.Font.SourceSansBold
-    text2.TextScaled = true
-    text2.Parent = bg
-end
-
--- Hàm tìm server mới
-function TPReturner()
-    local Site
-    if foundAnything == "" then
-        Site = HttpService:JSONDecode(game:HttpGet(
-            'https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'
-        ))
-    else
-        Site = HttpService:JSONDecode(game:HttpGet(
-            'https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. foundAnything
-        ))
-    end
-
-    if Site.nextPageCursor and Site.nextPageCursor ~= "null" then
-        foundAnything = Site.nextPageCursor
-    end
-
-    local num = 0
-    for _, v in pairs(Site.data) do
-        local ID = tostring(v.id)
-        local Possible = true
-        if tonumber(v.playing) < tonumber(v.maxPlayers) then
-            for _, Existing in pairs(AllIDs) do
-                if num ~= 0 then
-                    if ID == tostring(Existing) then
-                        Possible = false
-                    end
-                else
-                    if tonumber(actualHour) ~= tonumber(Existing) then
-                        local delFile = pcall(function()
-                            delfile("NotSameServers.json")
-                            AllIDs = {}
-                            table.insert(AllIDs, actualHour)
-                        end)
-                    end
-                end
-                num = num + 1
-            end
-            if Possible then
-                table.insert(AllIDs, ID)
-                pcall(function()
-                    writefile("NotSameServers.json", HttpService:JSONEncode(AllIDs))
-                    -- ⚡ Trước khi hop 3 giây hiện màn hình đen
-                    ShowBlackScreen()
-                    task.wait(3)
-                    TeleportService:TeleportToPlaceInstance(PlaceID, ID, LocalPlayer)
-                end)
-                task.wait(4)
-            end
-        end
-    end
-end
-
--- Hàm hop liên tục
-function TeleportLoop()
-    while task.wait() do
-        pcall(function()
-            TPReturner()
-            if foundAnything ~= "" then
-                TPReturner()
-            end
-        end)
-    end
-end
-
--- ⚡ Chờ 60 giây sau khi bật script rồi hop
-task.delay(180, function()
-    TeleportLoop()
-end)
--- 🌌 Auto Reset + Invisible (respawn support) + Clear Map (ghi chú màu tím)
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local CoreGui = game:GetService("CoreGui")
-
-if CoreGui:FindFirstChild("HN_MiniUI") then
-    CoreGui.HN_MiniUI:Destroy()
-end
-
-local gui = Instance.new("ScreenGui")
-gui.Name = "HN_MiniUI"
-gui.Parent = CoreGui
-
--- Hàm tạo toggle
-local function createToggle(name, posY, default, callback)
-    local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(0, 120, 0, 15)
-    title.Position = UDim2.new(1, -140, 0.1, posY)
-    title.AnchorPoint = Vector2.new(0, 0)
-    title.BackgroundTransparency = 1
-    title.Text = name
-    title.TextColor3 = Color3.fromRGB(170, 0, 255) -- 💜 ghi chú màu tím
-    title.Font = Enum.Font.GothamBold
-    title.TextSize = 12
-    title.Parent = gui
-
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 20, 0, 20)
-    btn.Position = UDim2.new(1, -70, 0.1, posY + 20)
-    btn.AnchorPoint = Vector2.new(0, 0)
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 14
-    btn.Font = Enum.Font.GothamBold
-    btn.Parent = gui
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(1, 0)
-
-    local state = default
-    local function updateVisual()
-        if state then
-            btn.BackgroundColor3 = Color3.fromRGB(170, 0, 255) -- tím khi on
-            btn.Text = "✓"
+        
+        if blur.Size == 24 then
+            blur.Size = 0
         else
-            btn.BackgroundColor3 = Color3.fromRGB(100, 100, 100) -- xám khi off
-            btn.Text = ""
+            blur.Size = 24
         end
-    end
-    updateVisual()
-
-    btn.MouseButton1Click:Connect(function()
-        state = not state
-        updateVisual()
-        callback(state)
-    end)
-
-    return function() return state end, function(newState)
-        state = newState
-        updateVisual()
-        callback(state)
-    end
-end
-
--- === AUTO RESET ===
-local AutoReset = true
-createToggle("Anti Kick", 0, true, function(state)
-    AutoReset = state
-end)
-
-task.spawn(function()
-    while task.wait(13) do
-        if AutoReset and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
-            LocalPlayer.Character.Humanoid.Health = 0
-        end
-    end
-end)
-
--- === INVISIBLE (bản thân, giữ khi respawn) ===
-local Invisible = false
-
-local function setInvisible(state)
-    if LocalPlayer.Character then
-        for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
-            if part:IsA("BasePart") or part:IsA("Decal") then
-                part.LocalTransparencyModifier = state and 1 or 0
-            end
-        end
-    end
-end
-
-local getInvState, setInvState = createToggle("Invisible", 60, false, function(state)
-    Invisible = state
-    setInvisible(Invisible)
-end)
-
--- Khi respawn, nếu Invisible đang bật thì áp lại
-LocalPlayer.CharacterAdded:Connect(function(char)
-    char:WaitForChild("HumanoidRootPart")
-    task.wait(0.2)
-    if Invisible then
-        setInvisible(true)
-    end
-end)
-
--- === CLEAR MAP (tàng hình map) ===
-local function setMapInvisible(state)
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("BasePart") or obj:IsA("Decal") then
-            if not obj:IsDescendantOf(LocalPlayer.Character) then
-                obj.LocalTransparencyModifier = state and 1 or 0
-            end
-        end
-    end
-end
-
-createToggle("Clear Map", 120, false, function(state)
-    setMapInvisible(state)
-end)
+    end  
+)
