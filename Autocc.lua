@@ -517,72 +517,118 @@ function Hub:CreateWindow(cfg)
 	}, Window)
 
 	-- Notify / Toast
-	function self:Notify(title, text, duration)
-		duration = tonumber(duration) or 2.5
-		local t = self.__theme
+function self:Notify(title, text, duration, iconImage)
+	duration = tonumber(duration) or 2.0
+	local t = self.__theme
 
-		local card = Create("Frame", {
-			Size = UDim2.new(1, 0, 0, 0),
-			AutomaticSize = Enum.AutomaticSize.Y,
-			BackgroundColor3 = t.Panel,
-			BackgroundTransparency = t.PanelA,
-			ZIndex = 9999,
-		}, self.__notifyStack)
-		Corner(card, 12)
-		Stroke(card, 1, t.StrokeA)
-		Pad(card, 12, 12, 10, 10)
+	-- width gọn hơn
+	local WIDTH = 260
 
-		local head = Create("TextLabel", {
-			Size = UDim2.new(1, 0, 0, 18),
-			BackgroundTransparency = 1,
-			Text = tostring(title or "Notice"),
-			TextXAlignment = Enum.TextXAlignment.Left,
-			Font = Enum.Font.GothamBold,
-			TextSize = 13,
-			TextColor3 = t.Text,
-			ZIndex = 10000
-		}, card)
+	local card = Create("Frame", {
+		Size = UDim2.new(0, WIDTH, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = t.Panel,
+		BackgroundTransparency = t.PanelA,
+		ZIndex = 9999,
+	}, self.__notifyStack)
+	Corner(card, 12)
+	Stroke(card, 1, t.StrokeA)
+	Pad(card, 10, 10, 10, 10)
 
-		local bodyText = Create("TextLabel", {
-			Size = UDim2.new(1, 0, 0, 0),
-			AutomaticSize = Enum.AutomaticSize.Y,
-			BackgroundTransparency = 1,
-			Text = tostring(text or ""),
-			TextWrapped = true,
-			TextXAlignment = Enum.TextXAlignment.Left,
-			Font = Enum.Font.Gotham,
-			TextSize = 12,
-			TextColor3 = t.SubText,
-			ZIndex = 10000
-		}, card)
+	-- layout ngang: icon + text
+	local row = Create("Frame", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+	}, card)
+	local rowLayout = Create("UIListLayout", {
+		FillDirection = Enum.FillDirection.Horizontal,
+		SortOrder = Enum.SortOrder.LayoutOrder,
+		Padding = UDim.new(0, 8),
+		VerticalAlignment = Enum.VerticalAlignment.Top,
+	}, row)
 
-		local layout = Create("UIListLayout", {
-			SortOrder = Enum.SortOrder.LayoutOrder,
-			Padding = UDim.new(0, 6),
-		}, card)
+	-- icon (logo)
+	local img = iconImage or cfg.Logo or "rbxassetid://0"
+	local icon = Create("ImageLabel", {
+		Size = UDim2.fromOffset(28, 28),
+		BackgroundTransparency = 1,
+		Image = img,
+		ImageTransparency = 0,
+		ZIndex = 10000
+	}, row)
+	Corner(icon, 8)
 
-		card.BackgroundTransparency = 1
-		head.TextTransparency = 1
-		bodyText.TextTransparency = 1
+	-- text block
+	local textBox = Create("Frame", {
+		Size = UDim2.new(1, -40, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+	}, row)
 
-		local infoIn = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-		Tween(card, infoIn, { BackgroundTransparency = t.PanelA })
-		Tween(head, infoIn, { TextTransparency = 0 })
-		Tween(bodyText, infoIn, { TextTransparency = 0 })
+	local titleLb = Create("TextLabel", {
+		Size = UDim2.new(1, 0, 0, 16),
+		BackgroundTransparency = 1,
+		Text = tostring(title or "Notice"),
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Font = Enum.Font.GothamBold,
+		TextSize = 13,
+		TextColor3 = t.Text,
+		TextTruncate = Enum.TextTruncate.AtEnd, -- gọn
+		ZIndex = 10000
+	}, textBox)
 
-		task.delay(duration, function()
-			if not card or not card.Parent then return end
-			local infoOut = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-			Tween(card, infoOut, { BackgroundTransparency = 1 })
-			Tween(head, infoOut, { TextTransparency = 1 })
-			Tween(bodyText, infoOut, { TextTransparency = 1 })
-			task.delay(0.2, function()
-				if card then card:Destroy() end
-			end)
+	local bodyLb = Create("TextLabel", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+		Text = tostring(text or ""),
+		TextWrapped = true,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Font = Enum.Font.Gotham,
+		TextSize = 12,
+		TextColor3 = t.SubText,
+		ZIndex = 10000
+	}, textBox)
+
+	-- giới hạn tối đa 2 dòng (nếu dài quá thì cắt)
+	local function clampLines(lbl, maxLines)
+		task.defer(function()
+			local lineH = lbl.TextSize + 2
+			local maxH = lineH * maxLines
+			if lbl.AbsoluteSize.Y > maxH then
+				lbl.Size = UDim2.new(1, 0, 0, maxH)
+				lbl.AutomaticSize = Enum.AutomaticSize.None
+				lbl.TextTruncate = Enum.TextTruncate.AtEnd
+				lbl.TextWrapped = false
+			end
 		end)
 	end
+	clampLines(bodyLb, 2)
 
-	return self
+	-- animation
+	card.BackgroundTransparency = 1
+	titleLb.TextTransparency = 1
+	bodyLb.TextTransparency = 1
+	icon.ImageTransparency = 1
+
+	local infoIn = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	Tween(card, infoIn, { BackgroundTransparency = t.PanelA })
+	Tween(titleLb, infoIn, { TextTransparency = 0 })
+	Tween(bodyLb, infoIn, { TextTransparency = 0 })
+	Tween(icon, infoIn, { ImageTransparency = 0 })
+
+	task.delay(duration, function()
+		if not card or not card.Parent then return end
+		local infoOut = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+		Tween(card, infoOut, { BackgroundTransparency = 1 })
+		Tween(titleLb, infoOut, { TextTransparency = 1 })
+		Tween(bodyLb, infoOut, { TextTransparency = 1 })
+		Tween(icon, infoOut, { ImageTransparency = 1 })
+		task.delay(0.2, function()
+			if card then card:Destroy() end
+		end)
+	end)
 end
 
 --// ---------- UI Blocks ----------
