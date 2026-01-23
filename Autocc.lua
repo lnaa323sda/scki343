@@ -1,15 +1,16 @@
---// DieverHub.lua (COMPLETE - CLEAN)
---// Fixes:
---//  - Remove "Selected: ..." bottom-left text (deleted)
---//  - Remove "white haze" (shadow OFF by default + darker scrollbars)
---//  - Popups (Dropdown/ListSelect) always on top (Overlay)
---//  - Added Notify/Toast system: Win:Notify(title, text, duration)
+--// DieverHub.lua (COMPLETE - FIXED & CLEAN)
+--// Fixes included:
+--//  - Removed bottom-left "Selected: ..." text (not created)
+--//  - Removed "white haze": shadow OFF by default + darker scrollbars
+--//  - Overlay popups (Dropdown/ListSelect) always on top
 --//  - Drag + Free Resize (bottom-right grip)
+--//  - Compact Notify with Logo: Win:Notify(title, text, duration, iconImage)
+--//    (logo defaults to window logo stored in self.__logo)
 --//
---// Usage:
---//   local Hub = loadstring(game:HttpGet(RAW_URL))()
---//   local Win = Hub:CreateWindow({Title="...", SubTitle="...", Center=true})
---//   Win:Notify("DIEVER HUB", "UI loaded!", 2.5)
+--// Roblox Studio (legal) usage:
+--//   local Hub = require(ReplicatedStorage:WaitForChild("DieverHub"))
+--//   local Win = Hub:CreateWindow({...})
+--//   Win:Notify("Hi","Loaded",2)
 
 local Hub = {}
 Hub.__index = Hub
@@ -82,7 +83,6 @@ local function clamp(n, a, b)
 end
 
 local function setScrollDark(sf)
-	-- Remove default "white" scrollbar look
 	sf.ScrollBarImageColor3 = Color3.fromRGB(70, 70, 80)
 	sf.ScrollBarImageTransparency = 0.2
 	sf.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
@@ -107,7 +107,7 @@ local DefaultTheme = {
 	ItemA = 0.10,
 	StrokeA = 0.55,
 
-	-- Shadow: OFF to remove “white haze”
+	-- Shadow OFF to remove “white haze”
 	UseShadow = false,
 	ShadowA = 0.65,
 	ShadowColor = Color3.fromRGB(0, 0, 0),
@@ -128,6 +128,102 @@ local function clearActivePopup(win, closerFn)
 	if win.__activePopupCloser == closerFn then
 		win.__activePopupCloser = nil
 	end
+end
+
+-- Popup builder (Dropdown/ListSelect)
+local function BuildOverlayPopup(win, anchorBtn, buildItemsFn, maxH)
+	local theme = win.__theme
+	local overlay = win.__overlay
+	local main = win.__main
+
+	local panel = Create("Frame", {
+		Size = UDim2.fromOffset(0, 0),
+		BackgroundColor3 = theme.Panel,
+		BackgroundTransparency = theme.PanelA,
+		Visible = false,
+		ClipsDescendants = true,
+		ZIndex = 5000,
+	}, overlay)
+	Corner(panel, 10)
+	Stroke(panel, 1, theme.StrokeA)
+	Pad(panel, 8, 8, 8, 8)
+
+	local sf = Create("ScrollingFrame", {
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		ScrollBarThickness = 6,
+		CanvasSize = UDim2.new(0, 0, 0, 0),
+		ZIndex = 5001,
+	}, panel)
+	setScrollDark(sf)
+
+	local lo = ListLayout(sf, 6)
+	AutoCanvas(sf, lo, 8)
+
+	local info = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local open = false
+	local conns = {}
+
+	local function place()
+		local mainPos = main.AbsolutePosition
+		local hp = anchorBtn.AbsolutePosition
+		local hs = anchorBtn.AbsoluteSize
+
+		local x = hp.X - mainPos.X
+		local y = (hp.Y - mainPos.Y) + hs.Y + 6
+		local w = anchorBtn.AbsoluteSize.X
+
+		panel.Position = UDim2.fromOffset(x, y)
+		panel.Size = UDim2.fromOffset(w, panel.AbsoluteSize.Y)
+	end
+
+	local function closeNow()
+		open = false
+		Tween(panel, info, { Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, 0) })
+		task.delay(0.16, function()
+			if not open then panel.Visible = false end
+		end)
+		for _, c in ipairs(conns) do pcall(function() c:Disconnect() end) end
+		table.clear(conns)
+	end
+
+	local function openNow()
+		open = true
+		panel.Visible = true
+		place()
+
+		local h = clamp(lo.AbsoluteContentSize.Y + 16, 40, maxH or 200)
+		panel.Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, 0)
+		Tween(panel, info, { Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, h) })
+
+		table.insert(conns, main:GetPropertyChangedSignal("Position"):Connect(place))
+		table.insert(conns, main:GetPropertyChangedSignal("Size"):Connect(place))
+
+		table.insert(conns, UIS.InputBegan:Connect(function(input, gp)
+			if gp then return end
+			if not open then return end
+			if input.UserInputType ~= Enum.UserInputType.MouseButton1 and input.UserInputType ~= Enum.UserInputType.Touch then return end
+
+			local p = input.Position
+			local function inside(obj)
+				local ap, as = obj.AbsolutePosition, obj.AbsoluteSize
+				return p.X >= ap.X and p.X <= ap.X + as.X and p.Y >= ap.Y and p.Y <= ap.Y + as.Y
+			end
+
+			if not inside(anchorBtn) and not inside(panel) then
+				closeNow()
+			end
+		end))
+	end
+
+	buildItemsFn(sf, lo)
+
+	return {
+		IsOpen = function() return open end,
+		Open = openNow,
+		Close = closeNow,
+	}
 end
 
 function Hub:CreateWindow(cfg)
@@ -160,17 +256,18 @@ function Hub:CreateWindow(cfg)
 		Name = "NotifyStack",
 		AnchorPoint = Vector2.new(1, 0),
 		Position = UDim2.new(1, -16, 0, 16),
-		Size = UDim2.new(0, 320, 1, -32),
+		Size = UDim2.new(0, 280, 1, -32),
 		BackgroundTransparency = 1,
 		ZIndex = 9999,
 	}, gui)
-	local notifyLayout = Create("UIListLayout", {
+	Create("UIListLayout", {
 		SortOrder = Enum.SortOrder.LayoutOrder,
 		Padding = UDim.new(0, 8),
 		HorizontalAlignment = Enum.HorizontalAlignment.Right,
 	}, notifyStack)
 
 	-- Mini logo toggle button
+	local logoImage = cfg.Logo or "rbxassetid://0"
 	local logoBtn = Create("ImageButton", {
 		Name = "LogoButton",
 		Size = cfg.LogoButtonSize or UDim2.fromOffset(56, 56),
@@ -178,7 +275,7 @@ function Hub:CreateWindow(cfg)
 		BackgroundColor3 = theme.Panel,
 		BackgroundTransparency = theme.PanelA,
 		AutoButtonColor = true,
-		Image = cfg.Logo or "rbxassetid://0",
+		Image = logoImage,
 		ZIndex = 2000
 	}, gui)
 	Corner(logoBtn, 14)
@@ -514,121 +611,116 @@ function Hub:CreateWindow(cfg)
 		__activeTab = nil,
 		__activePopupCloser = nil,
 		__notifyStack = notifyStack,
+		__logo = logoImage, -- IMPORTANT: Notify uses this (no cfg dependency)
 	}, Window)
 
-	-- Notify / Toast
-function self:Notify(title, text, duration, iconImage)
-	duration = tonumber(duration) or 2.0
-	local t = self.__theme
+	-- ✅ Compact Notify with logo (safe, no cfg scope)
+	function self:Notify(title, text, duration, iconImage)
+		duration = tonumber(duration) or 2.0
+		local t = self.__theme
+		local WIDTH = 250
 
-	-- width gọn hơn
-	local WIDTH = 260
+		local card = Create("Frame", {
+			Size = UDim2.new(0, WIDTH, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			BackgroundColor3 = t.Panel,
+			BackgroundTransparency = t.PanelA,
+			ZIndex = 9999,
+		}, self.__notifyStack)
+		Corner(card, 12)
+		Stroke(card, 1, t.StrokeA)
+		Pad(card, 10, 10, 10, 10)
 
-	local card = Create("Frame", {
-		Size = UDim2.new(0, WIDTH, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundColor3 = t.Panel,
-		BackgroundTransparency = t.PanelA,
-		ZIndex = 9999,
-	}, self.__notifyStack)
-	Corner(card, 12)
-	Stroke(card, 1, t.StrokeA)
-	Pad(card, 10, 10, 10, 10)
+		local row = Create("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			BackgroundTransparency = 1,
+		}, card)
 
-	-- layout ngang: icon + text
-	local row = Create("Frame", {
-		Size = UDim2.new(1, 0, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundTransparency = 1,
-	}, card)
-	local rowLayout = Create("UIListLayout", {
-		FillDirection = Enum.FillDirection.Horizontal,
-		SortOrder = Enum.SortOrder.LayoutOrder,
-		Padding = UDim.new(0, 8),
-		VerticalAlignment = Enum.VerticalAlignment.Top,
-	}, row)
+		Create("UIListLayout", {
+			FillDirection = Enum.FillDirection.Horizontal,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			Padding = UDim.new(0, 8),
+			VerticalAlignment = Enum.VerticalAlignment.Top,
+		}, row)
 
-	-- icon (logo)
-	local img = iconImage or cfg.Logo or "rbxassetid://0"
-	local icon = Create("ImageLabel", {
-		Size = UDim2.fromOffset(28, 28),
-		BackgroundTransparency = 1,
-		Image = img,
-		ImageTransparency = 0,
-		ZIndex = 10000
-	}, row)
-	Corner(icon, 8)
+		local icon = Create("ImageLabel", {
+			Size = UDim2.fromOffset(28, 28),
+			BackgroundTransparency = 1,
+			Image = iconImage or self.__logo or "rbxassetid://0",
+			ZIndex = 10000,
+		}, row)
+		Corner(icon, 8)
 
-	-- text block
-	local textBox = Create("Frame", {
-		Size = UDim2.new(1, -40, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundTransparency = 1,
-	}, row)
+		local textBox = Create("Frame", {
+			Size = UDim2.new(1, -40, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			BackgroundTransparency = 1,
+		}, row)
 
-	local titleLb = Create("TextLabel", {
-		Size = UDim2.new(1, 0, 0, 16),
-		BackgroundTransparency = 1,
-		Text = tostring(title or "Notice"),
-		TextXAlignment = Enum.TextXAlignment.Left,
-		Font = Enum.Font.GothamBold,
-		TextSize = 13,
-		TextColor3 = t.Text,
-		TextTruncate = Enum.TextTruncate.AtEnd, -- gọn
-		ZIndex = 10000
-	}, textBox)
+		local titleLb = Create("TextLabel", {
+			Size = UDim2.new(1, 0, 0, 16),
+			BackgroundTransparency = 1,
+			Text = tostring(title or "Notice"),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Font = Enum.Font.GothamBold,
+			TextSize = 13,
+			TextColor3 = t.Text,
+			TextTruncate = Enum.TextTruncate.AtEnd,
+			ZIndex = 10000
+		}, textBox)
 
-	local bodyLb = Create("TextLabel", {
-		Size = UDim2.new(1, 0, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundTransparency = 1,
-		Text = tostring(text or ""),
-		TextWrapped = true,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		Font = Enum.Font.Gotham,
-		TextSize = 12,
-		TextColor3 = t.SubText,
-		ZIndex = 10000
-	}, textBox)
+		local bodyLb = Create("TextLabel", {
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			BackgroundTransparency = 1,
+			Text = tostring(text or ""),
+			TextWrapped = true,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Font = Enum.Font.Gotham,
+			TextSize = 12,
+			TextColor3 = t.SubText,
+			ZIndex = 10000
+		}, textBox)
 
-	-- giới hạn tối đa 2 dòng (nếu dài quá thì cắt)
-	local function clampLines(lbl, maxLines)
+		-- clamp to 2 lines max (avoid long notify)
 		task.defer(function()
-			local lineH = lbl.TextSize + 2
-			local maxH = lineH * maxLines
-			if lbl.AbsoluteSize.Y > maxH then
-				lbl.Size = UDim2.new(1, 0, 0, maxH)
-				lbl.AutomaticSize = Enum.AutomaticSize.None
-				lbl.TextTruncate = Enum.TextTruncate.AtEnd
-				lbl.TextWrapped = false
+			local lineH = bodyLb.TextSize + 2
+			local maxH = lineH * 2
+			if bodyLb.AbsoluteSize.Y > maxH then
+				bodyLb.AutomaticSize = Enum.AutomaticSize.None
+				bodyLb.Size = UDim2.new(1, 0, 0, maxH)
+				bodyLb.TextWrapped = false
+				bodyLb.TextTruncate = Enum.TextTruncate.AtEnd
 			end
 		end)
-	end
-	clampLines(bodyLb, 2)
 
-	-- animation
-	card.BackgroundTransparency = 1
-	titleLb.TextTransparency = 1
-	bodyLb.TextTransparency = 1
-	icon.ImageTransparency = 1
+		-- animate in/out
+		card.BackgroundTransparency = 1
+		titleLb.TextTransparency = 1
+		bodyLb.TextTransparency = 1
+		icon.ImageTransparency = 1
 
-	local infoIn = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	Tween(card, infoIn, { BackgroundTransparency = t.PanelA })
-	Tween(titleLb, infoIn, { TextTransparency = 0 })
-	Tween(bodyLb, infoIn, { TextTransparency = 0 })
-	Tween(icon, infoIn, { ImageTransparency = 0 })
+		local infoIn = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		Tween(card, infoIn, { BackgroundTransparency = t.PanelA })
+		Tween(titleLb, infoIn, { TextTransparency = 0 })
+		Tween(bodyLb, infoIn, { TextTransparency = 0 })
+		Tween(icon, infoIn, { ImageTransparency = 0 })
 
-	task.delay(duration, function()
-		if not card or not card.Parent then return end
-		local infoOut = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-		Tween(card, infoOut, { BackgroundTransparency = 1 })
-		Tween(titleLb, infoOut, { TextTransparency = 1 })
-		Tween(bodyLb, infoOut, { TextTransparency = 1 })
-		Tween(icon, infoOut, { ImageTransparency = 1 })
-		task.delay(0.2, function()
-			if card then card:Destroy() end
+		task.delay(duration, function()
+			if not card or not card.Parent then return end
+			local infoOut = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+			Tween(card, infoOut, { BackgroundTransparency = 1 })
+			Tween(titleLb, infoOut, { TextTransparency = 1 })
+			Tween(bodyLb, infoOut, { TextTransparency = 1 })
+			Tween(icon, infoOut, { ImageTransparency = 1 })
+			task.delay(0.2, function()
+				if card then card:Destroy() end
+			end)
 		end)
-	end)
+	end
+
+	return self
 end
 
 --// ---------- UI Blocks ----------
@@ -944,105 +1036,6 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 	return { Set = function(v) setValue(v, false) end, Get = function() return value end, Root = frame }
 end
 
--- Popup builder (Dropdown/ListSelect)
-local function BuildOverlayPopup(win, anchorBtn, buildItemsFn, maxH)
-	local theme = win.__theme
-	local overlay = win.__overlay
-	local main = win.__main
-
-	local panel = Create("Frame", {
-		Size = UDim2.fromOffset(0, 0),
-		BackgroundColor3 = theme.Panel,
-		BackgroundTransparency = theme.PanelA,
-		Visible = false,
-		ClipsDescendants = true,
-		ZIndex = 5000,
-	}, overlay)
-	Corner(panel, 10)
-	Stroke(panel, 1, theme.StrokeA)
-	Pad(panel, 8, 8, 8, 8)
-
-	local sf = Create("ScrollingFrame", {
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundTransparency = 1,
-		BorderSizePixel = 0,
-		ScrollBarThickness = 6,
-		CanvasSize = UDim2.new(0, 0, 0, 0),
-		ZIndex = 5001,
-	}, panel)
-	setScrollDark(sf)
-
-	local lo = ListLayout(sf, 6)
-	AutoCanvas(sf, lo, 8)
-
-	local info = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	local open = false
-	local conns = {}
-
-	local function place()
-		local mainPos = main.AbsolutePosition
-		local hp = anchorBtn.AbsolutePosition
-		local hs = anchorBtn.AbsoluteSize
-
-		local x = hp.X - mainPos.X
-		local y = (hp.Y - mainPos.Y) + hs.Y + 6
-		local w = anchorBtn.AbsoluteSize.X
-
-		panel.Position = UDim2.fromOffset(x, y)
-		panel.Size = UDim2.fromOffset(w, panel.AbsoluteSize.Y)
-	end
-
-	local function closeNow()
-		open = false
-		Tween(panel, info, { Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, 0) })
-		task.delay(0.16, function()
-			if not open then panel.Visible = false end
-		end)
-		for _, c in ipairs(conns) do pcall(function() c:Disconnect() end) end
-		table.clear(conns)
-	end
-
-	local function openNow()
-		open = true
-		panel.Visible = true
-		place()
-
-		local h = clamp(lo.AbsoluteContentSize.Y + 16, 40, maxH or 200)
-		panel.Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, 0)
-		Tween(panel, info, { Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, h) })
-
-		table.insert(conns, main:GetPropertyChangedSignal("Position"):Connect(place))
-		table.insert(conns, main:GetPropertyChangedSignal("Size"):Connect(place))
-
-		table.insert(conns, UIS.InputBegan:Connect(function(input, gp)
-			if gp then return end
-			if not open then return end
-			if input.UserInputType ~= Enum.UserInputType.MouseButton1 and input.UserInputType ~= Enum.UserInputType.Touch then return end
-
-			local p = input.Position
-			local function inside(obj)
-				local ap, as = obj.AbsolutePosition, obj.AbsoluteSize
-				return p.X >= ap.X and p.X <= ap.X + as.X and p.Y >= ap.Y and p.Y <= ap.Y + as.Y
-			end
-
-			if not inside(anchorBtn) and not inside(panel) then
-				closeNow()
-			end
-		end))
-	end
-
-	buildItemsFn(sf, lo)
-
-	return {
-		Panel = panel,
-		Scroll = sf,
-		Layout = lo,
-		IsOpen = function() return open end,
-		Open = openNow,
-		Close = closeNow,
-	}
-end
-
 function Section:Dropdown(text, options, defaultValue, callback)
 	local win = self.__tab.__win
 	local theme = win.__theme
@@ -1143,7 +1136,6 @@ function Section:List(text, options, defaultValue, callback)
 	local win = self.__tab.__win
 	local theme = win.__theme
 	options = options or {}
-
 	local selected = defaultValue or options[1] or "(none)"
 
 	local frame = Create("Frame", {
