@@ -9,6 +9,12 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
 --========================================================
+-- THEME (Blue like top Status UI)
+--========================================================
+local THEME_BLUE = Color3.fromRGB(100, 220, 240)
+local CARD_BG = Color3.fromRGB(0, 0, 0)
+
+--========================================================
 -- DATA YOU PROVIDE (choose either Attributes or Folder Values)
 -- A) Attributes on Player:
 --    player:SetAttribute("Level", 2601)
@@ -23,7 +29,6 @@ local playerGui = player:WaitForChild("PlayerGui")
 --    player.Items.Has_MirrorFractal (BoolValue), ...
 --========================================================
 
--- Item flag keys (YOU must set these true/false)
 local ITEM_FLAGS = {
 	Has_GodHuman      = "GodHuman",
 	Has_CDK           = "Curse Dual Katana",
@@ -70,6 +75,30 @@ blur.Size = 0
 blur.Parent = Lighting
 
 --========================================================
+-- UI Helper
+--========================================================
+local function mkText(parent, name, pos, size, text, color, xAlign, yAlign, weight)
+	local t = Instance.new("TextLabel")
+	t.Name = name
+	t.Parent = parent
+	t.BackgroundTransparency = 1
+	t.Position = pos
+	t.Size = size or UDim2.new(0, 0, 0, 18)
+	t.FontFace = Font.new(
+		"rbxasset://fonts/families/GothamSSm.json",
+		weight or Enum.FontWeight.Bold,
+		Enum.FontStyle.Normal
+	)
+	t.Text = text or ""
+	t.TextColor3 = color or Color3.fromRGB(255, 255, 255)
+	t.TextSize = 16
+	t.TextXAlignment = xAlign or Enum.TextXAlignment.Left
+	t.TextYAlignment = yAlign or Enum.TextYAlignment.Bottom
+	t.RichText = false
+	return t
+end
+
+--========================================================
 -- UI: Main Card
 --========================================================
 local CoinCard = Instance.new("ScreenGui")
@@ -104,7 +133,7 @@ local Card = Instance.new("Frame")
 Card.Name = "Main"
 Card.Parent = DropShadowHolder
 Card.AnchorPoint = Vector2.new(0.5, 0.5)
-Card.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Card.BackgroundColor3 = CARD_BG
 Card.BackgroundTransparency = 0.5
 Card.Position = UDim2.new(0.5, 0, 0.5, 0)
 Card.Size = UDim2.new(1, -47, 1, -47)
@@ -115,7 +144,7 @@ CardCorner.CornerRadius = UDim.new(0, 5)
 CardCorner.Parent = Card
 
 local CardStroke = Instance.new("UIStroke")
-CardStroke.Color = Color3.fromRGB(255, 80, 80)
+CardStroke.Color = THEME_BLUE
 CardStroke.Thickness = 2.5
 CardStroke.Parent = Card
 
@@ -123,43 +152,26 @@ local Divider1 = Instance.new("Frame")
 Divider1.Name = "Divider1"
 Divider1.Parent = Card
 Divider1.BorderSizePixel = 0
-Divider1.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+Divider1.BackgroundColor3 = THEME_BLUE
 Divider1.Position = UDim2.new(0.15, 0, 0.15, 0)
 Divider1.Size = UDim2.new(0.7, 0, 0, 2)
-Divider1.BackgroundTransparency = 0.3
+Divider1.BackgroundTransparency = 0.15
 
 local Divider2 = Instance.new("Frame")
 Divider2.Name = "Divider2"
 Divider2.Parent = Card
 Divider2.BorderSizePixel = 0
-Divider2.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+Divider2.BackgroundColor3 = THEME_BLUE
 Divider2.Position = UDim2.new(0.1, 0, 0.75, 0)
 Divider2.Size = UDim2.new(0.8, 0, 0, 2)
-Divider2.BackgroundTransparency = 0.3
-
-local function mkText(parent, name, pos, size, text, color, xAlign)
-	local t = Instance.new("TextLabel")
-	t.Name = name
-	t.Parent = parent
-	t.BackgroundTransparency = 1
-	t.Position = pos
-	t.Size = size or UDim2.new(0, 0, 0, 18)
-	t.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-	t.Text = text or ""
-	t.TextColor3 = color or Color3.fromRGB(255, 255, 255)
-	t.TextSize = 16
-	t.TextXAlignment = xAlign or Enum.TextXAlignment.Left
-	t.TextYAlignment = Enum.TextYAlignment.Bottom
-	t.RichText = false
-	return t
-end
+Divider2.BackgroundTransparency = 0.15
 
 local TopTitle = mkText(
 	Card, "Top",
 	UDim2.new(0.5, 0, 0.05, 0),
 	UDim2.new(0, 400, 0, 18),
 	"DIEVER Stats Checker",
-	Color3.fromRGB(255, 255, 255),
+	THEME_BLUE,
 	Enum.TextXAlignment.Center
 )
 TopTitle.AnchorPoint = Vector2.new(0.5, 0)
@@ -168,27 +180,29 @@ local UnderLeft = mkText(
 	Card, "UnderLeft",
 	UDim2.new(0.2, 0, 0.25, 0),
 	UDim2.new(0, 220, 0, 18),
-	"Account Stats"
+	"Account Stats",
+	THEME_BLUE,
+	Enum.TextXAlignment.Center
 )
 UnderLeft.AnchorPoint = Vector2.new(0.5, 0)
-UnderLeft.TextXAlignment = Enum.TextXAlignment.Center
 
 local UnderRight = mkText(
 	Card, "UnderRight",
 	UDim2.new(0.75, 0, 0.25, 0),
 	UDim2.new(0, 220, 0, 18),
-	"Account Items"
+	"Account Items",
+	THEME_BLUE,
+	Enum.TextXAlignment.Center
 )
 UnderRight.AnchorPoint = Vector2.new(0.5, 0)
-UnderRight.TextXAlignment = Enum.TextXAlignment.Center
 
--- Stats labels
+-- Stats labels (white)
 local LevelLabel = mkText(Card, "LevelLabel", UDim2.new(0.07, 0, 0.35, 0), UDim2.new(0, 0, 0, 18), "Level: N/A    Sea: N/A")
 local RaceLabel  = mkText(Card, "RaceLabel",  UDim2.new(0.07, 0, 0.45, 0), UDim2.new(0, 0, 0, 18), "Race: N/A")
 local BeliLabel  = mkText(Card, "BeliLabel",  UDim2.new(0.07, 0, 0.55, 0), UDim2.new(0, 0, 0, 18), "Beli: N/A")
 local FragLabel  = mkText(Card, "FragLabel",  UDim2.new(0.07, 0, 0.65, 0), UDim2.new(0, 0, 0, 18), "Frag: N/A")
 
--- Item labels (use RichText dot color)
+-- Item labels (RichText colored dot + white text)
 local Item1 = mkText(Card, "Item1", UDim2.new(0.07, 0, 0.80, 0), UDim2.new(0, 260, 0, 18), "")
 local Item2 = mkText(Card, "Item2", UDim2.new(0.40, 0, 0.80, 0), UDim2.new(0, 260, 0, 18), "")
 local Item3 = mkText(Card, "Item3", UDim2.new(0.75, 0, 0.80, 0), UDim2.new(0, 260, 0, 18), "")
@@ -210,7 +224,6 @@ for _, lbl in pairs(itemLabelMap) do
 	lbl.RichText = true
 end
 
--- RichText dot colors (match your UI vibe)
 local RED_DOT   = 'rgb(255,80,80)'
 local GREEN_DOT = 'rgb(0,255,120)'
 
@@ -223,7 +236,7 @@ local function setItemRich(label: TextLabel, hasIt: boolean, name: string)
 end
 
 --========================================================
--- UI: Status Top (keep)
+-- UI: Status Top (unchanged)
 --========================================================
 local StatusGui = Instance.new("ScreenGui")
 StatusGui.Name = "Status"
@@ -252,7 +265,7 @@ StatusShadow.SliceCenter = Rect.new(49, 49, 450, 450)
 local StatusMain = Instance.new("Frame")
 StatusMain.Parent = StatusShadow
 StatusMain.AnchorPoint = Vector2.new(0.5, 0.5)
-StatusMain.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+StatusMain.BackgroundColor3 = CARD_BG
 StatusMain.BackgroundTransparency = 0.5
 StatusMain.BorderSizePixel = 0
 StatusMain.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -260,7 +273,7 @@ StatusMain.Size = UDim2.new(1, -50, 1, -55)
 
 local StatusStroke = Instance.new("UIStroke")
 StatusStroke.Parent = StatusMain
-StatusStroke.Color = Color3.fromRGB(100, 220, 240)
+StatusStroke.Color = THEME_BLUE
 StatusStroke.Thickness = 2.5
 
 local StatusText = mkText(
@@ -268,7 +281,7 @@ local StatusText = mkText(
 	UDim2.new(0.5, 0, 0, 10),
 	UDim2.new(0, 300, 0, 18),
 	"Status: Waiting for available room to join...",
-	Color3.fromRGB(100, 220, 240),
+	THEME_BLUE,
 	Enum.TextXAlignment.Center
 )
 StatusText.AnchorPoint = Vector2.new(0.5, 0)
@@ -278,7 +291,7 @@ local FarmText = mkText(
 	UDim2.new(0.5, 0, 0, 30),
 	UDim2.new(0, 450, 0, 18),
 	"Status Farm: N/A",
-	Color3.fromRGB(100, 220, 240),
+	THEME_BLUE,
 	Enum.TextXAlignment.Center
 )
 FarmText.AnchorPoint = Vector2.new(0.5, 0)
@@ -288,7 +301,7 @@ local DiscordTag = mkText(
 	UDim2.new(0.5, 0, -0.025, 0),
 	UDim2.new(0, 210, 0, 50),
 	"discord.gg/yourcode",
-	Color3.fromRGB(100, 220, 240),
+	THEME_BLUE,
 	Enum.TextXAlignment.Center
 )
 DiscordTag.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -317,8 +330,6 @@ BtnFrame.BackgroundTransparency = 0
 BtnFrame.Active = true
 BtnFrame.Draggable = true
 
--- Square: no UICorner (keep it square). If you want slight round, add UICorner radius 4-6.
-
 local BtnIcon = Instance.new("ImageLabel")
 BtnIcon.Parent = BtnFrame
 BtnIcon.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -343,7 +354,7 @@ local fadeInTween  = TweenService:Create(BtnFrame, tweenInfo, {BackgroundTranspa
 local fadeOutTween = TweenService:Create(BtnFrame, tweenInfo, {BackgroundTransparency = 0})
 
 --========================================================
--- UPDATE LOGIC
+-- UPDATE + TOGGLE
 --========================================================
 local function updateAll()
 	local level = getStat("Level")
@@ -357,7 +368,6 @@ local function updateAll()
 	BeliLabel.Text  = ("Beli: %s"):format(tostring(beli or "N/A"))
 	FragLabel.Text  = ("Frag: %s"):format(tostring(frags or "N/A"))
 
-	-- items: red/green dot
 	for flagName, label in pairs(itemLabelMap) do
 		local hasIt = getFlag(flagName)
 		local display = ITEM_FLAGS[flagName] or flagName
@@ -418,7 +428,7 @@ hookFolderValues("Stats")
 hookFolderValues("Items")
 
 --========================================================
--- QUICK TEST (optional) - uncomment for Studio test
+-- QUICK TEST (Studio only) - uncomment to see green dot works
 --========================================================
 --[[
 task.wait(1)
