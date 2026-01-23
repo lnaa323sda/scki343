@@ -1,1 +1,444 @@
-cc
+--// DIEVER Stats Checker (LEGIT - for your own game) //--
+-- Place this LocalScript at: StarterPlayer > StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+--========================================================
+-- THEME (Blue like top Status UI)
+--========================================================
+local THEME_BLUE = Color3.fromRGB(100, 220, 240)
+local CARD_BG = Color3.fromRGB(0, 0, 0)
+
+--========================================================
+-- DATA YOU PROVIDE (choose either Attributes or Folder Values)
+-- A) Attributes on Player:
+--    player:SetAttribute("Level", 2601)
+--    player:SetAttribute("Sea", 3)
+--    player:SetAttribute("Beli", 19512643)
+--    player:SetAttribute("Fragments", 13445)
+--    player:SetAttribute("Race", "Human")
+--    player:SetAttribute("Has_MirrorFractal", true)
+--
+-- B) Folder values on Player:
+--    player.Stats.Level (IntValue), player.Stats.Sea (IntValue), ...
+--    player.Items.Has_MirrorFractal (BoolValue), ...
+--========================================================
+
+local ITEM_FLAGS = {
+	Has_GodHuman      = "GodHuman",
+	Has_CDK           = "Curse Dual Katana",
+	Has_ValkyrieHelm  = "Valkyrie Helm",
+	Has_SkullGuitar   = "Skull Guitar",
+	Has_MirrorFractal = "Mirror Fractal",
+	Has_PullLever     = "Pull Lever",
+}
+
+--========================================================
+-- Helpers: read from Attributes first, fallback to Folder Values
+--========================================================
+local function getValueFromFolder(folderName: string, valueName: string)
+	local folder = player:FindFirstChild(folderName)
+	if not folder then return nil end
+	local obj = folder:FindFirstChild(valueName)
+	if not obj then return nil end
+	if obj:IsA("ValueBase") then
+		return obj.Value
+	end
+	return nil
+end
+
+local function getStat(statName: string)
+	local a = player:GetAttribute(statName)
+	if a ~= nil then return a end
+	return getValueFromFolder("Stats", statName)
+end
+
+local function getFlag(flagName: string): boolean
+	local a = player:GetAttribute(flagName)
+	if type(a) == "boolean" then return a end
+	local v = getValueFromFolder("Items", flagName)
+	if type(v) == "boolean" then return v end
+	return false
+end
+
+--========================================================
+-- Blur
+--========================================================
+local blur = Instance.new("BlurEffect")
+blur.Name = "CameraBlur"
+blur.Size = 0
+blur.Parent = Lighting
+
+--========================================================
+-- UI Helper
+--========================================================
+local function mkText(parent, name, pos, size, text, color, xAlign, yAlign, weight)
+	local t = Instance.new("TextLabel")
+	t.Name = name
+	t.Parent = parent
+	t.BackgroundTransparency = 1
+	t.Position = pos
+	t.Size = size or UDim2.new(0, 0, 0, 18)
+	t.FontFace = Font.new(
+		"rbxasset://fonts/families/GothamSSm.json",
+		weight or Enum.FontWeight.Bold,
+		Enum.FontStyle.Normal
+	)
+	t.Text = text or ""
+	t.TextColor3 = color or Color3.fromRGB(255, 255, 255)
+	t.TextSize = 16
+	t.TextXAlignment = xAlign or Enum.TextXAlignment.Left
+	t.TextYAlignment = yAlign or Enum.TextYAlignment.Bottom
+	t.RichText = false
+	return t
+end
+
+--========================================================
+-- UI: Main Card
+--========================================================
+local CoinCard = Instance.new("ScreenGui")
+CoinCard.Name = "CoinCard"
+CoinCard.Parent = playerGui
+CoinCard.ResetOnSpawn = false
+CoinCard.DisplayOrder = 20
+CoinCard.Enabled = true
+
+local DropShadowHolder = Instance.new("Frame")
+DropShadowHolder.Name = "DropShadowHolder"
+DropShadowHolder.Parent = CoinCard
+DropShadowHolder.AnchorPoint = Vector2.new(0.5, 0.5)
+DropShadowHolder.BackgroundTransparency = 1
+DropShadowHolder.Position = UDim2.new(0.5, 0, 0.5, 0)
+DropShadowHolder.Size = UDim2.new(0, 600, 0, 400)
+DropShadowHolder.ZIndex = 1
+
+local DropShadow = Instance.new("ImageLabel")
+DropShadow.Name = "DropShadow"
+DropShadow.Parent = DropShadowHolder
+DropShadow.AnchorPoint = Vector2.new(0.5, 0.5)
+DropShadow.BackgroundTransparency = 1
+DropShadow.Position = UDim2.new(0.5, 0, 0.5, 0)
+DropShadow.Size = UDim2.new(1, 47, 1, 47)
+DropShadow.ZIndex = 0
+DropShadow.Image = "rbxassetid://6015897843"
+DropShadow.ImageTransparency = 0.25
+DropShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+
+local Card = Instance.new("Frame")
+Card.Name = "Main"
+Card.Parent = DropShadowHolder
+Card.AnchorPoint = Vector2.new(0.5, 0.5)
+Card.BackgroundColor3 = CARD_BG
+Card.BackgroundTransparency = 0.5
+Card.Position = UDim2.new(0.5, 0, 0.5, 0)
+Card.Size = UDim2.new(1, -47, 1, -47)
+Card.ZIndex = 1
+
+local CardCorner = Instance.new("UICorner")
+CardCorner.CornerRadius = UDim.new(0, 5)
+CardCorner.Parent = Card
+
+local CardStroke = Instance.new("UIStroke")
+CardStroke.Color = THEME_BLUE
+CardStroke.Thickness = 2.5
+CardStroke.Parent = Card
+
+local Divider1 = Instance.new("Frame")
+Divider1.Name = "Divider1"
+Divider1.Parent = Card
+Divider1.BorderSizePixel = 0
+Divider1.BackgroundColor3 = THEME_BLUE
+Divider1.Position = UDim2.new(0.15, 0, 0.15, 0)
+Divider1.Size = UDim2.new(0.7, 0, 0, 2)
+Divider1.BackgroundTransparency = 0.15
+
+local Divider2 = Instance.new("Frame")
+Divider2.Name = "Divider2"
+Divider2.Parent = Card
+Divider2.BorderSizePixel = 0
+Divider2.BackgroundColor3 = THEME_BLUE
+Divider2.Position = UDim2.new(0.1, 0, 0.75, 0)
+Divider2.Size = UDim2.new(0.8, 0, 0, 2)
+Divider2.BackgroundTransparency = 0.15
+
+local TopTitle = mkText(
+	Card, "Top",
+	UDim2.new(0.5, 0, 0.05, 0),
+	UDim2.new(0, 400, 0, 18),
+	"DIEVER Stats Checker",
+	THEME_BLUE,
+	Enum.TextXAlignment.Center
+)
+TopTitle.AnchorPoint = Vector2.new(0.5, 0)
+
+local UnderLeft = mkText(
+	Card, "UnderLeft",
+	UDim2.new(0.2, 0, 0.25, 0),
+	UDim2.new(0, 220, 0, 18),
+	"Account Stats",
+	THEME_BLUE,
+	Enum.TextXAlignment.Center
+)
+UnderLeft.AnchorPoint = Vector2.new(0.5, 0)
+
+local UnderRight = mkText(
+	Card, "UnderRight",
+	UDim2.new(0.75, 0, 0.25, 0),
+	UDim2.new(0, 220, 0, 18),
+	"Account Items",
+	THEME_BLUE,
+	Enum.TextXAlignment.Center
+)
+UnderRight.AnchorPoint = Vector2.new(0.5, 0)
+
+-- Stats labels (white)
+local LevelLabel = mkText(Card, "LevelLabel", UDim2.new(0.07, 0, 0.35, 0), UDim2.new(0, 0, 0, 18), "Level: N/A    Sea: N/A")
+local RaceLabel  = mkText(Card, "RaceLabel",  UDim2.new(0.07, 0, 0.45, 0), UDim2.new(0, 0, 0, 18), "Race: N/A")
+local BeliLabel  = mkText(Card, "BeliLabel",  UDim2.new(0.07, 0, 0.55, 0), UDim2.new(0, 0, 0, 18), "Beli: N/A")
+local FragLabel  = mkText(Card, "FragLabel",  UDim2.new(0.07, 0, 0.65, 0), UDim2.new(0, 0, 0, 18), "Frag: N/A")
+
+-- Item labels (RichText colored dot + white text)
+local Item1 = mkText(Card, "Item1", UDim2.new(0.07, 0, 0.80, 0), UDim2.new(0, 260, 0, 18), "")
+local Item2 = mkText(Card, "Item2", UDim2.new(0.40, 0, 0.80, 0), UDim2.new(0, 260, 0, 18), "")
+local Item3 = mkText(Card, "Item3", UDim2.new(0.75, 0, 0.80, 0), UDim2.new(0, 260, 0, 18), "")
+
+local Item4 = mkText(Card, "Item4", UDim2.new(0.07, 0, 0.90, 0), UDim2.new(0, 260, 0, 18), "")
+local Item5 = mkText(Card, "Item5", UDim2.new(0.40, 0, 0.90, 0), UDim2.new(0, 260, 0, 18), "")
+local Item6 = mkText(Card, "Item6", UDim2.new(0.75, 0, 0.90, 0), UDim2.new(0, 260, 0, 18), "")
+
+local itemLabelMap = {
+	Has_GodHuman      = Item1,
+	Has_CDK           = Item2,
+	Has_ValkyrieHelm  = Item3,
+	Has_SkullGuitar   = Item4,
+	Has_MirrorFractal = Item5,
+	Has_PullLever     = Item6,
+}
+
+for _, lbl in pairs(itemLabelMap) do
+	lbl.RichText = true
+end
+
+local RED_DOT   = 'rgb(255,80,80)'
+local GREEN_DOT = 'rgb(0,255,120)'
+
+local function setItemRich(label: TextLabel, hasIt: boolean, name: string)
+	local dotColor = hasIt and GREEN_DOT or RED_DOT
+	label.Text = string.format(
+		'<font color="%s">●</font> <font color="rgb(255,255,255)">%s</font>',
+		dotColor, name
+	)
+end
+
+--========================================================
+-- UI: Status Top (unchanged)
+--========================================================
+local StatusGui = Instance.new("ScreenGui")
+StatusGui.Name = "Status"
+StatusGui.Parent = playerGui
+StatusGui.ResetOnSpawn = false
+StatusGui.DisplayOrder = 10
+
+local StatusHolder = Instance.new("Frame")
+StatusHolder.Parent = StatusGui
+StatusHolder.AnchorPoint = Vector2.new(0.5, 0.5)
+StatusHolder.BackgroundTransparency = 1
+StatusHolder.Position = UDim2.new(0.5, 0, 0.05, 0)
+StatusHolder.Size = UDim2.new(0, 320, 0, 68)
+
+local StatusShadow = Instance.new("ImageLabel")
+StatusShadow.Parent = StatusHolder
+StatusShadow.AnchorPoint = Vector2.new(0.5, 0.5)
+StatusShadow.BackgroundTransparency = 1
+StatusShadow.Position = UDim2.new(0.5, 0, 0.35, 0)
+StatusShadow.Size = UDim2.new(1, 47, 1, 47)
+StatusShadow.Image = "rbxassetid://6015897843"
+StatusShadow.ImageTransparency = 0.5
+StatusShadow.ScaleType = Enum.ScaleType.Slice
+StatusShadow.SliceCenter = Rect.new(49, 49, 450, 450)
+
+local StatusMain = Instance.new("Frame")
+StatusMain.Parent = StatusShadow
+StatusMain.AnchorPoint = Vector2.new(0.5, 0.5)
+StatusMain.BackgroundColor3 = CARD_BG
+StatusMain.BackgroundTransparency = 0.5
+StatusMain.BorderSizePixel = 0
+StatusMain.Position = UDim2.new(0.5, 0, 0.5, 0)
+StatusMain.Size = UDim2.new(1, -50, 1, -55)
+
+local StatusStroke = Instance.new("UIStroke")
+StatusStroke.Parent = StatusMain
+StatusStroke.Color = THEME_BLUE
+StatusStroke.Thickness = 2.5
+
+local StatusText = mkText(
+	StatusMain, "Top2",
+	UDim2.new(0.5, 0, 0, 10),
+	UDim2.new(0, 300, 0, 18),
+	"Status: Waiting for available room to join...",
+	THEME_BLUE,
+	Enum.TextXAlignment.Center
+)
+StatusText.AnchorPoint = Vector2.new(0.5, 0)
+
+local FarmText = mkText(
+	StatusMain, "Under",
+	UDim2.new(0.5, 0, 0, 30),
+	UDim2.new(0, 450, 0, 18),
+	"Status Farm: N/A",
+	THEME_BLUE,
+	Enum.TextXAlignment.Center
+)
+FarmText.AnchorPoint = Vector2.new(0.5, 0)
+
+local DiscordTag = mkText(
+	StatusGui, "Discord",
+	UDim2.new(0.5, 0, -0.025, 0),
+	UDim2.new(0, 210, 0, 50),
+	"discord.gg/yourcode",
+	THEME_BLUE,
+	Enum.TextXAlignment.Center
+)
+DiscordTag.AnchorPoint = Vector2.new(0.5, 0.5)
+
+local DiscordStroke = Instance.new("UIStroke")
+DiscordStroke.Parent = DiscordTag
+DiscordStroke.Thickness = 1
+
+--========================================================
+-- UI: Toggle Button (SQUARE)
+--========================================================
+local ToggleGui = Instance.new("ScreenGui")
+ToggleGui.Name = "DIEVER HUB Btn"
+ToggleGui.Parent = playerGui
+ToggleGui.ResetOnSpawn = false
+ToggleGui.DisplayOrder = 30
+
+local BtnFrame = Instance.new("Frame")
+BtnFrame.Name = "ToggleFrame"
+BtnFrame.Parent = ToggleGui
+BtnFrame.AnchorPoint = Vector2.new(0.1, 0.1)
+BtnFrame.Position = UDim2.new(0, 20, 0.1, -6)
+BtnFrame.Size = UDim2.new(0, 50, 0, 50)
+BtnFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+BtnFrame.BackgroundTransparency = 0
+BtnFrame.Active = true
+BtnFrame.Draggable = true
+
+local BtnIcon = Instance.new("ImageLabel")
+BtnIcon.Parent = BtnFrame
+BtnIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+BtnIcon.BackgroundTransparency = 1
+BtnIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+BtnIcon.Size = UDim2.new(0, 40, 0, 40)
+BtnIcon.Image = "rbxassetid://70511817915018"
+
+local Btn = Instance.new("TextButton")
+Btn.Parent = BtnFrame
+Btn.BackgroundTransparency = 1
+Btn.Size = UDim2.new(1, 0, 1, 0)
+Btn.Text = ""
+
+local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local originalSize = UDim2.new(0, 40, 0, 40)
+local zoomedSize   = UDim2.new(0, 30, 0, 30)
+
+local faded = false
+local zoomedIn = false
+local fadeInTween  = TweenService:Create(BtnFrame, tweenInfo, {BackgroundTransparency = 0.25})
+local fadeOutTween = TweenService:Create(BtnFrame, tweenInfo, {BackgroundTransparency = 0})
+
+--========================================================
+-- UPDATE + TOGGLE
+--========================================================
+local function updateAll()
+	local level = getStat("Level")
+	local sea = getStat("Sea")
+	local race = getStat("Race")
+	local beli = getStat("Beli")
+	local frags = getStat("Fragments")
+
+	LevelLabel.Text = ("Level: %s    Sea: %s"):format(tostring(level or "N/A"), tostring(sea or "N/A"))
+	RaceLabel.Text  = ("Race: %s"):format(tostring(race or "N/A"))
+	BeliLabel.Text  = ("Beli: %s"):format(tostring(beli or "N/A"))
+	FragLabel.Text  = ("Frag: %s"):format(tostring(frags or "N/A"))
+
+	for flagName, label in pairs(itemLabelMap) do
+		local hasIt = getFlag(flagName)
+		local display = ITEM_FLAGS[flagName] or flagName
+		setItemRich(label, hasIt, display)
+	end
+end
+
+local function toggleUI()
+	if zoomedIn then
+		TweenService:Create(BtnIcon, tweenInfo, {Size = originalSize}):Play()
+	else
+		TweenService:Create(BtnIcon, tweenInfo, {Size = zoomedSize}):Play()
+	end
+	zoomedIn = not zoomedIn
+
+	if faded then fadeOutTween:Play() else fadeInTween:Play() end
+	faded = not faded
+
+	CoinCard.Enabled = not CoinCard.Enabled
+	blur.Size = CoinCard.Enabled and 24 or 0
+end
+
+Btn.MouseButton1Down:Connect(toggleUI)
+
+--========================================================
+-- Auto reactivity: Attributes + Folder Values
+--========================================================
+local function hookAttributes()
+	local watch = { "Level", "Sea", "Race", "Beli", "Fragments" }
+	for k in pairs(ITEM_FLAGS) do
+		table.insert(watch, k)
+	end
+	for _, a in ipairs(watch) do
+		player:GetAttributeChangedSignal(a):Connect(updateAll)
+	end
+end
+
+local function hookFolderValues(folderName: string)
+	local folder = player:FindFirstChild(folderName)
+	if not folder then return end
+
+	local function hookChild(ch)
+		if ch:IsA("ValueBase") then
+			ch:GetPropertyChangedSignal("Value"):Connect(updateAll)
+		end
+	end
+
+	for _, ch in ipairs(folder:GetChildren()) do
+		hookChild(ch)
+	end
+	folder.ChildAdded:Connect(hookChild)
+end
+
+-- init
+updateAll()
+hookAttributes()
+hookFolderValues("Stats")
+hookFolderValues("Items")
+
+--========================================================
+-- QUICK TEST (Studio only) - uncomment to see green dot works
+--========================================================
+--[[
+task.wait(1)
+player:SetAttribute("Level", 2601)
+player:SetAttribute("Sea", 3)
+player:SetAttribute("Beli", 19512643)
+player:SetAttribute("Fragments", 13445)
+player:SetAttribute("Race", "Human")
+
+player:SetAttribute("Has_MirrorFractal", true)
+player:SetAttribute("Has_CDK", true)
+updateAll()
+]]
