@@ -1,285 +1,426 @@
--- // UI Large \\ --
-local Lighting = game:GetService("Lighting")
+--// DIEVER Stats Checker (LEGIT - for your own game) //--
+-- Put this LocalScript in: StarterPlayer > StarterPlayerScripts
 
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+--========================================================
+-- 1) DATA MODEL (You control these in YOUR game)
+-- Option A: Attributes on Player:
+--   player:SetAttribute("Level", 2450)
+--   player:SetAttribute("Sea", 3)
+--   player:SetAttribute("Beli", 1234567)
+--   player:SetAttribute("Fragments", 9999)
+--   player:SetAttribute("Race", "Human")
+--   player:SetAttribute("Has_MirrorFractal", true)   -- item flags
+-- Option B: Folder values on Player:
+--   player.Stats.Level (IntValue), player.Stats.Sea (IntValue), etc.
+--   player.Items.Has_MirrorFractal (BoolValue), etc.
+--========================================================
+
+local ITEM_FLAGS = {
+	-- key = labelText
+	Has_GodHuman = "GodHuman",
+	Has_CDK = "Curse Dual Katana",
+	Has_SkullGuitar = "Skull Guitar",
+	Has_MirrorFractal = "Mirror Fractal",
+	Has_ValkyrieHelm = "Valkyrie Helm",
+	Has_PullLever = "Pull Lever",
+}
+
+local function getValueFromFolder(pathFolderName: string, valueName: string)
+	local folder = player:FindFirstChild(pathFolderName)
+	if not folder then return nil end
+	local obj = folder:FindFirstChild(valueName)
+	if not obj then return nil end
+	if obj:IsA("ValueBase") then
+		return obj.Value
+	end
+	return nil
+end
+
+local function getFlag(flagName: string): boolean
+	-- Prefer attribute
+	local attr = player:GetAttribute(flagName)
+	if type(attr) == "boolean" then return attr end
+
+	-- Fallback: BoolValue in Items folder
+	local v = getValueFromFolder("Items", flagName)
+	if type(v) == "boolean" then return v end
+	return false
+end
+
+local function getStat(statName: string)
+	-- Prefer attribute
+	local attr = player:GetAttribute(statName)
+	if attr ~= nil then return attr end
+
+	-- Fallback: value in Stats folder
+	return getValueFromFolder("Stats", statName)
+end
+
+--========================================================
+-- 2) EFFECTS
+--========================================================
 local blur = Instance.new("BlurEffect")
 blur.Name = "CameraBlur"
-blur.Size = 24
+blur.Size = 0
 blur.Parent = Lighting
 
-local CoinCard_1 = Instance.new("ScreenGui")
-local DropShadowHolder_1 = Instance.new("Frame")
-local Main_1 = Instance.new("Frame")
-local UICorner_1 = Instance.new("UICorner")
-local UIStroke_1 = Instance.new("UIStroke")
-local Divider_1 = Instance.new("Frame")
-local Divider_2 = Instance.new("Frame")
-local TypeAccountScroll_1 = Instance.new("Frame")
-local ItemLabel1_1 = Instance.new("TextLabel")
-local ItemLabel2_1 = Instance.new("TextLabel")
-local ItemLabel1_2 = Instance.new("TextLabel")
-local BeliLabel_1 = Instance.new("TextLabel")
-local LevelLabel_1 = Instance.new("TextLabel")
-local RaceLabel_1 = Instance.new("TextLabel")
-local TextLabel_1 = Instance.new("TextLabel")
-local TextLabel_2 = Instance.new("TextLabel")
-local TextLabel_3 = Instance.new("TextLabel")
-local TextLabel_4 = Instance.new("TextLabel")
-local TextLabel_5 = Instance.new("TextLabel")
-local TextLabel_6 = Instance.new("TextLabel")
-local TextLabel_7 = Instance.new("TextLabel")
-local Top_1 = Instance.new("TextLabel")
-local UIGradient_1 = Instance.new("UIGradient")
-local Under_1 = Instance.new("TextLabel")
-local UIGradient_2 = Instance.new("UIGradient")
-local Under_2 = Instance.new("TextLabel")
-local UIGradient_3 = Instance.new("UIGradient")
-local DropShadow_1 = Instance.new("ImageLabel")
+--========================================================
+-- 3) UI: CoinCard (Main)
+--========================================================
+local CoinCard = Instance.new("ScreenGui")
+CoinCard.Name = "CoinCard"
+CoinCard.Parent = playerGui
+CoinCard.ResetOnSpawn = false
+CoinCard.DisplayOrder = 20
+CoinCard.Enabled = true
 
-CoinCard_1.Name = "CoinCard"
-CoinCard_1.Parent = game:GetService("CoreGui")
-CoinCard_1.ResetOnSpawn = false
-CoinCard_1.DisplayOrder = 20
+local DropShadowHolder = Instance.new("Frame")
+DropShadowHolder.Name = "DropShadowHolder"
+DropShadowHolder.Parent = CoinCard
+DropShadowHolder.AnchorPoint = Vector2.new(0.5, 0.5)
+DropShadowHolder.BackgroundTransparency = 1
+DropShadowHolder.Position = UDim2.new(0.5, 0, 0.5, 0)
+DropShadowHolder.Size = UDim2.new(0, 600, 0, 400)
+DropShadowHolder.ZIndex = 1
 
-DropShadowHolder_1.AnchorPoint = Vector2.new(0.5, 0.5)
-DropShadowHolder_1.BackgroundColor3 = Color3.fromRGB(163, 163, 163)
-DropShadowHolder_1.BackgroundTransparency = 1
-DropShadowHolder_1.BorderColor3 = Color3.fromRGB(27, 42, 53)
-DropShadowHolder_1.Name = "DropShadowHolder"
-DropShadowHolder_1.Parent = CoinCard_1
-DropShadowHolder_1.Position = UDim2.new(0.5, 0, 0.5, 0)
-DropShadowHolder_1.Size = UDim2.new(0, 600, 0, 400)
-DropShadowHolder_1.ZIndex = 1
-DropShadowHolder_1.Selectable = false
+local DropShadow = Instance.new("ImageLabel")
+DropShadow.Name = "DropShadow"
+DropShadow.Parent = DropShadowHolder
+DropShadow.AnchorPoint = Vector2.new(0.5, 0.5)
+DropShadow.BackgroundTransparency = 1
+DropShadow.Position = UDim2.new(0.5, 0, 0.5, 0)
+DropShadow.Size = UDim2.new(1, 47, 1, 47)
+DropShadow.ZIndex = 0
+DropShadow.Image = "rbxassetid://6015897843"
+DropShadow.ImageTransparency = 0.25
+DropShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
 
-Main_1.AnchorPoint = Vector2.new(0.5, 0.5)
-Main_1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Main_1.BackgroundTransparency = 0.5
-Main_1.Name = "Main"
-Main_1.Parent = DropShadowHolder_1
-Main_1.Position = UDim2.new(0.5, 0, 0.5, 0)
-Main_1.Size = UDim2.new(1, -47, 1, -47)
-Main_1.Selectable = false
+local MainCard = Instance.new("Frame")
+MainCard.Name = "Main"
+MainCard.Parent = DropShadowHolder
+MainCard.AnchorPoint = Vector2.new(0.5, 0.5)
+MainCard.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MainCard.BackgroundTransparency = 0.5
+MainCard.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainCard.Size = UDim2.new(1, -47, 1, -47)
+MainCard.ZIndex = 1
 
-UICorner_1.CornerRadius = UDim.new(0, 5)
-UICorner_1.Parent = Main_1
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 5)
+corner.Parent = MainCard
 
-UIStroke_1.Color = Color3.fromRGB(100, 220, 240)          -- Đổi từ đỏ sang xanh
-UIStroke_1.Thickness = 2.5
-UIStroke_1.Parent = Main_1
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(255, 80, 80)
+stroke.Thickness = 2.5
+stroke.Parent = MainCard
 
-Divider_1.BorderColor3 = Color3.fromRGB(27, 42, 53)
-Divider_1.Name = "Divider"
-Divider_1.Parent = Main_1
-Divider_1.Position = UDim2.new(0.15000000596046448, 0, 0.15000000596046448, 0)
-Divider_1.Size = UDim2.new(0.699999988079071, 0, 0, 2)
-Divider_1.Selectable = false
+local divider1 = Instance.new("Frame")
+divider1.Name = "Divider1"
+divider1.Parent = MainCard
+divider1.BorderSizePixel = 0
+divider1.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+divider1.Position = UDim2.new(0.15, 0, 0.15, 0)
+divider1.Size = UDim2.new(0.7, 0, 0, 2)
+divider1.BackgroundTransparency = 0.3
 
-Divider_2.BorderColor3 = Color3.fromRGB(27, 42, 53)
-Divider_2.Name = "Divider"
-Divider_2.Parent = Main_1
-Divider_2.Position = UDim2.new(0.10000000149011612, 0, 0.75, 0)
-Divider_2.Size = UDim2.new(0.800000011920929, 0, 0, 2)
-Divider_2.Selectable = false
+local divider2 = Instance.new("Frame")
+divider2.Name = "Divider2"
+divider2.Parent = MainCard
+divider2.BorderSizePixel = 0
+divider2.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+divider2.Position = UDim2.new(0.1, 0, 0.75, 0)
+divider2.Size = UDim2.new(0.8, 0, 0, 2)
+divider2.BackgroundTransparency = 0.3
 
--- (các label item giữ nguyên trắng)
+local function mkText(parent, name, pos, text, color)
+	local t = Instance.new("TextLabel")
+	t.Name = name
+	t.Parent = parent
+	t.BackgroundTransparency = 1
+	t.Position = pos
+	t.Size = UDim2.new(0, 0, 0, 18)
+	t.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	t.Text = text
+	t.TextColor3 = color or Color3.fromRGB(255, 255, 255)
+	t.TextSize = 16
+	t.TextXAlignment = Enum.TextXAlignment.Left
+	t.TextYAlignment = Enum.TextYAlignment.Bottom
+	return t
+end
 
-BeliLabel_1.BackgroundTransparency = 1
-BeliLabel_1.Name = "BeliLabel"
-BeliLabel_1.Parent = Main_1
-BeliLabel_1.Position = UDim2.new(0.07000000029802322, 0, 0.550000011920929, 0)
-BeliLabel_1.Size = UDim2.new(0, 0, 0, 18)
-BeliLabel_1.Selectable = false
-BeliLabel_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-BeliLabel_1.Text = "Beli: N/A"
-BeliLabel_1.TextColor3 = Color3.fromRGB(255, 255, 255)
-BeliLabel_1.TextSize = 16
-BeliLabel_1.TextXAlignment = Enum.TextXAlignment.Left
-BeliLabel_1.TextYAlignment = Enum.TextYAlignment.Bottom
+local TopTitle = Instance.new("TextLabel")
+TopTitle.Name = "Top"
+TopTitle.Parent = MainCard
+TopTitle.BackgroundTransparency = 1
+TopTitle.Position = UDim2.new(0.5, 0, 0.05, 0)
+TopTitle.AnchorPoint = Vector2.new(0.5, 0)
+TopTitle.Size = UDim2.new(0, 400, 0, 18)
+TopTitle.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+TopTitle.Text = "DIEVER Stats Checker"
+TopTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+TopTitle.TextSize = 16
+TopTitle.TextYAlignment = Enum.TextYAlignment.Bottom
 
--- ... các label khác giữ nguyên TextColor3 trắng ...
+local underLeft = Instance.new("TextLabel")
+underLeft.Name = "UnderLeft"
+underLeft.Parent = MainCard
+underLeft.BackgroundTransparency = 1
+underLeft.Position = UDim2.new(0.2, 0, 0.25, 0)
+underLeft.AnchorPoint = Vector2.new(0.5, 0)
+underLeft.Size = UDim2.new(0, 200, 0, 18)
+underLeft.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+underLeft.Text = "Account Stats"
+underLeft.TextColor3 = Color3.fromRGB(255, 255, 255)
+underLeft.TextSize = 16
 
-Top_1.BackgroundTransparency = 0.9990000128746033
-Top_1.Name = "Top"
-Top_1.Parent = Main_1
-Top_1.Position = UDim2.new(0.5, 0, 0.05000000074505806, 0)
-Top_1.Size = UDim2.new(0, 0, 0, 18)
-Top_1.Selectable = false
-Top_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-Top_1.Text = "DIEVER Stats Checker"
-Top_1.TextColor3 = Color3.fromRGB(100, 220, 240)          -- Đổi từ trắng + gradient đỏ → xanh
-Top_1.TextSize = 16
-Top_1.TextYAlignment = Enum.TextYAlignment.Bottom
+local underRight = Instance.new("TextLabel")
+underRight.Name = "UnderRight"
+underRight.Parent = MainCard
+underRight.BackgroundTransparency = 1
+underRight.Position = UDim2.new(0.75, 0, 0.25, 0)
+underRight.AnchorPoint = Vector2.new(0.5, 0)
+underRight.Size = UDim2.new(0, 200, 0, 18)
+underRight.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+underRight.Text = "Account Items"
+underRight.TextColor3 = Color3.fromRGB(255, 255, 255)
+underRight.TextSize = 16
 
-UIGradient_1.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 220, 240)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 220, 240)),
+-- Stats labels
+local LevelLabel = mkText(MainCard, "LevelLabel", UDim2.new(0.07, 0, 0.35, 0), "Level: N/A    Sea: N/A", nil)
+local RaceLabel  = mkText(MainCard, "RaceLabel",  UDim2.new(0.07, 0, 0.45, 0), "Race: N/A", nil)
+local BeliLabel  = mkText(MainCard, "BeliLabel",  UDim2.new(0.07, 0, 0.55, 0), "Beli: N/A", nil)
+local FragLabel  = mkText(MainCard, "FragLabel",  UDim2.new(0.07, 0, 0.65, 0), "Frag: N/A", nil)
+
+-- Item status labels (bottom area like your layout)
+local ItemStatusLeft1  = mkText(MainCard, "ItemStatusLeft1",  UDim2.new(0.07, 0, 0.80, 0), "🔴 GodHuman", nil)
+local ItemStatusMid1   = mkText(MainCard, "ItemStatusMid1",   UDim2.new(0.40, 0, 0.80, 0), "🔴 Curse Dual Katana", nil)
+local ItemStatusRight1 = mkText(MainCard, "ItemStatusRight1", UDim2.new(0.75, 0, 0.80, 0), "🔴 Valkyrie Helm", nil)
+
+local ItemStatusLeft2  = mkText(MainCard, "ItemStatusLeft2",  UDim2.new(0.07, 0, 0.90, 0), "🔴 Skull Guitar", nil)
+local ItemStatusMid2   = mkText(MainCard, "ItemStatusMid2",   UDim2.new(0.40, 0, 0.90, 0), "🔴 Mirror Fractal", nil)
+local ItemStatusRight2 = mkText(MainCard, "ItemStatusRight2", UDim2.new(0.75, 0, 0.90, 0), "🔴 Pull Lever", nil)
+
+local itemLabelMap = {
+	Has_GodHuman       = ItemStatusLeft1,
+	Has_CDK            = ItemStatusMid1,
+	Has_ValkyrieHelm   = ItemStatusRight1,
+	Has_SkullGuitar    = ItemStatusLeft2,
+	Has_MirrorFractal  = ItemStatusMid2,
+	Has_PullLever      = ItemStatusRight2,
 }
-UIGradient_1.Parent = Top_1
 
-Under_1.BackgroundTransparency = 0.9990000128746033
-Under_1.Name = "Under"
-Under_1.Parent = Main_1
-Under_1.Position = UDim2.new(0.20000000298023224, 0, 0.25, 0)
-Under_1.Size = UDim2.new(0, 0, 0, 18)
-Under_1.Selectable = false
-Under_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-Under_1.Text = "Account Stats"
-Under_1.TextColor3 = Color3.fromRGB(100, 220, 240)        -- Đổi sang xanh
-Under_1.TextSize = 16
-Under_1.TextYAlignment = Enum.TextYAlignment.Bottom
+--========================================================
+-- 4) UI: Status Top (keep as you asked)
+--========================================================
+local StatusGui = Instance.new("ScreenGui")
+StatusGui.Name = "Status"
+StatusGui.Parent = playerGui
+StatusGui.ResetOnSpawn = false
+StatusGui.DisplayOrder = 10
 
-UIGradient_2.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 220, 240)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 220, 240)),
-}
-UIGradient_2.Parent = Under_1
+local topHolder = Instance.new("Frame")
+topHolder.Parent = StatusGui
+topHolder.AnchorPoint = Vector2.new(0.5, 0.5)
+topHolder.BackgroundTransparency = 1
+topHolder.Position = UDim2.new(0.5, 0, 0.05, 0)
+topHolder.Size = UDim2.new(0, 320, 0, 68)
 
-Under_2.BackgroundTransparency = 0.9990000128746033
-Under_2.Name = "Under"
-Under_2.Parent = Main_1
-Under_2.Position = UDim2.new(0.75, 0, 0.25, 0)
-Under_2.Size = UDim2.new(0, 0, 0, 18)
-Under_2.Selectable = false
-Under_2.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-Under_2.Text = "Account Items"
-Under_2.TextColor3 = Color3.fromRGB(100, 220, 240)        -- Đổi sang xanh
-Under_2.TextSize = 16
-Under_2.TextYAlignment = Enum.TextYAlignment.Bottom
+local topShadow = Instance.new("ImageLabel")
+topShadow.Parent = topHolder
+topShadow.AnchorPoint = Vector2.new(0.5, 0.5)
+topShadow.BackgroundTransparency = 1
+topShadow.Position = UDim2.new(0.5, 0, 0.35, 0)
+topShadow.Size = UDim2.new(1, 47, 1, 47)
+topShadow.Image = "rbxassetid://6015897843"
+topShadow.ImageTransparency = 0.5
+topShadow.ScaleType = Enum.ScaleType.Slice
+topShadow.SliceCenter = Rect.new(49, 49, 450, 450)
 
-UIGradient_3.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 220, 240)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 220, 240)),
-}
-UIGradient_3.Parent = Under_2
+local topMain = Instance.new("Frame")
+topMain.Parent = topShadow
+topMain.AnchorPoint = Vector2.new(0.5, 0.5)
+topMain.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+topMain.BackgroundTransparency = 0.5
+topMain.BorderSizePixel = 0
+topMain.Position = UDim2.new(0.5, 0, 0.5, 0)
+topMain.Size = UDim2.new(1, -50, 1, -55)
 
--- (phần DropShadow giữ nguyên)
+local topStroke = Instance.new("UIStroke")
+topStroke.Parent = topMain
+topStroke.Color = Color3.fromRGB(100, 220, 240)
+topStroke.Thickness = 2.5
 
--- // UI Top \\ -- (phần Status)
+local StatusText = Instance.new("TextLabel")
+StatusText.Parent = topMain
+StatusText.AnchorPoint = Vector2.new(0.5, 0)
+StatusText.BackgroundTransparency = 1
+StatusText.Position = UDim2.new(0.5, 0, 0, 10)
+StatusText.Size = UDim2.new(0, 300, 0, 18)
+StatusText.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+StatusText.Text = "Status: Waiting for available room to join..."
+StatusText.TextColor3 = Color3.fromRGB(100, 220, 240)
+StatusText.TextSize = 16
+StatusText.TextWrapped = true
 
-local Status = Instance.new("ScreenGui")
-Status.Name = "Status"
-Status.Parent = game:GetService("CoreGui")
-Status.ResetOnSpawn = false
-Status.DisplayOrder = 10
+local FarmText = Instance.new("TextLabel")
+FarmText.Parent = topMain
+FarmText.AnchorPoint = Vector2.new(0.5, 0)
+FarmText.BackgroundTransparency = 1
+FarmText.Position = UDim2.new(0.5, 0, 0, 30)
+FarmText.Size = UDim2.new(0, 450, 0, 18)
+FarmText.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+FarmText.Text = "Status Farm: N/A"
+FarmText.TextColor3 = Color3.fromRGB(100, 220, 240)
+FarmText.TextSize = 16
 
--- ... (các phần DropShadow giữ nguyên) ...
+local DiscordTag = Instance.new("TextLabel")
+DiscordTag.Parent = StatusGui
+DiscordTag.AnchorPoint = Vector2.new(0.5, 0.5)
+DiscordTag.BackgroundTransparency = 1
+DiscordTag.Position = UDim2.new(0.5, 0, -0.025, 0)
+DiscordTag.Size = UDim2.new(0, 210, 0, 50)
+DiscordTag.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+DiscordTag.Text = "discord.gg/yourcode"
+DiscordTag.TextColor3 = Color3.fromRGB(100, 220, 240)
+DiscordTag.TextSize = 16
 
-local UIStroke_1 = Instance.new("UIStroke")
-UIStroke_1.Parent = Main_1
-UIStroke_1.Color = Color3.fromRGB(100, 220, 240)          -- Đổi từ đỏ sang xanh
-UIStroke_1.Thickness = 2.5
+local dStroke = Instance.new("UIStroke")
+dStroke.Parent = DiscordTag
+dStroke.Thickness = 1
 
-local Top2_1 = Instance.new("TextLabel")
-Top2_1.Name = "Top2"
-Top2_1.Parent = Main_1
--- ... giữ nguyên ...
+--========================================================
+-- 5) UI: Toggle Button (SQUARE)
+--========================================================
+local ToggleGui = Instance.new("ScreenGui")
+ToggleGui.Name = "DIEVER HUB Btn"
+ToggleGui.Parent = playerGui
+ToggleGui.ResetOnSpawn = false
+ToggleGui.DisplayOrder = 30
 
-local Under_1 = Instance.new("TextLabel")
-Under_1.Name = "Under"
-Under_1.Parent = Main_1
--- ... giữ nguyên vị trí ...
-Under_1.Text = "Status Farm: N/A"
-Under_1.TextColor3 = Color3.fromRGB(100, 220, 240)        -- Đổi từ đỏ (233,80,80) sang xanh tươi
-Under_1.TextSize = 16
+local btnFrame = Instance.new("Frame")
+btnFrame.Name = "ToggleFrame"
+btnFrame.Parent = ToggleGui
+btnFrame.AnchorPoint = Vector2.new(0.1, 0.1)
+btnFrame.Position = UDim2.new(0, 20, 0.1, -6)
+btnFrame.Size = UDim2.new(0, 50, 0, 50)
+btnFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+btnFrame.Active = true
+btnFrame.Draggable = true
 
-local TextLabel_1 = Instance.new("TextLabel")
-TextLabel_1.Parent = Status
-TextLabel_1.AnchorPoint = Vector2.new(0.5, 0.5)
-TextLabel_1.BackgroundColor3 = Color3.fromRGB(163,162,165)
-TextLabel_1.BackgroundTransparency = 1
-TextLabel_1.BorderSizePixel = 0
-TextLabel_1.Position = UDim2.new(0.5, 0,-0.0250000004, 0)
-TextLabel_1.Size = UDim2.new(0, 210,0, 50)
-TextLabel_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-TextLabel_1.Text = "discord.gg/gKuZC2bH3g"
-TextLabel_1.TextColor3 = Color3.fromRGB(100, 220, 240)
-TextLabel_1.TextSize = 16
+-- Square: NO UICorner (or set radius 0)
+-- local btnCorner = Instance.new("UICorner")
+-- btnCorner.CornerRadius = UDim.new(0, 0)
+-- btnCorner.Parent = btnFrame
 
-local UIStroke_2 = Instance.new("UIStroke")
-UIStroke_2.Parent = TextLabel_1
-UIStroke_2.Thickness = 1
+local btnImage = Instance.new("ImageLabel")
+btnImage.Parent = btnFrame
+btnImage.AnchorPoint = Vector2.new(0.5, 0.5)
+btnImage.BackgroundTransparency = 1
+btnImage.Position = UDim2.new(0.5, 0, 0.5, 0)
+btnImage.Size = UDim2.new(0, 40, 0, 40)
+btnImage.Image = "rbxassetid://70511817915018"
 
-local UIGradient_1 = Instance.new("UIGradient")
-UIGradient_1.Parent = UIStroke_2
-UIGradient_1.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0)}
+local btn = Instance.new("TextButton")
+btn.Parent = btnFrame
+btn.BackgroundTransparency = 1
+btn.Size = UDim2.new(1, 0, 1, 0)
+btn.Text = ""
 
--- // Toggle UI \\ --
+local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local originalSize = UDim2.new(0, 40, 0, 40)
+local zoomedSize   = UDim2.new(0, 30, 0, 30)
 
-local LonelyHubBtn = Instance.new("ScreenGui")
-local dutdit = Instance.new("Frame")
-local UICorner = Instance.new("UICorner")
-local ImageLabel = Instance.new("ImageLabel")
-local TextButton = Instance.new("TextButton")
+local faded = false
+local zoomedIn = false
+local fadeInTween  = TweenService:Create(btnFrame, tweenInfo, {BackgroundTransparency = 0.25})
+local fadeOutTween = TweenService:Create(btnFrame, tweenInfo, {BackgroundTransparency = 0})
 
-LonelyHubBtn.Name = "DIEVER HUB Btn"  
-LonelyHubBtn.Parent = game:GetService("CoreGui")
-LonelyHubBtn.ZIndexBehavior = Enum.ZIndexBehavior.Sibling  
-LonelyHubBtn.DisplayOrder = 10
+local function toggleUI()
+	-- animate icon size
+	if zoomedIn then
+		TweenService:Create(btnImage, tweenInfo, {Size = originalSize}):Play()
+	else
+		TweenService:Create(btnImage, tweenInfo, {Size = zoomedSize}):Play()
+	end
+	zoomedIn = not zoomedIn
 
-dutdit.Name = "dut dit"  
-dutdit.Parent = LonelyHubBtn  
-dutdit.AnchorPoint = Vector2.new(0.1, 0.1)  
-dutdit.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  
-dutdit.Position = UDim2.new(0, 20, 0.1, -6)  
-dutdit.Size = UDim2.new(0, 50, 0, 50)  
-dutdit.Active = true
-dutdit.Draggable = true
+	-- animate bg alpha
+	if faded then fadeOutTween:Play() else fadeInTween:Play() end
+	faded = not faded
 
-UICorner.CornerRadius = UDim.new(1, 0)  
-UICorner.Parent = dutdit  
+	-- toggle card + blur
+	CoinCard.Enabled = not CoinCard.Enabled
+	blur.Size = CoinCard.Enabled and 24 or 0
+end
 
-ImageLabel.Parent = dutdit  
-ImageLabel.AnchorPoint = Vector2.new(0.5, 0.5)  
-ImageLabel.BackgroundTransparency = 1.0  
-ImageLabel.Position = UDim2.new(0.5, 0, 0.5, 0)  
-ImageLabel.Size = UDim2.new(0, 40, 0, 40)  
-ImageLabel.Image = "rbxassetid://70511817915018"  
+btn.MouseButton1Down:Connect(toggleUI)
 
-TextButton.Parent = dutdit  
-TextButton.BackgroundTransparency = 1.0  
-TextButton.Size = UDim2.new(1, 0, 1, 0)  
-TextButton.Font = Enum.Font.SourceSans  
-TextButton.Text = ""  
-TextButton.TextColor3 = Color3.fromRGB(27, 42, 53)  
+--========================================================
+-- 6) UPDATE LOGIC (stats + items -> 🔴/🟢)
+--========================================================
+local function icon(hasIt: boolean)
+	return hasIt and "🟢" or "🔴"
+end
 
-local TweenService = game:GetService("TweenService")  
-local VirtualInputManager = game:GetService("VirtualInputManager")  
+local function updateAll()
+	local level = getStat("Level")
+	local sea = getStat("Sea")
+	local race = getStat("Race")
+	local beli = getStat("Beli")
+	local frags = getStat("Fragments")
 
-local zoomedIn = false  
-local originalSize = UDim2.new(0, 40, 0, 40)  
-local zoomedSize = UDim2.new(0, 30, 0, 30)  
-local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)  
+	LevelLabel.Text = ("Level: %s    Sea: %s"):format(tostring(level or "N/A"), tostring(sea or "N/A"))
+	RaceLabel.Text  = ("Race: %s"):format(tostring(race or "N/A"))
+	BeliLabel.Text  = ("Beli: %s"):format(tostring(beli or "N/A"))
+	FragLabel.Text  = ("Frag: %s"):format(tostring(frags or "N/A"))
 
-local faded = false  
-local fadeInTween = TweenService:Create(dutdit, tweenInfo, {BackgroundTransparency = 0.25})  
-local fadeOutTween = TweenService:Create(dutdit, tweenInfo, {BackgroundTransparency = 0})  
+	for flagName, label in pairs(itemLabelMap) do
+		local hasIt = getFlag(flagName)
+		local display = ITEM_FLAGS[flagName] or flagName
+		label.Text = ("%s %s"):format(icon(hasIt), display)
+	end
+end
 
-TextButton.MouseButton1Down:Connect(  
-    function()  
-        if zoomedIn then  
-            TweenService:Create(ImageLabel, tweenInfo, {Size = originalSize}):Play()  
-        else  
-            TweenService:Create(ImageLabel, tweenInfo, {Size = zoomedSize}):Play()  
-        end  
-        zoomedIn = not zoomedIn  
+-- Watch attribute changes (if you use Attributes)
+local function hookAttributes()
+	local attrsToWatch = { "Level", "Sea", "Race", "Beli", "Fragments" }
+	for flagName in pairs(ITEM_FLAGS) do
+		table.insert(attrsToWatch, flagName)
+	end
 
-        if faded then  
-            fadeOutTween:Play()  
-        else  
-            fadeInTween:Play()  
-        end  
-        faded = not faded  
-        
-        if CoinCard_1.Enabled == false then
-            CoinCard_1.Enabled = true
-        else
-            CoinCard_1.Enabled = false
-        end
-        
-        if blur.Size == 24 then
-            blur.Size = 0
-        else
-            blur.Size = 24
-        end
-    end  
-)
+	for _, a in ipairs(attrsToWatch) do
+		player:GetAttributeChangedSignal(a):Connect(updateAll)
+	end
+end
+
+-- Watch value changes in folders (if you use Stats/Items folders)
+local function hookFolderValues(folderName: string)
+	local folder = player:FindFirstChild(folderName)
+	if not folder then return end
+
+	local function hookChild(ch)
+		if ch:IsA("ValueBase") then
+			ch:GetPropertyChangedSignal("Value"):Connect(updateAll)
+		end
+	end
+
+	for _, ch in ipairs(folder:GetChildren()) do hookChild(ch) end
+	folder.ChildAdded:Connect(hookChild)
+end
+
+-- init
+updateAll()
+hookAttributes()
+hookFolderValues("Stats")
+hookFolderValues("Items")
+
+--========================================================
+-- END
+--========================================================
