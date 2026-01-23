@@ -1,18 +1,15 @@
---// DieverHub.lua (COMPLETE)
---// DIEVER HUB UI Library
---// Features:
---//  - Window + Tabs + Sections
---//  - Controls: Button / Toggle / Slider / Dropdown (overlay) / ListSelect (overlay)
---//  - Smooth Drag + Free Resize (bottom-right grip)
---//  - Upgraded Theme: transparency + depth + optional shadow
---//  - Popups always render ABOVE everything (no overlap issues)
+--// DieverHub.lua (COMPLETE - CLEAN)
+--// Fixes:
+--//  - Remove "Selected: ..." bottom-left text (deleted)
+--//  - Remove "white haze" (shadow OFF by default + darker scrollbars)
+--//  - Popups (Dropdown/ListSelect) always on top (Overlay)
+--//  - Added Notify/Toast system: Win:Notify(title, text, duration)
+--//  - Drag + Free Resize (bottom-right grip)
 --//
 --// Usage:
 --//   local Hub = loadstring(game:HttpGet(RAW_URL))()
---//   local Win = Hub:CreateWindow({...})
---//   local Tab = Win:Tab("Main")
---//   local Sec = Tab:Section("Demo")
---//   Sec:Button("Hi", function() print("Hi") end)
+--//   local Win = Hub:CreateWindow({Title="...", SubTitle="...", Center=true})
+--//   Win:Notify("DIEVER HUB", "UI loaded!", 2.5)
 
 local Hub = {}
 Hub.__index = Hub
@@ -84,6 +81,15 @@ local function clamp(n, a, b)
 	return math.max(a, math.min(b, n))
 end
 
+local function setScrollDark(sf)
+	-- Remove default "white" scrollbar look
+	sf.ScrollBarImageColor3 = Color3.fromRGB(70, 70, 80)
+	sf.ScrollBarImageTransparency = 0.2
+	sf.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+	sf.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+	sf.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+end
+
 --// ---------- Theme Defaults ----------
 local DefaultTheme = {
 	-- colors
@@ -101,9 +107,10 @@ local DefaultTheme = {
 	ItemA = 0.10,
 	StrokeA = 0.55,
 
-	-- depth effects
-	UseShadow = true,
-	ShadowA = 0.35,
+	-- Shadow: OFF to remove “white haze”
+	UseShadow = false,
+	ShadowA = 0.65,
+	ShadowColor = Color3.fromRGB(0, 0, 0),
 }
 
 --// ---------- Window ----------
@@ -133,19 +140,35 @@ function Hub:CreateWindow(cfg)
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	}, PlayerGui)
 
-	-- Optional shadow (behind main)
+	-- Shadow (optional, OFF by default)
 	local shadow
 	if theme.UseShadow then
 		shadow = Create("ImageLabel", {
 			Name = "Shadow",
 			BackgroundTransparency = 1,
-			Image = "rbxassetid://1316045217", -- common 9-slice shadow
+			Image = "rbxassetid://1316045217",
 			ImageTransparency = theme.ShadowA,
+			ImageColor3 = theme.ShadowColor or Color3.fromRGB(0, 0, 0),
 			ScaleType = Enum.ScaleType.Slice,
 			SliceCenter = Rect.new(10, 10, 118, 118),
 			ZIndex = 0,
 		}, gui)
 	end
+
+	-- Notify stack (top-right)
+	local notifyStack = Create("Frame", {
+		Name = "NotifyStack",
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -16, 0, 16),
+		Size = UDim2.new(0, 320, 1, -32),
+		BackgroundTransparency = 1,
+		ZIndex = 9999,
+	}, gui)
+	local notifyLayout = Create("UIListLayout", {
+		SortOrder = Enum.SortOrder.LayoutOrder,
+		Padding = UDim.new(0, 8),
+		HorizontalAlignment = Enum.HorizontalAlignment.Right,
+	}, notifyStack)
 
 	-- Mini logo toggle button
 	local logoBtn = Create("ImageButton", {
@@ -188,7 +211,6 @@ function Hub:CreateWindow(cfg)
 	Stroke(main, 1, 0.35)
 	main.ClipsDescendants = false
 
-	-- Center option
 	if cfg.Center == true then
 		main.AnchorPoint = Vector2.new(0.5, 0.5)
 		main.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -197,13 +219,9 @@ function Hub:CreateWindow(cfg)
 	-- Constraints
 	local minS = cfg.MinSize or Vector2.new(360, 260)
 	local maxS = cfg.MaxSize or Vector2.new(1400, 900)
+	Create("UISizeConstraint", { MinSize = minS, MaxSize = maxS }, main)
 
-	Create("UISizeConstraint", {
-		MinSize = minS,
-		MaxSize = maxS,
-	}, main)
-
-	-- Auto scale to fit small screens
+	-- Auto scale (small screens)
 	local uiScale = Create("UIScale", { Scale = 1 }, main)
 	local lastVP = Vector2.new(0, 0)
 	local function updateScale()
@@ -223,7 +241,7 @@ function Hub:CreateWindow(cfg)
 	updateScale()
 	RunService.RenderStepped:Connect(updateScale)
 
-	-- Overlay layer (popups render here always on top)
+	-- Overlay layer for popups (always on top)
 	local overlay = Create("Frame", {
 		Name = "Overlay",
 		Size = UDim2.new(1, 0, 1, 0),
@@ -324,7 +342,7 @@ function Hub:CreateWindow(cfg)
 
 	local tabScroll = Create("ScrollingFrame", {
 		Name = "TabScroll",
-		Size = UDim2.new(1, 0, 1, -50),
+		Size = UDim2.new(1, 0, 1, -30),
 		Position = UDim2.new(0, 0, 0, 30),
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
@@ -332,21 +350,9 @@ function Hub:CreateWindow(cfg)
 		ScrollBarThickness = 6,
 		ZIndex = 7
 	}, listBox)
+	setScrollDark(tabScroll)
 	local tabLayout = ListLayout(tabScroll, 8)
 	AutoCanvas(tabScroll, tabLayout, 6)
-
-	local selectedLabel = Create("TextLabel", {
-		Name = "SelectedLabel",
-		Size = UDim2.new(1, 0, 0, 18),
-		Position = UDim2.new(0, 0, 1, -18),
-		BackgroundTransparency = 1,
-		Text = cfg.SelectedText or "Selected: (none)",
-		TextXAlignment = Enum.TextXAlignment.Left,
-		Font = Enum.Font.Gotham,
-		TextSize = 12,
-		TextColor3 = Color3.fromRGB(200, 200, 200),
-		ZIndex = 7
-	}, listBox)
 
 	-- Right: Content scroll
 	local contentFrame = Create("Frame", {
@@ -366,10 +372,11 @@ function Hub:CreateWindow(cfg)
 		ScrollBarThickness = 6,
 		ZIndex = 6
 	}, contentFrame)
+	setScrollDark(contentScroll)
 	local contentLayout = ListLayout(contentScroll, 10)
 	AutoCanvas(contentScroll, contentLayout, 10)
 
-	-- Sync shadow to main
+	-- Sync shadow to main (only if enabled)
 	local function syncShadow()
 		if not shadow then return end
 		shadow.Position = UDim2.new(main.Position.X.Scale, main.Position.X.Offset - 18, main.Position.Y.Scale, main.Position.Y.Offset - 18)
@@ -420,14 +427,14 @@ function Hub:CreateWindow(cfg)
 		end)
 	end
 
-	-- Resize grip (smooth/free resize)
+	-- Resize grip
 	do
 		local grip = Create("Frame", {
 			Name = "ResizeGrip",
 			Size = UDim2.fromOffset(22, 22),
 			Position = UDim2.new(1, -26, 1, -26),
 			BackgroundColor3 = Color3.fromRGB(45, 45, 52),
-			BackgroundTransparency = 0.08,
+			BackgroundTransparency = 0.15,
 			BorderSizePixel = 0,
 			ZIndex = 2000,
 		}, main)
@@ -475,7 +482,6 @@ function Hub:CreateWindow(cfg)
 
 			local newX = clamp(startSizePx.X + delta.X, minS.X, maxS.X)
 			local newY = clamp(startSizePx.Y + delta.Y, minS.Y, maxS.Y)
-
 			main.Size = UDim2.fromOffset(newX, newY)
 		end)
 	end
@@ -503,12 +509,78 @@ function Hub:CreateWindow(cfg)
 		__theme = theme,
 		__tabScroll = tabScroll,
 		__contentScroll = contentScroll,
-		__selectedLabel = selectedLabel,
 		__tabs = {},
 		__tabButtons = {},
 		__activeTab = nil,
 		__activePopupCloser = nil,
+		__notifyStack = notifyStack,
 	}, Window)
+
+	-- Notify / Toast
+	function self:Notify(title, text, duration)
+		duration = tonumber(duration) or 2.5
+		local t = self.__theme
+
+		local card = Create("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			BackgroundColor3 = t.Panel,
+			BackgroundTransparency = t.PanelA,
+			ZIndex = 9999,
+		}, self.__notifyStack)
+		Corner(card, 12)
+		Stroke(card, 1, t.StrokeA)
+		Pad(card, 12, 12, 10, 10)
+
+		local head = Create("TextLabel", {
+			Size = UDim2.new(1, 0, 0, 18),
+			BackgroundTransparency = 1,
+			Text = tostring(title or "Notice"),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Font = Enum.Font.GothamBold,
+			TextSize = 13,
+			TextColor3 = t.Text,
+			ZIndex = 10000
+		}, card)
+
+		local bodyText = Create("TextLabel", {
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			BackgroundTransparency = 1,
+			Text = tostring(text or ""),
+			TextWrapped = true,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Font = Enum.Font.Gotham,
+			TextSize = 12,
+			TextColor3 = t.SubText,
+			ZIndex = 10000
+		}, card)
+
+		local layout = Create("UIListLayout", {
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			Padding = UDim.new(0, 6),
+		}, card)
+
+		card.BackgroundTransparency = 1
+		head.TextTransparency = 1
+		bodyText.TextTransparency = 1
+
+		local infoIn = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		Tween(card, infoIn, { BackgroundTransparency = t.PanelA })
+		Tween(head, infoIn, { TextTransparency = 0 })
+		Tween(bodyText, infoIn, { TextTransparency = 0 })
+
+		task.delay(duration, function()
+			if not card or not card.Parent then return end
+			local infoOut = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+			Tween(card, infoOut, { BackgroundTransparency = 1 })
+			Tween(head, infoOut, { TextTransparency = 1 })
+			Tween(bodyText, infoOut, { TextTransparency = 1 })
+			task.delay(0.2, function()
+				if card then card:Destroy() end
+			end)
+		end)
+	end
 
 	return self
 end
@@ -619,7 +691,6 @@ end
 function Window:SelectTab(name)
 	if self.__activeTab == name then return end
 
-	-- close any popup when switching tabs
 	if self.__activePopupCloser then
 		pcall(self.__activePopupCloser)
 		self.__activePopupCloser = nil
@@ -638,7 +709,6 @@ function Window:SelectTab(name)
 	self.__activeTab = name
 	tabObj.__page.Visible = true
 	self.__tabButtons[name].BackgroundColor3 = self.__theme.Accent
-	self.__selectedLabel.Text = "Selected: " .. name
 end
 
 function Tab:Section(title)
@@ -717,7 +787,6 @@ function Section:Toggle(text, defaultOn, callback)
 		Size = UDim2.new(0, 18, 0, 18),
 		Position = UDim2.new(0, 2, 0.5, -9),
 		BackgroundColor3 = Color3.fromRGB(240, 240, 240),
-		BackgroundTransparency = 0,
 	}, toggle)
 	Corner(knob, 999)
 
@@ -777,7 +846,6 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 	local fill = Create("Frame", {
 		Size = UDim2.new(0, 0, 1, 0),
 		BackgroundColor3 = theme.Accent,
-		BackgroundTransparency = 0,
 	}, bg)
 	Corner(fill, 8)
 
@@ -830,7 +898,7 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 	return { Set = function(v) setValue(v, false) end, Get = function() return value end, Root = frame }
 end
 
--- Popup builder (used by Dropdown + ListSelect), always on overlay and topmost
+-- Popup builder (Dropdown/ListSelect)
 local function BuildOverlayPopup(win, anchorBtn, buildItemsFn, maxH)
 	local theme = win.__theme
 	local overlay = win.__overlay
@@ -856,6 +924,7 @@ local function BuildOverlayPopup(win, anchorBtn, buildItemsFn, maxH)
 		CanvasSize = UDim2.new(0, 0, 0, 0),
 		ZIndex = 5001,
 	}, panel)
+	setScrollDark(sf)
 
 	local lo = ListLayout(sf, 6)
 	AutoCanvas(sf, lo, 8)
@@ -896,11 +965,9 @@ local function BuildOverlayPopup(win, anchorBtn, buildItemsFn, maxH)
 		panel.Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, 0)
 		Tween(panel, info, { Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, h) })
 
-		-- follow drag/resize while open
 		table.insert(conns, main:GetPropertyChangedSignal("Position"):Connect(place))
 		table.insert(conns, main:GetPropertyChangedSignal("Size"):Connect(place))
 
-		-- click outside closes
 		table.insert(conns, UIS.InputBegan:Connect(function(input, gp)
 			if gp then return end
 			if not open then return end
@@ -918,7 +985,6 @@ local function BuildOverlayPopup(win, anchorBtn, buildItemsFn, maxH)
 		end))
 	end
 
-	-- build list items
 	buildItemsFn(sf, lo)
 
 	return {
@@ -928,7 +994,6 @@ local function BuildOverlayPopup(win, anchorBtn, buildItemsFn, maxH)
 		IsOpen = function() return open end,
 		Open = openNow,
 		Close = closeNow,
-		Place = place,
 	}
 end
 
@@ -1028,7 +1093,6 @@ function Section:Dropdown(text, options, defaultValue, callback)
 	return { Set = set, Get = function() return value end, Root = frame }
 end
 
--- ✅ ListSelect overlay: always top, never covered
 function Section:List(text, options, defaultValue, callback)
 	local win = self.__tab.__win
 	local theme = win.__theme
@@ -1130,18 +1194,7 @@ function Section:List(text, options, defaultValue, callback)
 	end)
 
 	render()
-
-	return {
-		Set = set,
-		Get = function() return selected end,
-		Open = function()
-			setActivePopup(win, popupCloser)
-			icon.Text = "▾"
-			popup.Open()
-		end,
-		Close = function() popupCloser() end,
-		Root = frame
-	}
+	return { Set = set, Get = function() return selected end, Root = frame }
 end
 
 Section.ListSelect = Section.List
