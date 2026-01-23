@@ -13,7 +13,11 @@ local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
+-- wait LocalPlayer safely
 local LP = Players.LocalPlayer
+if not LP then
+	LP = Players.PlayerAdded:Wait()
+end
 local PlayerGui = LP:WaitForChild("PlayerGui")
 
 --// ---------- Helpers ----------
@@ -307,7 +311,6 @@ function Hub:CreateWindow(cfg)
 				dragging = true
 				dragStart = input.Position
 				startPos = main.Position
-
 				input.Changed:Connect(function()
 					if input.UserInputState == Enum.UserInputState.End then
 						dragging = false
@@ -360,7 +363,6 @@ function Hub:CreateWindow(cfg)
 			resizing = true
 			startMousePos = Vector2.new(input.Position.X, input.Position.Y)
 			startSizePx = Vector2.new(main.AbsoluteSize.X, main.AbsoluteSize.Y)
-
 			local conn; conn = input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
 					resizing = false
@@ -379,7 +381,6 @@ function Hub:CreateWindow(cfg)
 			if not resizing then return end
 			if input.UserInputType ~= Enum.UserInputType.MouseMovement and input.UserInputType ~= Enum.UserInputType.Touch then return end
 
-			-- NEW: true free resize = startSize + delta (no incremental jump)
 			local now = Vector2.new(input.Position.X, input.Position.Y)
 			local delta = now - startMousePos
 
@@ -835,7 +836,7 @@ function Section:Dropdown(text, options, defaultValue, callback)
 	return { Set = set, Get = function() return value end, Root = frame }
 end
 
--- ✅ List chọn THU GỌN (click mở list, chọn xong tự đóng)
+-- ✅ ListSelect: click mở list, chọn xong tự thu gọn
 function Section:List(text, options, defaultValue, callback)
 	local theme = self.__tab.__win.__theme
 	options = options or {}
@@ -846,7 +847,6 @@ function Section:List(text, options, defaultValue, callback)
 		BackgroundTransparency = 1,
 	}, self.__inner)
 
-	-- header button
 	local header = Create("TextButton", {
 		Size = UDim2.new(1, 0, 0, 34),
 		BackgroundColor3 = theme.Item,
@@ -880,7 +880,6 @@ function Section:List(text, options, defaultValue, callback)
 	header.MouseEnter:Connect(function() header.BackgroundColor3 = theme.ItemHover end)
 	header.MouseLeave:Connect(function() header.BackgroundColor3 = theme.Item end)
 
-	-- list panel
 	local panel = Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 0),
 		Position = UDim2.new(0, 0, 0, 38),
@@ -904,7 +903,7 @@ function Section:List(text, options, defaultValue, callback)
 
 	local open = false
 	local info = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	local maxH = 180 -- bạn đổi nếu muốn
+	local maxH = 180
 
 	local function renderSelected()
 		label.Text = (text or "List") .. ": " .. tostring(selected)
@@ -955,14 +954,13 @@ function Section:List(text, options, defaultValue, callback)
 		b.MouseLeave:Connect(function() b.BackgroundColor3 = theme.Item end)
 		b.MouseButton1Click:Connect(function()
 			set(val)
-			setOpen(false) -- chọn xong tự thu gọn
+			setOpen(false)
 		end)
 	end
 
 	renderSelected()
 
-	-- Important: increase control height when open (so it won't overlap next controls)
-	-- This makes it behave like a real collapsible list.
+	-- grow/shrink control height when open so it won't overlap next controls
 	local function syncFrameHeight()
 		if open then
 			frame.Size = UDim2.new(1, 0, 0, 34 + panel.AbsoluteSize.Y + 6)
@@ -970,8 +968,6 @@ function Section:List(text, options, defaultValue, callback)
 			frame.Size = UDim2.new(1, 0, 0, 34)
 		end
 	end
-
-	-- watch panel size to adjust frame height
 	panel:GetPropertyChangedSignal("AbsoluteSize"):Connect(syncFrameHeight)
 	syncFrameHeight()
 
@@ -984,7 +980,6 @@ function Section:List(text, options, defaultValue, callback)
 	}
 end
 
--- alias: ListSelect (nếu bạn muốn gọi tên rõ ràng)
 Section.ListSelect = Section.List
 
 function Window:Destroy()
@@ -994,7 +989,5 @@ end
 Hub.Window = Window
 setmetatable(Hub, Hub)
 
--- ✅ Return safe for: loadstring(game:HttpGet(url))()
-return function()
-	return Hub
-end
+-- ✅ QUAN TRỌNG: chunk phải return Hub (không return function)
+return Hub
