@@ -1,9 +1,18 @@
---// DieverHub.lua (FULL SOURCE - FIXED)
---// Tabs + Sections + Button/Toggle/Slider/Dropdown/ListSelect (collapsible)
---// Drag (Mouse+Touch), Center, Auto scale, Resize grip bottom-right (smooth/free)
+--// DieverHub.lua (COMPLETE)
+--// DIEVER HUB UI Library
+--// Features:
+--//  - Window + Tabs + Sections
+--//  - Controls: Button / Toggle / Slider / Dropdown (overlay) / ListSelect (overlay)
+--//  - Smooth Drag + Free Resize (bottom-right grip)
+--//  - Upgraded Theme: transparency + depth + optional shadow
+--//  - Popups always render ABOVE everything (no overlap issues)
+--//
 --// Usage:
 --//   local Hub = loadstring(game:HttpGet(RAW_URL))()
 --//   local Win = Hub:CreateWindow({...})
+--//   local Tab = Win:Tab("Main")
+--//   local Sec = Tab:Section("Demo")
+--//   Sec:Button("Hi", function() print("Hi") end)
 
 local Hub = {}
 Hub.__index = Hub
@@ -13,11 +22,7 @@ local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
--- wait LocalPlayer safely
-local LP = Players.LocalPlayer
-if not LP then
-	LP = Players.PlayerAdded:Wait()
-end
+local LP = Players.LocalPlayer or Players.PlayerAdded:Wait()
 local PlayerGui = LP:WaitForChild("PlayerGui")
 
 --// ---------- Helpers ----------
@@ -37,7 +42,7 @@ end
 local function Stroke(parent, thickness, transparency)
 	Create("UIStroke", {
 		Thickness = thickness or 1,
-		Transparency = transparency or 0.5,
+		Transparency = transparency or 0.55,
 		ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	}, parent)
 end
@@ -75,21 +80,48 @@ local function AutoCanvas(sf, layout, extra)
 	upd()
 end
 
+local function clamp(n, a, b)
+	return math.max(a, math.min(b, n))
+end
+
 --// ---------- Theme Defaults ----------
 local DefaultTheme = {
-	Bg = Color3.fromRGB(20, 20, 24),
-	Panel = Color3.fromRGB(24, 24, 28),
-	Item = Color3.fromRGB(32, 32, 38),
-	ItemHover = Color3.fromRGB(38, 38, 45),
-	Text = Color3.fromRGB(240, 240, 240),
-	SubText = Color3.fromRGB(180, 180, 180),
-	Stroke = 0.60,
+	-- colors
+	Bg = Color3.fromRGB(18, 18, 22),
+	Panel = Color3.fromRGB(24, 24, 30),
+	Item = Color3.fromRGB(34, 34, 42),
+	ItemHover = Color3.fromRGB(42, 42, 52),
+	Text = Color3.fromRGB(245, 245, 245),
+	SubText = Color3.fromRGB(190, 190, 190),
 	Accent = Color3.fromRGB(80, 160, 255),
+
+	-- transparency (depth)
+	BgA = 0.10,
+	PanelA = 0.12,
+	ItemA = 0.10,
+	StrokeA = 0.55,
+
+	-- depth effects
+	UseShadow = true,
+	ShadowA = 0.35,
 }
 
 --// ---------- Window ----------
 local Window = {}
 Window.__index = Window
+
+local function setActivePopup(win, closerFn)
+	if win.__activePopupCloser and win.__activePopupCloser ~= closerFn then
+		pcall(win.__activePopupCloser)
+	end
+	win.__activePopupCloser = closerFn
+end
+
+local function clearActivePopup(win, closerFn)
+	if win.__activePopupCloser == closerFn then
+		win.__activePopupCloser = nil
+	end
+end
 
 function Hub:CreateWindow(cfg)
 	cfg = cfg or {}
@@ -101,14 +133,30 @@ function Hub:CreateWindow(cfg)
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	}, PlayerGui)
 
+	-- Optional shadow (behind main)
+	local shadow
+	if theme.UseShadow then
+		shadow = Create("ImageLabel", {
+			Name = "Shadow",
+			BackgroundTransparency = 1,
+			Image = "rbxassetid://1316045217", -- common 9-slice shadow
+			ImageTransparency = theme.ShadowA,
+			ScaleType = Enum.ScaleType.Slice,
+			SliceCenter = Rect.new(10, 10, 118, 118),
+			ZIndex = 0,
+		}, gui)
+	end
+
 	-- Mini logo toggle button
 	local logoBtn = Create("ImageButton", {
 		Name = "LogoButton",
 		Size = cfg.LogoButtonSize or UDim2.fromOffset(56, 56),
 		Position = cfg.LogoButtonPos or UDim2.new(0, 16, 0, 16),
 		BackgroundColor3 = theme.Panel,
+		BackgroundTransparency = theme.PanelA,
 		AutoButtonColor = true,
 		Image = cfg.Logo or "rbxassetid://0",
+		ZIndex = 2000
 	}, gui)
 	Corner(logoBtn, 14)
 	Stroke(logoBtn, 1, 0.35)
@@ -121,7 +169,8 @@ function Hub:CreateWindow(cfg)
 		Text = cfg.MiniText or "DIEVER HUB",
 		TextSize = 12,
 		Font = Enum.Font.GothamSemibold,
-		TextColor3 = theme.Text
+		TextColor3 = theme.Text,
+		ZIndex = 2001
 	}, logoBtn)
 
 	-- Main window
@@ -131,10 +180,13 @@ function Hub:CreateWindow(cfg)
 		AnchorPoint = Vector2.new(0, 0),
 		Position = cfg.Position or UDim2.new(0, 16, 0, 84),
 		BackgroundColor3 = theme.Bg,
+		BackgroundTransparency = theme.BgA,
 		Visible = (cfg.Visible ~= false),
+		ZIndex = 5
 	}, gui)
 	Corner(main, 14)
 	Stroke(main, 1, 0.35)
+	main.ClipsDescendants = false
 
 	-- Center option
 	if cfg.Center == true then
@@ -151,7 +203,7 @@ function Hub:CreateWindow(cfg)
 		MaxSize = maxS,
 	}, main)
 
-	-- Auto scale to fit small screens (only when viewport changes)
+	-- Auto scale to fit small screens
 	local uiScale = Create("UIScale", { Scale = 1 }, main)
 	local lastVP = Vector2.new(0, 0)
 	local function updateScale()
@@ -165,20 +217,31 @@ function Hub:CreateWindow(cfg)
 		local sx = vp.X / math.max(w, 1)
 		local sy = vp.Y / math.max(h, 1)
 		local s = math.min(1, sx, sy)
-		s = math.clamp(s * 0.95, 0.6, 1)
+		s = clamp(s * 0.95, 0.6, 1)
 		uiScale.Scale = s
 	end
 	updateScale()
 	RunService.RenderStepped:Connect(updateScale)
+
+	-- Overlay layer (popups render here always on top)
+	local overlay = Create("Frame", {
+		Name = "Overlay",
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+		ClipsDescendants = false,
+		ZIndex = 999
+	}, main)
 
 	-- Top bar
 	local top = Create("Frame", {
 		Name = "TopBar",
 		Size = UDim2.new(1, 0, 0, 44),
 		BackgroundColor3 = theme.Panel,
+		BackgroundTransparency = theme.PanelA,
+		ZIndex = 6
 	}, main)
 	Corner(top, 14)
-	Stroke(top, 1, 0.55)
+	Stroke(top, 1, theme.StrokeA)
 
 	Create("TextLabel", {
 		Name = "Title",
@@ -189,7 +252,8 @@ function Hub:CreateWindow(cfg)
 		TextXAlignment = Enum.TextXAlignment.Left,
 		Font = Enum.Font.GothamBold,
 		TextSize = 16,
-		TextColor3 = theme.Text
+		TextColor3 = theme.Text,
+		ZIndex = 7
 	}, top)
 
 	local close = Create("TextButton", {
@@ -197,11 +261,13 @@ function Hub:CreateWindow(cfg)
 		Size = UDim2.fromOffset(36, 28),
 		Position = UDim2.new(1, -46, 0.5, -14),
 		BackgroundColor3 = Color3.fromRGB(40, 40, 46),
+		BackgroundTransparency = 0.05,
 		Text = "X",
 		Font = Enum.Font.GothamBold,
 		TextSize = 14,
 		TextColor3 = theme.Text,
-		AutoButtonColor = true
+		AutoButtonColor = true,
+		ZIndex = 7
 	}, top)
 	Corner(close, 10)
 
@@ -210,7 +276,8 @@ function Hub:CreateWindow(cfg)
 		Name = "Body",
 		Size = UDim2.new(1, 0, 1, -44),
 		Position = UDim2.new(0, 0, 0, 44),
-		BackgroundTransparency = 1
+		BackgroundTransparency = 1,
+		ZIndex = 6
 	}, main)
 
 	local leftWidth = cfg.LeftWidth or 230
@@ -218,14 +285,16 @@ function Hub:CreateWindow(cfg)
 	local left = Create("Frame", {
 		Name = "Left",
 		Size = UDim2.new(0, leftWidth, 1, 0),
-		BackgroundTransparency = 1
+		BackgroundTransparency = 1,
+		ZIndex = 6
 	}, body)
 
 	local right = Create("Frame", {
 		Name = "Right",
 		Size = UDim2.new(1, -leftWidth, 1, 0),
 		Position = UDim2.new(0, leftWidth, 0, 0),
-		BackgroundTransparency = 1
+		BackgroundTransparency = 1,
+		ZIndex = 6
 	}, body)
 
 	-- Left: Tabs list
@@ -233,10 +302,12 @@ function Hub:CreateWindow(cfg)
 		Name = "ListBox",
 		Size = UDim2.new(1, -16, 1, -16),
 		Position = UDim2.new(0, 8, 0, 8),
-		BackgroundColor3 = theme.Panel
+		BackgroundColor3 = theme.Panel,
+		BackgroundTransparency = theme.PanelA,
+		ZIndex = 6
 	}, left)
 	Corner(listBox, 12)
-	Stroke(listBox, 1, theme.Stroke)
+	Stroke(listBox, 1, theme.StrokeA)
 	Pad(listBox, 10, 10, 10, 10)
 
 	Create("TextLabel", {
@@ -247,7 +318,8 @@ function Hub:CreateWindow(cfg)
 		TextXAlignment = Enum.TextXAlignment.Left,
 		Font = Enum.Font.GothamBold,
 		TextSize = 14,
-		TextColor3 = theme.Text
+		TextColor3 = theme.Text,
+		ZIndex = 7
 	}, listBox)
 
 	local tabScroll = Create("ScrollingFrame", {
@@ -257,7 +329,8 @@ function Hub:CreateWindow(cfg)
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
 		CanvasSize = UDim2.new(0, 0, 0, 0),
-		ScrollBarThickness = 6
+		ScrollBarThickness = 6,
+		ZIndex = 7
 	}, listBox)
 	local tabLayout = ListLayout(tabScroll, 8)
 	AutoCanvas(tabScroll, tabLayout, 6)
@@ -271,7 +344,8 @@ function Hub:CreateWindow(cfg)
 		TextXAlignment = Enum.TextXAlignment.Left,
 		Font = Enum.Font.Gotham,
 		TextSize = 12,
-		TextColor3 = Color3.fromRGB(200, 200, 200)
+		TextColor3 = Color3.fromRGB(200, 200, 200),
+		ZIndex = 7
 	}, listBox)
 
 	-- Right: Content scroll
@@ -279,7 +353,8 @@ function Hub:CreateWindow(cfg)
 		Name = "ContentFrame",
 		Size = UDim2.new(1, -16, 1, -16),
 		Position = UDim2.new(0, 8, 0, 8),
-		BackgroundTransparency = 1
+		BackgroundTransparency = 1,
+		ZIndex = 6
 	}, right)
 
 	local contentScroll = Create("ScrollingFrame", {
@@ -288,10 +363,23 @@ function Hub:CreateWindow(cfg)
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
 		CanvasSize = UDim2.new(0, 0, 0, 0),
-		ScrollBarThickness = 6
+		ScrollBarThickness = 6,
+		ZIndex = 6
 	}, contentFrame)
 	local contentLayout = ListLayout(contentScroll, 10)
 	AutoCanvas(contentScroll, contentLayout, 10)
+
+	-- Sync shadow to main
+	local function syncShadow()
+		if not shadow then return end
+		shadow.Position = UDim2.new(main.Position.X.Scale, main.Position.X.Offset - 18, main.Position.Y.Scale, main.Position.Y.Offset - 18)
+		shadow.Size = UDim2.new(0, main.AbsoluteSize.X + 36, 0, main.AbsoluteSize.Y + 36)
+	end
+	if shadow then
+		task.defer(syncShadow)
+		main:GetPropertyChangedSignal("Position"):Connect(syncShadow)
+		main:GetPropertyChangedSignal("Size"):Connect(syncShadow)
+	end
 
 	-- Drag (Mouse + Touch)
 	do
@@ -339,11 +427,12 @@ function Hub:CreateWindow(cfg)
 			Size = UDim2.fromOffset(22, 22),
 			Position = UDim2.new(1, -26, 1, -26),
 			BackgroundColor3 = Color3.fromRGB(45, 45, 52),
+			BackgroundTransparency = 0.08,
 			BorderSizePixel = 0,
-			ZIndex = 50,
+			ZIndex = 2000,
 		}, main)
 		Corner(grip, 6)
-		Stroke(grip, 1, 0.65)
+		Stroke(grip, 1, theme.StrokeA)
 
 		Create("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
@@ -352,7 +441,7 @@ function Hub:CreateWindow(cfg)
 			Font = Enum.Font.GothamBold,
 			TextSize = 14,
 			TextColor3 = theme.SubText,
-			ZIndex = 51,
+			ZIndex = 2001,
 		}, grip)
 
 		local resizing = false
@@ -384,15 +473,18 @@ function Hub:CreateWindow(cfg)
 			local now = Vector2.new(input.Position.X, input.Position.Y)
 			local delta = now - startMousePos
 
-			local newX = math.clamp(startSizePx.X + delta.X, minS.X, maxS.X)
-			local newY = math.clamp(startSizePx.Y + delta.Y, minS.Y, maxS.Y)
+			local newX = clamp(startSizePx.X + delta.X, minS.X, maxS.X)
+			local newY = clamp(startSizePx.Y + delta.Y, minS.Y, maxS.Y)
 
 			main.Size = UDim2.fromOffset(newX, newY)
 		end)
 	end
 
 	-- show/hide
-	local function setVisible(v) main.Visible = v end
+	local function setVisible(v)
+		main.Visible = v
+		if shadow then shadow.Visible = v end
+	end
 	logoBtn.MouseButton1Click:Connect(function() setVisible(not main.Visible) end)
 	close.MouseButton1Click:Connect(function() setVisible(false) end)
 
@@ -407,6 +499,7 @@ function Hub:CreateWindow(cfg)
 	local self = setmetatable({
 		__gui = gui,
 		__main = main,
+		__overlay = overlay,
 		__theme = theme,
 		__tabScroll = tabScroll,
 		__contentScroll = contentScroll,
@@ -414,6 +507,7 @@ function Hub:CreateWindow(cfg)
 		__tabs = {},
 		__tabButtons = {},
 		__activeTab = nil,
+		__activePopupCloser = nil,
 	}, Window)
 
 	return self
@@ -424,10 +518,11 @@ local function Card(parent, theme, title)
 	local card = Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 0),
 		BackgroundColor3 = theme.Panel,
+		BackgroundTransparency = theme.PanelA,
 		AutomaticSize = Enum.AutomaticSize.Y,
 	}, parent)
 	Corner(card, 12)
-	Stroke(card, 1, 0.65)
+	Stroke(card, 1, theme.StrokeA)
 	Pad(card, 12, 12, 10, 10)
 
 	if title then
@@ -459,6 +554,7 @@ local function MakeTabButton(win, name)
 		Name = "TabButton",
 		Size = UDim2.new(1, 0, 0, 34),
 		BackgroundColor3 = theme.Item,
+		BackgroundTransparency = theme.ItemA,
 		Text = name,
 		Font = Enum.Font.GothamSemibold,
 		TextSize = 13,
@@ -466,7 +562,7 @@ local function MakeTabButton(win, name)
 		AutoButtonColor = false,
 	}, win.__tabScroll)
 	Corner(btn, 10)
-	Stroke(btn, 1, 0.7)
+	Stroke(btn, 1, theme.StrokeA)
 
 	btn.MouseEnter:Connect(function()
 		if win.__activeTab ~= name then btn.BackgroundColor3 = theme.ItemHover end
@@ -523,6 +619,12 @@ end
 function Window:SelectTab(name)
 	if self.__activeTab == name then return end
 
+	-- close any popup when switching tabs
+	if self.__activePopupCloser then
+		pcall(self.__activePopupCloser)
+		self.__activePopupCloser = nil
+	end
+
 	for _, tabObj in pairs(self.__tabs) do
 		tabObj.__page.Visible = false
 	end
@@ -541,10 +643,9 @@ end
 
 function Tab:Section(title)
 	local theme = self.__win.__theme
-	local card, inner = Card(self.__page, theme, title or "Section")
+	local _, inner = Card(self.__page, theme, title or "Section")
 	return setmetatable({
 		__tab = self,
-		__card = card,
 		__inner = inner,
 	}, Section)
 end
@@ -568,6 +669,7 @@ function Section:Button(text, callback)
 	local btn = Create("TextButton", {
 		Size = UDim2.new(1, 0, 0, 34),
 		BackgroundColor3 = theme.Item,
+		BackgroundTransparency = theme.ItemA,
 		Text = text or "Button",
 		Font = Enum.Font.GothamSemibold,
 		TextSize = 13,
@@ -575,7 +677,7 @@ function Section:Button(text, callback)
 		AutoButtonColor = false,
 	}, self.__inner)
 	Corner(btn, 10)
-	Stroke(btn, 1, 0.7)
+	Stroke(btn, 1, theme.StrokeA)
 
 	btn.MouseEnter:Connect(function() btn.BackgroundColor3 = theme.ItemHover end)
 	btn.MouseLeave:Connect(function() btn.BackgroundColor3 = theme.Item end)
@@ -606,14 +708,16 @@ function Section:Toggle(text, defaultOn, callback)
 		Text = "",
 		AutoButtonColor = false,
 		BackgroundColor3 = Color3.fromRGB(60, 60, 60),
+		BackgroundTransparency = 0.05,
 	}, frame)
 	Corner(toggle, 999)
-	Stroke(toggle, 1, 0.75)
+	Stroke(toggle, 1, theme.StrokeA)
 
 	local knob = Create("Frame", {
 		Size = UDim2.new(0, 18, 0, 18),
 		Position = UDim2.new(0, 2, 0.5, -9),
 		BackgroundColor3 = Color3.fromRGB(240, 240, 240),
+		BackgroundTransparency = 0,
 	}, toggle)
 	Corner(knob, 999)
 
@@ -647,7 +751,7 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 	minValue = tonumber(minValue) or 0
 	maxValue = tonumber(maxValue) or 100
 	defaultValue = tonumber(defaultValue) or minValue
-	defaultValue = math.clamp(defaultValue, minValue, maxValue)
+	defaultValue = clamp(defaultValue, minValue, maxValue)
 
 	local frame = Create("Frame", { Size = UDim2.new(1, 0, 0, 70), BackgroundTransparency = 1 }, self.__inner)
 
@@ -665,11 +769,16 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 		Size = UDim2.new(1, 0, 0, 30),
 		Position = UDim2.new(0, 0, 0, 28),
 		BackgroundColor3 = Color3.fromRGB(40, 40, 46),
+		BackgroundTransparency = 0.05,
 	}, frame)
 	Corner(bg, 8)
-	Stroke(bg, 1, 0.7)
+	Stroke(bg, 1, theme.StrokeA)
 
-	local fill = Create("Frame", { Size = UDim2.new(0, 0, 1, 0), BackgroundColor3 = theme.Accent }, bg)
+	local fill = Create("Frame", {
+		Size = UDim2.new(0, 0, 1, 0),
+		BackgroundColor3 = theme.Accent,
+		BackgroundTransparency = 0,
+	}, bg)
 	Corner(fill, 8)
 
 	local valLabel = Create("TextLabel", {
@@ -686,7 +795,7 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 	local dragging = false
 
 	local function setValue(v, fire)
-		value = math.clamp(math.floor(v + 0.5), minValue, maxValue)
+		value = clamp(math.floor(v + 0.5), minValue, maxValue)
 		local alpha = (value - minValue) / math.max((maxValue - minValue), 1)
 		fill.Size = UDim2.new(alpha, 0, 1, 0)
 		valLabel.Text = tostring(value)
@@ -695,7 +804,7 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 	end
 
 	local function updateFromX(x)
-		local rel = math.clamp((x - bg.AbsolutePosition.X) / bg.AbsoluteSize.X, 0, 1)
+		local rel = clamp((x - bg.AbsolutePosition.X) / bg.AbsoluteSize.X, 0, 1)
 		local v = minValue + rel * (maxValue - minValue)
 		setValue(v, true)
 	end
@@ -721,8 +830,111 @@ function Section:Slider(text, minValue, maxValue, defaultValue, callback)
 	return { Set = function(v) setValue(v, false) end, Get = function() return value end, Root = frame }
 end
 
+-- Popup builder (used by Dropdown + ListSelect), always on overlay and topmost
+local function BuildOverlayPopup(win, anchorBtn, buildItemsFn, maxH)
+	local theme = win.__theme
+	local overlay = win.__overlay
+	local main = win.__main
+
+	local panel = Create("Frame", {
+		Size = UDim2.fromOffset(0, 0),
+		BackgroundColor3 = theme.Panel,
+		BackgroundTransparency = theme.PanelA,
+		Visible = false,
+		ClipsDescendants = true,
+		ZIndex = 5000,
+	}, overlay)
+	Corner(panel, 10)
+	Stroke(panel, 1, theme.StrokeA)
+	Pad(panel, 8, 8, 8, 8)
+
+	local sf = Create("ScrollingFrame", {
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		ScrollBarThickness = 6,
+		CanvasSize = UDim2.new(0, 0, 0, 0),
+		ZIndex = 5001,
+	}, panel)
+
+	local lo = ListLayout(sf, 6)
+	AutoCanvas(sf, lo, 8)
+
+	local info = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local open = false
+	local conns = {}
+
+	local function place()
+		local mainPos = main.AbsolutePosition
+		local hp = anchorBtn.AbsolutePosition
+		local hs = anchorBtn.AbsoluteSize
+
+		local x = hp.X - mainPos.X
+		local y = (hp.Y - mainPos.Y) + hs.Y + 6
+		local w = anchorBtn.AbsoluteSize.X
+
+		panel.Position = UDim2.fromOffset(x, y)
+		panel.Size = UDim2.fromOffset(w, panel.AbsoluteSize.Y)
+	end
+
+	local function closeNow()
+		open = false
+		Tween(panel, info, { Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, 0) })
+		task.delay(0.16, function()
+			if not open then panel.Visible = false end
+		end)
+		for _, c in ipairs(conns) do pcall(function() c:Disconnect() end) end
+		table.clear(conns)
+	end
+
+	local function openNow()
+		open = true
+		panel.Visible = true
+		place()
+
+		local h = clamp(lo.AbsoluteContentSize.Y + 16, 40, maxH or 200)
+		panel.Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, 0)
+		Tween(panel, info, { Size = UDim2.fromOffset(anchorBtn.AbsoluteSize.X, h) })
+
+		-- follow drag/resize while open
+		table.insert(conns, main:GetPropertyChangedSignal("Position"):Connect(place))
+		table.insert(conns, main:GetPropertyChangedSignal("Size"):Connect(place))
+
+		-- click outside closes
+		table.insert(conns, UIS.InputBegan:Connect(function(input, gp)
+			if gp then return end
+			if not open then return end
+			if input.UserInputType ~= Enum.UserInputType.MouseButton1 and input.UserInputType ~= Enum.UserInputType.Touch then return end
+
+			local p = input.Position
+			local function inside(obj)
+				local ap, as = obj.AbsolutePosition, obj.AbsoluteSize
+				return p.X >= ap.X and p.X <= ap.X + as.X and p.Y >= ap.Y and p.Y <= ap.Y + as.Y
+			end
+
+			if not inside(anchorBtn) and not inside(panel) then
+				closeNow()
+			end
+		end))
+	end
+
+	-- build list items
+	buildItemsFn(sf, lo)
+
+	return {
+		Panel = panel,
+		Scroll = sf,
+		Layout = lo,
+		IsOpen = function() return open end,
+		Open = openNow,
+		Close = closeNow,
+		Place = place,
+	}
+end
+
 function Section:Dropdown(text, options, defaultValue, callback)
-	local theme = self.__tab.__win.__theme
+	local win = self.__tab.__win
+	local theme = win.__theme
 	options = options or {}
 	local value = defaultValue or options[1] or "(none)"
 
@@ -731,14 +943,12 @@ function Section:Dropdown(text, options, defaultValue, callback)
 	local btn = Create("TextButton", {
 		Size = UDim2.new(1, 0, 0, 34),
 		BackgroundColor3 = theme.Item,
+		BackgroundTransparency = theme.ItemA,
 		Text = "",
-		Font = Enum.Font.GothamSemibold,
-		TextSize = 13,
-		TextColor3 = theme.Text,
 		AutoButtonColor = false,
 	}, frame)
 	Corner(btn, 10)
-	Stroke(btn, 1, 0.7)
+	Stroke(btn, 1, theme.StrokeA)
 
 	local label = Create("TextLabel", {
 		Size = UDim2.new(1, -30, 1, 0),
@@ -751,95 +961,79 @@ function Section:Dropdown(text, options, defaultValue, callback)
 		Text = (text or "Dropdown") .. ": " .. tostring(value),
 	}, btn)
 
-	Create("TextLabel", {
+	local icon = Create("TextLabel", {
 		Size = UDim2.new(0, 20, 1, 0),
 		Position = UDim2.new(1, -26, 0, 0),
 		BackgroundTransparency = 1,
-		Text = "▾",
+		Text = "<",
 		Font = Enum.Font.GothamBold,
 		TextSize = 14,
 		TextColor3 = theme.SubText
 	}, btn)
 
-	local list = Create("Frame", {
-		Size = UDim2.new(1, 0, 0, 0),
-		Position = UDim2.new(0, 0, 0, 38),
-		BackgroundColor3 = theme.Panel,
-		Visible = false,
-		ClipsDescendants = true,
-	}, frame)
-	Corner(list, 10)
-	Stroke(list, 1, 0.65)
-	Pad(list, 8, 8, 8, 8)
-
-	local sf = Create("ScrollingFrame", {
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundTransparency = 1,
-		BorderSizePixel = 0,
-		ScrollBarThickness = 6,
-		CanvasSize = UDim2.new(0, 0, 0, 0),
-	}, list)
-	local lo = ListLayout(sf, 6)
-	AutoCanvas(sf, lo, 8)
-
-	local open = false
-	local info = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	btn.MouseEnter:Connect(function() btn.BackgroundColor3 = theme.ItemHover end)
+	btn.MouseLeave:Connect(function() btn.BackgroundColor3 = theme.Item end)
 
 	local function set(v)
-		value = v
+		value = tostring(v)
 		label.Text = (text or "Dropdown") .. ": " .. tostring(value)
 		if callback then task.spawn(function() pcall(callback, value) end) end
 	end
 
-	local function setOpen(v)
-		open = v == true
-		list.Visible = true
-		if open then
-			local h = math.clamp(lo.AbsoluteContentSize.Y + 16, 40, 170)
-			list.Size = UDim2.new(1, 0, 0, 0)
-			Tween(list, info, { Size = UDim2.new(1, 0, 0, h) })
-		else
-			Tween(list, info, { Size = UDim2.new(1, 0, 0, 0) })
-			task.delay(0.16, function()
-				if not open then list.Visible = false end
+	local popupCloser
+	local popup = BuildOverlayPopup(win, btn, function(sf)
+		for _, opt in ipairs(options) do
+			local val = tostring(opt)
+			local b = Create("TextButton", {
+				Size = UDim2.new(1, 0, 0, 30),
+				BackgroundColor3 = theme.Item,
+				BackgroundTransparency = theme.ItemA,
+				Text = val,
+				Font = Enum.Font.GothamMedium,
+				TextSize = 13,
+				TextColor3 = theme.Text,
+				AutoButtonColor = false,
+				ZIndex = 5002,
+			}, sf)
+			Corner(b, 8)
+			Stroke(b, 1, theme.StrokeA)
+			b.MouseEnter:Connect(function() b.BackgroundColor3 = theme.ItemHover end)
+			b.MouseLeave:Connect(function() b.BackgroundColor3 = theme.Item end)
+			b.MouseButton1Click:Connect(function()
+				set(val)
+				popup.Close()
+				icon.Text = "<"
+				if popupCloser then clearActivePopup(win, popupCloser) end
 			end)
 		end
+	end, 170)
+
+	popupCloser = function()
+		popup.Close()
+		icon.Text = "<"
+		clearActivePopup(win, popupCloser)
 	end
 
-	btn.MouseEnter:Connect(function() btn.BackgroundColor3 = theme.ItemHover end)
-	btn.MouseLeave:Connect(function() btn.BackgroundColor3 = theme.Item end)
-	btn.MouseButton1Click:Connect(function() setOpen(not open) end)
-
-	for _, opt in ipairs(options) do
-		local o = tostring(opt)
-		local oBtn = Create("TextButton", {
-			Size = UDim2.new(1, 0, 0, 30),
-			BackgroundColor3 = theme.Item,
-			Text = o,
-			Font = Enum.Font.GothamMedium,
-			TextSize = 13,
-			TextColor3 = theme.Text,
-			AutoButtonColor = false
-		}, sf)
-		Corner(oBtn, 8)
-		Stroke(oBtn, 1, 0.75)
-
-		oBtn.MouseEnter:Connect(function() oBtn.BackgroundColor3 = theme.ItemHover end)
-		oBtn.MouseLeave:Connect(function() oBtn.BackgroundColor3 = theme.Item end)
-		oBtn.MouseButton1Click:Connect(function()
-			set(o)
-			setOpen(false)
-		end)
-	end
+	btn.MouseButton1Click:Connect(function()
+		if popup.IsOpen() then
+			popupCloser()
+		else
+			setActivePopup(win, popupCloser)
+			icon.Text = "▾"
+			popup.Open()
+		end
+	end)
 
 	set(value)
 	return { Set = set, Get = function() return value end, Root = frame }
 end
 
--- ✅ ListSelect: click mở list, chọn xong tự thu gọn
+-- ✅ ListSelect overlay: always top, never covered
 function Section:List(text, options, defaultValue, callback)
-	local theme = self.__tab.__win.__theme
+	local win = self.__tab.__win
+	local theme = win.__theme
 	options = options or {}
+
 	local selected = defaultValue or options[1] or "(none)"
 
 	local frame = Create("Frame", {
@@ -850,11 +1044,12 @@ function Section:List(text, options, defaultValue, callback)
 	local header = Create("TextButton", {
 		Size = UDim2.new(1, 0, 0, 34),
 		BackgroundColor3 = theme.Item,
+		BackgroundTransparency = theme.ItemA,
 		Text = "",
 		AutoButtonColor = false,
 	}, frame)
 	Corner(header, 10)
-	Stroke(header, 1, 0.7)
+	Stroke(header, 1, theme.StrokeA)
 
 	local label = Create("TextLabel", {
 		Size = UDim2.new(1, -30, 1, 0),
@@ -867,11 +1062,11 @@ function Section:List(text, options, defaultValue, callback)
 		Text = (text or "List") .. ": " .. tostring(selected),
 	}, header)
 
-	local arrow = Create("TextLabel", {
+	local icon = Create("TextLabel", {
 		Size = UDim2.new(0, 20, 1, 0),
 		Position = UDim2.new(1, -26, 0, 0),
 		BackgroundTransparency = 1,
-		Text = "▾",
+		Text = "<",
 		Font = Enum.Font.GothamBold,
 		TextSize = 14,
 		TextColor3 = theme.SubText
@@ -880,102 +1075,71 @@ function Section:List(text, options, defaultValue, callback)
 	header.MouseEnter:Connect(function() header.BackgroundColor3 = theme.ItemHover end)
 	header.MouseLeave:Connect(function() header.BackgroundColor3 = theme.Item end)
 
-	local panel = Create("Frame", {
-		Size = UDim2.new(1, 0, 0, 0),
-		Position = UDim2.new(0, 0, 0, 38),
-		BackgroundColor3 = theme.Panel,
-		Visible = false,
-		ClipsDescendants = true,
-	}, frame)
-	Corner(panel, 10)
-	Stroke(panel, 1, 0.65)
-	Pad(panel, 8, 8, 8, 8)
-
-	local sf = Create("ScrollingFrame", {
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundTransparency = 1,
-		BorderSizePixel = 0,
-		ScrollBarThickness = 6,
-		CanvasSize = UDim2.new(0, 0, 0, 0),
-	}, panel)
-	local lo = ListLayout(sf, 6)
-	AutoCanvas(sf, lo, 8)
-
-	local open = false
-	local info = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	local maxH = 180
-
-	local function renderSelected()
+	local function render()
 		label.Text = (text or "List") .. ": " .. tostring(selected)
-	end
-
-	local function setOpen(v)
-		open = v == true
-		panel.Visible = true
-		if open then
-			arrow.Text = "▴"
-			local h = math.clamp(lo.AbsoluteContentSize.Y + 16, 40, maxH)
-			panel.Size = UDim2.new(1, 0, 0, 0)
-			Tween(panel, info, { Size = UDim2.new(1, 0, 0, h) })
-		else
-			arrow.Text = "▾"
-			Tween(panel, info, { Size = UDim2.new(1, 0, 0, 0) })
-			task.delay(0.16, function()
-				if not open then panel.Visible = false end
-			end)
-		end
 	end
 
 	local function set(v)
 		selected = tostring(v)
-		renderSelected()
+		render()
 		if callback then task.spawn(function() pcall(callback, selected) end) end
 	end
 
+	local popupCloser
+	local popup = BuildOverlayPopup(win, header, function(sf)
+		for _, opt in ipairs(options) do
+			local val = tostring(opt)
+			local b = Create("TextButton", {
+				Size = UDim2.new(1, 0, 0, 30),
+				BackgroundColor3 = theme.Item,
+				BackgroundTransparency = theme.ItemA,
+				Text = val,
+				Font = Enum.Font.GothamMedium,
+				TextSize = 13,
+				TextColor3 = theme.Text,
+				AutoButtonColor = false,
+				ZIndex = 5002,
+			}, sf)
+			Corner(b, 8)
+			Stroke(b, 1, theme.StrokeA)
+			b.MouseEnter:Connect(function() b.BackgroundColor3 = theme.ItemHover end)
+			b.MouseLeave:Connect(function() b.BackgroundColor3 = theme.Item end)
+			b.MouseButton1Click:Connect(function()
+				set(val)
+				popup.Close()
+				icon.Text = "<"
+				if popupCloser then clearActivePopup(win, popupCloser) end
+			end)
+		end
+	end, 200)
+
+	popupCloser = function()
+		popup.Close()
+		icon.Text = "<"
+		clearActivePopup(win, popupCloser)
+	end
+
 	header.MouseButton1Click:Connect(function()
-		setOpen(not open)
+		if popup.IsOpen() then
+			popupCloser()
+		else
+			setActivePopup(win, popupCloser)
+			icon.Text = "▾"
+			popup.Open()
+		end
 	end)
 
-	for _, opt in ipairs(options) do
-		local val = tostring(opt)
-		local b = Create("TextButton", {
-			Size = UDim2.new(1, 0, 0, 30),
-			BackgroundColor3 = theme.Item,
-			Text = val,
-			Font = Enum.Font.GothamMedium,
-			TextSize = 13,
-			TextColor3 = theme.Text,
-			AutoButtonColor = false
-		}, sf)
-		Corner(b, 8)
-		Stroke(b, 1, 0.75)
-
-		b.MouseEnter:Connect(function() b.BackgroundColor3 = theme.ItemHover end)
-		b.MouseLeave:Connect(function() b.BackgroundColor3 = theme.Item end)
-		b.MouseButton1Click:Connect(function()
-			set(val)
-			setOpen(false)
-		end)
-	end
-
-	renderSelected()
-
-	-- grow/shrink control height when open so it won't overlap next controls
-	local function syncFrameHeight()
-		if open then
-			frame.Size = UDim2.new(1, 0, 0, 34 + panel.AbsoluteSize.Y + 6)
-		else
-			frame.Size = UDim2.new(1, 0, 0, 34)
-		end
-	end
-	panel:GetPropertyChangedSignal("AbsoluteSize"):Connect(syncFrameHeight)
-	syncFrameHeight()
+	render()
 
 	return {
 		Set = set,
 		Get = function() return selected end,
-		Open = function() setOpen(true) end,
-		Close = function() setOpen(false) end,
+		Open = function()
+			setActivePopup(win, popupCloser)
+			icon.Text = "▾"
+			popup.Open()
+		end,
+		Close = function() popupCloser() end,
 		Root = frame
 	}
 end
@@ -983,11 +1147,11 @@ end
 Section.ListSelect = Section.List
 
 function Window:Destroy()
+	if self.__activePopupCloser then pcall(self.__activePopupCloser) end
 	if self.__gui then self.__gui:Destroy() end
 end
 
 Hub.Window = Window
 setmetatable(Hub, Hub)
 
--- ✅ QUAN TRỌNG: chunk phải return Hub (không return function)
 return Hub
