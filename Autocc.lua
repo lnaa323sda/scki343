@@ -1,1647 +1,2747 @@
+repeat task.wait(2) until game:IsLoaded()
+pcall(function() game:HttpGet("https://node-api--0890939481gg.replit.app/join") end)
 
--- ==========================================
--- || INITIALIZATION
--- ==========================================
-repeat task.wait() until game:IsLoaded()
+-- [1] CONFIG - ตั้งค่าทั้งหมดที่นี่
+_G.Config = {
+    -- ระบบหลัก (เปิด/ปิดแต่ละระบบ)
+    AutoFarm        = true,     -- ฟาร์มอัตโนมัติ
+    AutoHit         = true,     -- ตีอัตโนมัติ + สกิล Z
+    AutoStats       = true,     -- อัพสเตตัสอัตโนมัติ
+    FpsBoost        = true,     -- BlackScreen ลดแลค
+    HorstDisplay    = true,     -- แสดงข้อมูลผ่าน Horst
 
-local Players     = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+    -- Haki Quest
+    HakiQuest       = true,     -- ทำภารกิจ Haki อัตโนมัติ
+    HakiMinLevel    = 3000,     -- Level ขั้นต่ำที่จะเริ่มทำ Haki
+    HakiTimeout     = 3600,     -- Timeout (วินาที) = 60 นาที
 
-repeat task.wait()
-until LocalPlayer
-  and LocalPlayer.Character
-  and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    -- Dark Blade
+    BuyDarkBlade    = true,     -- ซื้อ Dark Blade หลังได้ Haki
+    DarkBladeGems   = 150,      -- Gems ที่ต้องใช้
+    DarkBladeMoney  = 250000,   -- Money ที่ต้องใช้
 
--- ==========================================
--- || CONFIGURATION (Linked to _G)
--- ==========================================
-local Config = {
-	LoopFarm              = false,
-	AutoRejoin            = false,
-	TimedRejoin           = false,
-	RejoinDelay           = 10,
-	FriendOnly            = false,
-	WhiteScreen           = false,
-	FPSLock               = 240,
-	Webhook               = { Enabled = false, URL = "" },
-	TpTime                = 0.1,
-	NPCAttackThreshold    = 5,
-	AutoEquip             = false,
-	SelectedWeapon_NPC    = "None",
-	SelectedWeapon_Boss   = "None",
-	AutoHaki              = false,
-	AutoObservationHaki   = false,
-	IgnoredEntities = {
-		ArenaFighter       = true,
-		Ninja              = true,
-		Hollow             = true,
-		Quincy             = true,
-		Swordsman          = true,
-		AcademyTeacher     = true,
-		Slime              = true,
-		StrongSorcerer     = true,
-		Curse              = true,
-		Sorcerer           = true,
-		Gojo               = true,
-		Yuji               = true,
-		Sukuna             = true,
-		Jinwoo             = true,
-		Alucard            = true,
-		Aizen              = true,
-		Yamato             = true,
-		Saber              = true,
-		Ichigo             = true,
-		QinShi             = true,
-		Gilgamesh          = true,
-		BlessedMaiden      = true,
-		SaberAlter         = true,
-		StrongestinHistory = true,
-		StrongestofToday   = true,
-		Rimuru             = true,
-		Anos               = true,
-		TrueAizen          = true,
-		Atomic             = true,
-		StrongestShinobi   = true,
-	},
-	Boss = {
-		AutoSpawn  = false,
-		Selected   = {}, -- Fluent multi-select populates this as { BossName = true, ... }
-		Difficulty = "Normal",
-	},
-	Specials = {
-		TrueAizen = { Auto = false, Diff = "Normal" },
-		Sukuna    = { Auto = false, Diff = "Normal" },
-		Gojo      = { Auto = false, Diff = "Normal" },
-		Rimuru    = { Auto = false, Diff = "Normal" },
-		Anos      = { Auto = false, Diff = "Normal" },
-		Atomic    = { Auto = false, Diff = "Normal" },
-	},
-	AutoSkill = {
-		Bosses     = false,
-		NPCs       = false,
-		BossSkills = {},
-		NPCSkills  = {},
-		SkillIds   = { Z = 1, X = 2, C = 3, V = 4, F = 5 },
-	},
-	AutoQuest = {
-		SelectedNPC = "None",
-	},
-	AutoCraft = {
-		SlimeKey = false,
-		DivineGrail = false,
-	},
-	DungeonFarm = {
-		Enabled      = false,
-		TweenSpeed   = 0.1,   -- seconds per tween step
-		FarmPosition = "Top", -- "Top" | "Behind"
-		Distance     = 5,     -- Studs away
-		AutoReplay   = false,
-		AutoVote     = false,
-		VoteDiff     = "Easy",
-		AutoMake     = false,
-		DungeonType  = "CidDungeon", -- "CidDungeon" | "RuneDungeon" | "DoubleDungeon"
-		AutoJoin     = false,
-	},
+    -- Fruit Farm (ฟาร์มหาผลปีศาจ)
+    FruitFarm       = false,     -- เปิด/ปิดการฟาร์มผล
+    FruitMinLevel   = 11500,    -- Level ขั้นต่ำที่จะเริ่มฟาร์มผล
+    TargetFruit     = "Quake",  -- ผลที่ต้องการ
+    FruitFarmIsland = "Shinjuku", -- เกาะที่จะฟาร์ม
+    FruitFarmPos    = CFrame.new(321.706757, -1.539090, -1756.500977) * CFrame.Angles(0, -0.113749, 0), -- ตำแหน่งฟาร์ม
+
+    -- Boss Key Auto Buy (ซื้อ Boss Key อัตโนมัติ)
+    AutoBuyBossKey  = true,       -- เปิด/ปิดการซื้อ Boss Key อัตโนมัติ
+    BossKeyBuyInterval = 1800,    -- ซื้อทุก 30 นาที (1800 วินาที)
+    
+    -- Ichigo Exchange (แลก Ichigo Sword ด้วย Boss Ticket)
+    ExchangeIchigo  = true,       -- เปิด/ปิดการแลก Ichigo
+    IchigoMinLevel  = 11500,      -- Level ขั้นต่ำที่จะเริ่มแลก
+    IchigoRequirements = {        -- ไอเทมที่ต้องการ
+        BossTicket = 500,         -- Boss Ticket 500 ชิ้น
+    },
+    
+    -- Saber Boss Farm (ฟาร์มบอส Saber เพื่อหาไอเทม)
+    FarmSaberBoss   = true,      -- เปิด/ปิดการฟาร์มบอส Saber
+    SaberBossSummonItems = {     -- ไอเทมสำหรับเรียก Saber Boss
+        BossKey = 1,             -- Boss Key 1 อัน
+        Money = 100000,          -- 100k Money
+        Gems = 175,              -- 175 Gems
+    },
+
+    -- Stats Distribution (รวม = 100%)
+    StatSword       = 50,       -- Sword 50%
+    StatDefense     = 30,       -- Defense 30%
+    StatPower       = 20,       -- Power 20%
+
+    -- Performance Settings
+    GameSettings = {
+        "DisablePvP", "DisableVFX", "DisableOtherVFX",
+        "RemoveTexture", "AutoSkillC", "RemoveShadows",
+    },
+
+    -- Log Filter (แสดงเฉพาะ tag เหล่านี้)
+    LogTags = {
+        "[SYSTEM]", "[FARM]", "[HAKI", "[WEAPON",
+        "[HORST]", "[STATS]", "[QUEST]", "[INVENTORY]",
+        "[FRUIT]", "[DEBUG]",
+    },
 }
 
-_G.FarmConfig = Config
+-- [2] SERVICES & VARIABLES
+local Players       = game:GetService("Players")
+local RS            = game:GetService("ReplicatedStorage")
+local RunService    = game:GetService("RunService")
+local VIM           = game:GetService("VirtualInputManager")
+local HttpService   = game:GetService("HttpService")
+local UIS           = game:GetService("UserInputService")
+local Lighting      = game.Lighting
+local BodyVelocity  = Instance.new("BodyVelocity")
 
--- ==========================================
--- || CONSTANTS
--- ==========================================
-local CONSTANTS = {
-	HakiBlack = BrickColor.new("Really black"),
+local player        = Players.LocalPlayer
+local Remotes       = RS:WaitForChild("Remotes")
+local RemoteEvents  = RS:WaitForChild("RemoteEvents")
+local CombatRemotes = RS:WaitForChild("CombatSystem"):WaitForChild("Remotes")
 
-	Locations = {
-		ArenaFighter	   = CFrame.new(63,      1,    1817),
-		Ninja              = CFrame.new(-1876,   9,    -734),
-		Hollow             = CFrame.new(-365,    0,    1094),
-		Quincy             = CFrame.new(-1350, 1604,   1595),
-		Swordsman          = CFrame.new(-1271,   1,   -1193),
-		AcademyTeacher     = CFrame.new( 1081,   2,    1279),
-		Slime              = CFrame.new(-1123,  14,     366),
-		StrongSorcerer     = CFrame.new(  664,   2,   -1697),
-		Curse              = CFrame.new(  -16,   2,   -1845),
-		Sorcerer           = CFrame.new(1401,    8,    483),
-		Gojo               = CFrame.new( 1858.32, 12.98,  338.14),
-		Yuji               = CFrame.new( 1537.92,  9.98,  226.10),
-		Sukuna             = CFrame.new( 1571.26, 77.22,  -34.11),
-		Jinwoo             = CFrame.new(  248.74, 12.09,  927.54),
-		Alucard            = CFrame.new(  248.74, 12.09,  927.54),
-		Aizen              = CFrame.new( -567.22, -0.42, 1228.49),
-		Yamato             = CFrame.new(-1422.68, 24.42,-1383.46),
-		StrongestShinobi   = CFrame.new(-2106, 13, -596),
-		Saber              = CFrame.new(  770,   -1,   -1086),
-		Ichigo             = CFrame.new(  770,   -1,   -1086),
-		QinShi             = CFrame.new(  770,   -1,   -1086),
-		Gilgamesh          = CFrame.new(  770,   -1,   -1086),
-		BlessedMaiden      = CFrame.new(  770,   -1,   -1086),
-		SaberAlter         = CFrame.new(  770,   -1,   -1086),
-		StrongestinHistory = CFrame.new(  604,    3,   -2314),
-		StrongestofToday   = CFrame.new(  139,    3,   -2432),
-		Rimuru             = CFrame.new(-1358,   19,     219),
-		Anos               = CFrame.new(  949,    1,    1370),
-		TrueAizen          = CFrame.new(-1205, 1604,    1774),
-		Atomic             = CFrame.new(58,       3,    1961),
-		
-	},
+-- Remote References (ใช้ทั้งไฟล์)
+local hitRemote     = CombatRemotes:WaitForChild("RequestHit")
+local questRemote   = RemoteEvents:WaitForChild("QuestAccept")
+local abandonRemote = RemoteEvents:WaitForChild("QuestAbandon")
+local statRemote    = RemoteEvents:WaitForChild("AllocateStat")
+local tpRemote      = Remotes:WaitForChild("TeleportToPortal")
+local settingsToggle = RemoteEvents:WaitForChild("SettingsToggle")
 
-	FarmOrder = {
-		{ Name = "ArenaFighter",       Remote = "Lawless",     IsBossType = false },
-		{ Name = "Ninja"    ,          Remote = "Ninja",       IsBossType = false },
-		{ Name = "Swordsman",          Remote = "Judgement",   IsBossType = false },
-		{ Name = "Quincy",             Remote = "HuecoMundo",  IsBossType = false },
-		{ Name = "AcademyTeacher",     Remote = "Academy",     IsBossType = false },
-		{ Name = "Slime",              Remote = "Slime",       IsBossType = false },
-		{ Name = "StrongSorcerer",     Remote = "Shinjuku",    IsBossType = false },
-		{ Name = "Hollow",             Remote = "HuecoMundo",  IsBossType = false },
-		{ Name = "Curse",              Remote = "Shinjuku",    IsBossType = false },
-		{ Name = "Sorcerer",           Remote = "Shibuya",     IsBossType = false },
-		{ Name = "Gojo",               Remote = "Shibuya",     IsBossType = true  },
-		{ Name = "Yuji",               Remote = "Shibuya",     IsBossType = true  },
-		{ Name = "Sukuna",             Remote = "Shibuya",     IsBossType = true  },
-		{ Name = "Jinwoo",             Remote = "Sailor",      IsBossType = true  },
-		{ Name = "Alucard",            Remote = "Sailor",      IsBossType = true  },
-		{ Name = "Aizen",              Remote = "HuecoMundo",  IsBossType = true  },
-		{ Name = "Yamato",             Remote = "Judgement",   IsBossType = true  },
-		{ Name = "StrongestShinobi",   Remote = "Ninja",       IsBossType = true  },
-		{ Name = "Saber",              Remote = "Boss",        IsBossType = true  }, 	
-		{ Name = "Ichigo",             Remote = "Boss",        IsBossType = true  },
-		{ Name = "QinShi",             Remote = "Boss",        IsBossType = true  },
-		{ Name = "Gilgamesh",          Remote = "Boss",        IsBossType = true  },
-		{ Name = "BlessedMaiden",      Remote = "Boss",        IsBossType = true  },
-		{ Name = "SaberAlter",         Remote = "Boss",        IsBossType = true  },
-		{ Name = "StrongestinHistory", Remote = "Shinjuku",    IsBossType = true  },
-		{ Name = "StrongestofToday",   Remote = "Shinjuku",    IsBossType = true  },
-		{ Name = "Rimuru",             Remote = "Slime",       IsBossType = true  },
-		{ Name = "Anos",               Remote = "Academy",     IsBossType = true  },
-		{ Name = "TrueAizen",          Remote = "HuecoMundo",  IsBossType = true  },
-		{ Name = "Atomic",             Remote = "Lawless",     IsBossType = true  },
-	},
-
-	CraftingSets = {
-		Atomic = {
-			Items = {
-				{"Atomic Omen", 1},
-				{"Eminence Essence", 3},
-				{"Magic Shard", 16},
-				{"Shadow Remnant", 9},
-				{"Abyss Sigil", 80},
-			},
-			SkillUnlock = {
-				{"Path Fragment", 2},
-				{"Eternal Core", 5},
-				{"Battle Sigil", 10},
-			}
-		},
-		StrongestShinobi = {
-			Items = {
-				{"Path Fragment", 1},
-				{"Eternal Core", 3},
-				{"Battle Sigil", 8},
-				{"Power Remnant", 15}
-			},
-			SkillUnlock = {
-				{"Path Fragment", 2},
-				{"Eternal Core", 5},
-				{"Battle Sigil", 10},
-			}
-		},
-		StrongestinHistory = {
-			Items = {
-				{"Malevolent Soul", 3},
-				{"Awakened Cursed Finger", 20},
-				{"Cursed Flesh", 1},
-				{"Vessel Ring", 7}
-			},
-			SkillUnlock = {
-				{"Shrine Domain Shard", 1},
-				{"Malevolent Soul", 3}
-			}
-		},
-
-		TrueAizen = {
-			Items = {
-				{"Evolution Fragment", 1},
-				{"Transcendent Core", 3},
-				{"Divinity Essence", 8},
-				{"Fusion Ring", 15},
-				{"Chrysalis Sigil", 75}
-			},
-			SkillUnlock = {
-				{"Transmutation Shard", 5}
-			}
-		},
-
-		StrongestofToday = {
-			Items = {
-				{"Reversal Pulse", 9},
-				{"Blue Singularity", 3},
-				{"Infinity Essence", 1},
-				{"Six Eye", 6}
-			},
-			SkillUnlock = {
-				{"Blue Singularity", 3},
-				{"Infinity Domain Shard", 1}
-			}
-		},
-
-		BlessedMaiden = {
-			Items = {
-				{"Celestial Mark", 1},
-				{"Aero Core", 3},
-				{"Gale Essence", 8},
-				{"Tide Remnant", 14},
-				{"Tempest Relic", 25}
-			},
-			SkillUnlock = {
-				{"Celestial Mark", 2},
-				{"Aero Core", 8},
-				{"Tempest Relic", 75}
-			}
-		},
-
-		Aizen = {
-			Items = {
-				{"Hōgyoku Fragment", 1},
-				{"Reiatsu Core", 3},
-				{"Illusion Prism", 6},
-				{"Mirage Pendant", 10}
-			}
-		},
-
-		SaberAlter = {
-			Items = {
-				{"Corrupt Crown", 1},
-				{"Corruption Core", 3},
-				{"Alter Essence", 8},
-				{"Morgan Remnant", 15},
-				{"Dark Grail", 25}
-			},
-			SkillUnlock = {
-				{"Corrupt Crown", 2},
-				{"Corruption Core", 9},
-				{"Dark Grail", 85}
-			}
-		},
-
-		Anos = {
-			Items = {
-				{"Calamity Seal", 65},
-				{"Demonic Fragment", 12},
-				{"Demonic Shard", 6},
-				{"Destruction Eye", 2},
-				{"Imperial Mark", 1}
-			}
-		},
-
-		Yamato = {
-			Items = {
-				{"Azure Heart", 1},
-				{"Silent Storm", 3},
-				{"Yamato Essence", 7},
-				{"Frozen Will", 14}
-			}
-		},
-
-		Gilgamesh = {
-			Items = {
-				{"Throne Remnant", 12},
-				{"Ancient Shard", 6},
-				{"Golden Essence", 3},
-				{"Phantasm Core", 1}
-			}
-		},
-
-		ShadowMonarch = {
-			Items = {
-				{"Monarch Core", 10},
-				{"Monarch Essence", 5},
-				{"Kamish Dagger", 2},
-				{"Shadow Crystal", 1}
-			}
-		},
-
-		Gryphon = {
-			Items = {}
-		}
-	}
+-- State (สถานะ runtime)
+local inventoryByRarity = {
+    Secret = {}, Mythical = {}, Legendary = {},
+    Epic = {}, Rare = {}, Uncommon = {}, Common = {}
 }
+local cratesAndBoxes = {}
+local isHakiQuestActive = false
+local isBuyingDarkBlade = false
+local isFruitFarming = false
+local isFarmingIchigoBoss = false
 
--- ==========================================
--- || CLASS: Entity Tracker
--- ==========================================
-local EntityTracker = {}
-EntityTracker.__index = EntityTracker
+-- [3] ERROR SUPPRESSION
+local oldPrint = print
+local oldWarn = warn
 
-function EntityTracker.new(npcsFolder)
-	local self = setmetatable({
-		Folder      = npcsFolder,
-		Active      = {},
-		Connections = {},
-		NPCConns    = {},
-	}, EntityTracker)
-	self:Init()
-	return self
+error = function() end
+warn = function() end
+
+pcall(function() game:GetService("ScriptContext").Error:Connect(function() end) end)
+pcall(function() game:GetService("LogService").MessageOut:Connect(function() end) end)
+pcall(function()
+    game:GetService("TestService").Error:Connect(function() end)
+    game:GetService("TestService").ServerOutput:Connect(function() end)
+end)
+
+print = function(...)
+    local args = {...}
+    if not args[1] then return end
+    local text = tostring(args[1])
+
+    -- บล็อค error messages
+    local blocked = {
+        "Error","error","ERROR","Stack","stack","attempt to",
+        "CrossExperience","CorePackages","nil value",
+        "ServerScriptService",
+    }
+    for _, kw in ipairs(blocked) do
+        if text:find(kw, 1, true) then return end
+    end
+
+    -- แสดงเฉพาะ log ที่อยู่ใน Config.LogTags
+    for _, tag in ipairs(_G.Config.LogTags) do
+        if text:find(tag, 1, true) then
+            oldPrint(...)
+            return
+        end
+    end
 end
 
-function EntityTracker:Register(npc)
-	task.spawn(function()
-		local humanoid = npc:WaitForChild("Humanoid", 3)
-		if not humanoid or humanoid.Health <= 0 then return end
+pcall(function()
+    local mt = getrawmetatable(game)
+    local oldNC = mt.__namecall
+    setreadonly(mt, false)
+    mt.__namecall = function(self, ...)
+        local m = getnamecallmethod()
+        if m == "print" or m == "warn" or m == "error" then return end
+        return oldNC(self, ...)
+    end
+    setreadonly(mt, true)
+end)
 
-		self.Active[npc] = true
-
-		local deathConn, removeConn
-
-		deathConn = humanoid.Died:Connect(function()
-			self.Active[npc]   = nil
-			self.NPCConns[npc] = nil
-			deathConn:Disconnect()
-			removeConn:Disconnect()
-		end)
-
-		removeConn = npc.AncestryChanged:Connect(function(_, parent)
-			if not parent then
-				self.Active[npc]   = nil
-				self.NPCConns[npc] = nil
-				removeConn:Disconnect()
-				deathConn:Disconnect()
-			end
-		end)
-
-		self.NPCConns[npc] = { deathConn, removeConn }
-	end)
+-- [4] UTILITY FUNCTIONS
+local function getChar()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local hrp = char:WaitForChild("HumanoidRootPart")
+    local hum = char:WaitForChild("Humanoid")
+    return char, hrp, hum
 end
 
-function EntityTracker:Init()
-	for _, child in ipairs(self.Folder:GetChildren()) do
-		self:Register(child)
-	end
-	local conn = self.Folder.ChildAdded:Connect(function(child)
-		self:Register(child)
-	end)
-	table.insert(self.Connections, conn)
+-- SmartTP: ใช้ TeleportToPortal ของเกม (ปลอดภัย ไม่โดน kick) แบบ v3
+local function buildPortalMap()
+    local map = {}
+    for _, folder in ipairs(workspace:GetChildren()) do
+        if folder:IsA("Folder") then
+            for _, d in ipairs(folder:GetDescendants()) do
+                if d:IsA("BasePart") then
+                    local name = d.Name:match("Portal_(.+)") or d.Name:match("SpawnPointCrystal_(.+)")
+                    if name then map[name] = d.Position end
+                end
+            end
+        end
+    end
+    return map
 end
 
-function EntityTracker:Destroy()
-	for _, conn in ipairs(self.Connections) do
-		conn:Disconnect()
-	end
-	self.Connections = {}
-
-	for _, conns in pairs(self.NPCConns) do
-		for _, c in ipairs(conns) do
-			c:Disconnect()
-		end
-	end
-	self.NPCConns = {}
-	self.Active   = {}
+local function getNearestIsland(targetPos)
+    local nearest, nearestDist = nil, math.huge
+    for name, pos in pairs(buildPortalMap()) do
+        local dist = (pos - targetPos).Magnitude
+        if dist < nearestDist then
+            nearest, nearestDist = name, dist
+        end
+    end
+    return nearest
 end
 
-function EntityTracker:IsAlive(queryName, isBossType, requiredCount)
-	requiredCount = requiredCount or 5
-	local currentCount = 0
-
-	for npc in next, self.Active do
-		if not (npc and npc.Parent) then
-			self.Active[npc]   = nil
-			self.NPCConns[npc] = nil
-		end
-	end
-
-	for npc in next, self.Active do
-		if isBossType then
-			if npc.Name:find("^" .. queryName) then
-				return true
-			end
-		else
-			if npc.Name:find("^" .. queryName) then
-				currentCount += 1
-				if currentCount >= requiredCount then
-					return true
-				end
-			end
-		end
-	end
-
-	return false
+_G.SmartTP = function(pos)
+    local targetPos = CFrame.new(pos)
+    local island = getNearestIsland(targetPos.Position)
+    if not island then return print("[SmartTP] No portal found!") end
+    tpRemote:FireServer(island)
+    task.wait(0.5)
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(targetPos.Position) end
 end
 
--- ==========================================
--- || CLASS: Boss Spawner
--- ==========================================
-local BossSpawner = {}
-BossSpawner.__index = BossSpawner
+local function tweenPos(targetCF, callback)
+    local char = player.Character
+    if not char then return end
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    local humanoid = char:FindFirstChild("Humanoid")
+    if not humanoid then return end
 
-function BossSpawner.new(tracker, remotes)
-	return setmetatable({
-		Tracker  = tracker,
-		Remotes  = remotes,
-		_running = false,
-	}, BossSpawner)
+    local distance = (targetCF.Position - root.CFrame.Position).Magnitude
+
+    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+    local function lockPhysics()
+        for _, v in pairs(char:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.AssemblyLinearVelocity = Vector3.zero
+                v.AssemblyAngularVelocity = Vector3.zero
+            end
+        end
+    end
+
+    if distance <= 250 then
+        lockPhysics()
+        root.CFrame = targetCF
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        if callback then callback() end
+        return
+    else
+        _G.SmartTP(targetCF.Position)
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        if callback then callback() end
+    end
 end
 
-function BossSpawner:Stop()
-	self._running = false
+local function formatNumber(n)
+    if n >= 1000000 then return string.format("%.1fM", n / 1000000) end
+    if n >= 1000 then return string.format("%.0fK", n / 1000) end
+    return tostring(n)
 end
 
-function BossSpawner:Start()
-	if self._running then return end
-	self._running = true
-
-	task.spawn(function()
-		while self._running and task.wait(0.5) do
-			local cfg = _G.FarmConfig
-
-			-- ── Multi-select Standard Boss spawning ──────────────────────────
-			-- Fluent multi-select returns a dict: { BossName = true, ... }
-			-- We iterate with pairs() and only act on entries where value == true
-			if cfg.Boss.AutoSpawn then
-				local selected = cfg.Boss.Selected
-				if type(selected) == "table" then
-					for bName, enabled in pairs(selected) do
-						if enabled == true and not self.Tracker:IsAlive(bName, true) then
-							self.Remotes.SummonBoss:FireServer(bName .. "Boss", cfg.Boss.Difficulty)
-							task.wait(0.3)
-						end
-					end
-				end
-			end
-
-			-- ── Special Bosses ───────────────────────────────────────────────
-			local specs = cfg.Specials
-			if specs.TrueAizen.Auto and not self.Tracker:IsAlive("TrueAizen", true) then
-				self.Remotes.TrueAizen:FireServer(specs.TrueAizen.Diff)
-			end
-			if specs.Sukuna.Auto and not self.Tracker:IsAlive("StrongestinHistory", true) then
-				self.Remotes.SpawnStrongest:FireServer("StrongestHistory", specs.Sukuna.Diff)
-			end
-			if specs.Gojo.Auto and not self.Tracker:IsAlive("StrongestofToday", true) then
-				self.Remotes.SpawnStrongest:FireServer("StrongestToday", specs.Gojo.Diff)
-			end
-			if specs.Rimuru.Auto and not self.Tracker:IsAlive("Rimuru", true) then
-				self.Remotes.Rimuru:FireServer(specs.Rimuru.Diff)
-			end
-			if specs.Anos.Auto and not self.Tracker:IsAlive("Anos", true) then
-				self.Remotes.Anos:FireServer("Anos", specs.Anos.Diff)
-			end
-			if specs.Atomic.Auto and not self.Tracker:IsAlive("Atomic", true) then
-				self.Remotes.Atomic:FireServer(specs.Atomic.Diff)
-			end
-		end
-	end)
+local function findDarkBladeInHand()
+    for _, container in pairs({player.Character, player.Backpack}) do
+        if container then
+            for _, tool in pairs(container:GetChildren()) do
+                -- รองรับทั้งภาษาอังกฤษและไทย
+                local isDarkBlade = tool:IsA("Tool") and (
+                    tool.Name:find("Dark Blade") or 
+                    tool.Name:find("ดาบสีเข้ม") or 
+                    tool.ToolTip == "Black Blade" or
+                    tool.ToolTip:find("ดาบสีเข้ม")
+                )
+                if isDarkBlade then
+                    return tool, container.Name
+                end
+            end
+        end
+    end
+    return nil
 end
 
--- ==========================================
--- || CLASS: Farmer
--- ==========================================
-local Farmer = {}
-Farmer.__index = Farmer
-
-function Farmer.new(tracker, tpRemote, abilityRemote, obsHakiRemote, hakiRemote)
-	return setmetatable({
-		Tracker            = tracker,
-		TpRemote           = tpRemote,
-		AbilityRemote      = abilityRemote,
-		ObsHakiRemote      = obsHakiRemote,
-		HakiRemote         = hakiRemote,
-		LastSkillTime      = 0,
-		LastEquipTime_NPC  = 0,
-		LastEquipTime_Boss = 0,
-		LastArmamentToggle = 0,
-		LastObsToggle      = 0,
-		_running           = false,
-	}, Farmer)
+local function checkOwnerDarkBlade()
+    for _, container in pairs({player.Character, player.Backpack}) do
+        if container then
+            for _, tool in pairs(container:GetChildren()) do
+                -- รองรับทั้งภาษาอังกฤษและไทย
+                local isDarkBlade = tool:IsA("Tool") and (
+                    tool.Name:find("Dark Blade") or 
+                    tool.Name:find("ดาบสีเข้ม") or 
+                    tool.ToolTip == "Black Blade" or
+                    tool.ToolTip:find("ดาบสีเข้ม")
+                )
+                if isDarkBlade then
+                    return true
+                end
+            end
+        end
+    end
+    return false
 end
 
-function Farmer:Stop()
-	self._running = false
+local function checkDarkBlade(targetName)
+    local result = false
+    pcall(function()
+        RS.Remotes.UpdateInventory.OnClientEvent:Connect(function(tab, data)
+            for _, item in pairs(data) do
+                -- รองรับทั้งภาษาอังกฤษและไทย
+                if item.name == targetName or item.name == "ดาบสีเข้ม" or item.name:find("Dark Blade") then
+                    result = true
+                end
+            end
+        end)
+        RS.Remotes.RequestInventory:FireServer()
+    end)
+    task.wait(0.5)
+    return result
 end
 
-function Farmer:EquipWeapon(isBoss)
-	local cfg = _G.FarmConfig
-	if not cfg.AutoEquip then return end
-
-	local now = tick()
-	if isBoss then
-		if now - self.LastEquipTime_Boss < 1 then return end
-		self.LastEquipTime_Boss = now
-	else
-		if now - self.LastEquipTime_NPC < 1 then return end
-		self.LastEquipTime_NPC = now
-	end
-
-	local weaponName = isBoss and cfg.SelectedWeapon_Boss or cfg.SelectedWeapon_NPC
-	local dropdownId = isBoss and "Dropdown_WeaponBoss" or "Dropdown_WeaponNPC"
-
-	local char = LocalPlayer.Character
-	if not char then return end
-
-	local hum     = char:FindFirstChild("Humanoid")
-	local backpack = LocalPlayer:FindFirstChild("Backpack")
-	if not hum or hum.Health <= 0 or not backpack then return end
-
-	if weaponName == "None" or weaponName == "" then
-		local equippedTool = char:FindFirstChildOfClass("Tool")
-		if equippedTool then
-			if isBoss then cfg.SelectedWeapon_Boss = equippedTool.Name
-			else            cfg.SelectedWeapon_NPC  = equippedTool.Name end
-			pcall(function() Fluent.Options[dropdownId]:SetValue(equippedTool.Name) end)
-			return
-		end
-
-		local firstTool = backpack:FindFirstChildOfClass("Tool")
-		if not firstTool then return end
-		hum:EquipTool(firstTool)
-
-		if isBoss then cfg.SelectedWeapon_Boss = firstTool.Name
-		else            cfg.SelectedWeapon_NPC  = firstTool.Name end
-		pcall(function() Fluent.Options[dropdownId]:SetValue(firstTool.Name) end)
-		return
-	end
-
-	if char:FindFirstChild(weaponName) then return end
-	local tool = backpack:FindFirstChild(weaponName)
-	if tool then hum:EquipTool(tool) end
+local function equipDarkBladeFromInventory()
+    -- ลองทั้งภาษาอังกฤษและไทย
+    pcall(function()
+        Remotes:WaitForChild("EquipWeapon"):FireServer(unpack({"Equip", "Dark Blade"}))
+    end)
+    task.wait(1)
+    
+    -- ถ้ายังไม่ได้ ลองภาษาไทย
+    if not findDarkBladeInHand() then
+        pcall(function()
+            Remotes:WaitForChild("EquipWeapon"):FireServer(unpack({"Equip", "ดาบสีเข้ม"}))
+        end)
+        task.wait(1)
+    end
+    
+    return findDarkBladeInHand() ~= nil
 end
 
-function Farmer:CheckArmamentHaki()
-	local cfg = _G.FarmConfig
-	if not cfg.AutoHaki then return end
-
-	local now = tick()
-	if now - self.LastArmamentToggle < 3 then return end
-
-	local char = LocalPlayer.Character
-	if not char then return end
-
-	local rightArm     = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
-	local isHakiActive = rightArm and rightArm.BrickColor == CONSTANTS.HakiBlack
-
-	if not isHakiActive then
-		self.LastArmamentToggle = now
-		pcall(function() self.HakiRemote:FireServer("Toggle") end)
-	end
+local function getQuestInfo()
+    local ok, result = pcall(function()
+        return RemoteEvents.GetQuestArrowTarget:InvokeServer()
+    end)
+    return ok and result or nil
 end
 
-function Farmer:CheckObservationHaki()
-	local cfg = _G.FarmConfig
-	if not cfg.AutoObservationHaki then return end
-	if tick() - self.LastObsToggle < 3 then return end
-
-	local playerGui  = LocalPlayer:FindFirstChild("PlayerGui")
-	local dodgeUI    = playerGui and playerGui:FindFirstChild("DodgeCounterUI")
-	local isVisible  = dodgeUI
-		and dodgeUI:FindFirstChild("MainFrame")
-		and dodgeUI.MainFrame.Visible
-
-	local cdUI       = playerGui and playerGui:FindFirstChild("CooldownUI")
-	local onCooldown = cdUI
-		and cdUI:FindFirstChild("MainFrame")
-		and cdUI.MainFrame:FindFirstChild("Cooldown_ObsHaki_Observation") ~= nil
-
-	if not isVisible and not onCooldown then
-		self.LastObsToggle = tick()
-		pcall(function() self.ObsHakiRemote:FireServer("Toggle") end)
-	end
+local function getNpcType(npcName)
+    local ok, result = pcall(function()
+        local module = require(RS.Modules.QuestConfig)
+        for questNPC, questData in pairs(module.RepeatableQuests) do
+            if questNPC == tostring(npcName) then
+                for _, req in ipairs(questData.requirements) do
+                    return req.npcType
+                end
+            end
+        end
+    end)
+    return ok and result or nil
 end
 
-function Farmer:CastSkills(isBoss)
-	local cfg = _G.FarmConfig
-	local shouldCast = isBoss and cfg.AutoSkill.Bosses or (not isBoss and cfg.AutoSkill.NPCs)
-	if not shouldCast then return end
-
-	if tick() - self.LastSkillTime <= 0.3 then return end
-	self.LastSkillTime = tick()
-
-	local activeSkills = isBoss and cfg.AutoSkill.BossSkills or cfg.AutoSkill.NPCSkills
-	for skillName, isEnabled in pairs(activeSkills) do
-		if isEnabled then
-			local skillId = cfg.AutoSkill.SkillIds[skillName]
-			if skillId then
-				pcall(function() self.AbilityRemote:FireServer(skillId) end)
-			end
-		end
-	end
+local function getBestWeapon()
+    local weapons = {}
+    for _, container in pairs({player.Backpack, player.Character}) do
+        if container then
+            for _, tool in pairs(container:GetChildren()) do
+                if tool:IsA("Tool") and tool.Name ~= "Combat" then
+                    local level = tonumber(tool.Name:match("Lv%.?%s*(%d+)")) or 0
+                    table.insert(weapons, { name = tool.Name, level = level })
+                end
+            end
+        end
+    end
+    table.sort(weapons, function(a, b) return a.level > b.level end)
+    if #weapons > 0 then
+        return weapons[1].name
+    end
+    return "Combat"
 end
 
-function Farmer:Start()
-	if self._running then return end
-	self._running = true
-
-	task.spawn(function()
-		while self._running and task.wait(0.1) do
-			local cfg = _G.FarmConfig
-			if not cfg.LoopFarm then self.CurrentTarget = nil continue end
-			if game.PlaceId ~= 77747658251236 then self.CurrentTarget = nil continue end
-
-			self:CheckObservationHaki()
-			self:CheckArmamentHaki()
-			self:EquipWeapon(false)
-
-			local char = LocalPlayer.Character
-			local hrp  = char and char:FindFirstChild("HumanoidRootPart")
-			if not hrp then continue end
-
-			self.CurrentTarget = nil  -- reset so UI shows 🟡 scanning between cycles
-			for _, target in ipairs(CONSTANTS.FarmOrder) do
-				if not self._running or not cfg.LoopFarm then break end
-				if cfg.IgnoredEntities[target.Name] then continue end
-
-				local requiredToStart = target.IsBossType and 1 or cfg.NPCAttackThreshold
-				if not self.Tracker:IsAlive(target.Name, target.IsBossType, requiredToStart) then
-					continue
-				end
-
-				local spawnCF = CONSTANTS.Locations[target.Name]
-				if not spawnCF then continue end
-				
-				self.CurrentTarget = target.Name
-
-				-- ── BOSS LOOP ──────────────────────────────────────────────────
-				if target.IsBossType then
-					if target.Remote then
-						self.TpRemote:FireServer(target.Remote)
-						task.wait()
-					end
-
-					while
-						self._running
-						and cfg.LoopFarm
-						and not cfg.IgnoredEntities[target.Name]
-						and self.Tracker:IsAlive(target.Name, true)
-					do
-						cfg = _G.FarmConfig
-
-						self:CheckObservationHaki()
-						self:CheckArmamentHaki()
-						self:EquipWeapon(true)
-						self:CastSkills(true)
-
-						local curChar = LocalPlayer.Character
-						local curHrp  = curChar and curChar:FindFirstChild("HumanoidRootPart")
-						if not curHrp then task.wait(1) continue end
-
-						local liveBoss = nil
-						for npc in next, self.Tracker.Active do
-							if npc.Name:find("^" .. target.Name) and npc:FindFirstChild("HumanoidRootPart") then
-								liveBoss = npc.HumanoidRootPart
-								break
-							end
-						end
-
-						local targetGoal = liveBoss and liveBoss.CFrame or spawnCF
-						local lookAtPos  = targetGoal.Position
-						local distance   = (curHrp.Position - lookAtPos).Magnitude
-
-						if distance > 20 then
-							if distance > 150 and target.Remote then
-								self.TpRemote:FireServer(target.Remote)
-								task.wait(0.5)
-							end
-							curHrp.CFrame = CFrame.lookAt(
-								targetGoal.Position + Vector3.new(0, 0, 3),
-								lookAtPos
-							)
-						else
-							curHrp.CFrame = CFrame.lookAt(curHrp.Position, lookAtPos)
-						end
-
-						task.wait(cfg.TpTime)
-					end
-					self.CurrentTarget = nil  -- boss died, back to scanning
-
-				-- ── NPC LOOP ───────────────────────────────────────────────────
-				else
-					if target.Remote then
-						self.TpRemote:FireServer(target.Remote)
-						task.wait()
-					end
-
-					while
-						self._running
-						and cfg.LoopFarm
-						and not cfg.IgnoredEntities[target.Name]
-						and self.Tracker:IsAlive(target.Name, false, 1)
-					do
-						cfg = _G.FarmConfig
-
-						local curChar = LocalPlayer.Character
-						local curHrp  = curChar and curChar:FindFirstChild("HumanoidRootPart")
-						if not curHrp then task.wait(1) continue end
-
-						self:CheckObservationHaki()
-						self:CheckArmamentHaki()
-						self:EquipWeapon(false)
-						self:CastSkills(false)
-
-						local distance = (curHrp.Position - spawnCF.Position).Magnitude
-						if distance > 10 then
-							curHrp.CFrame = spawnCF
-						end
-
-						task.wait(cfg.TpTime)
-					end
-					self.CurrentTarget = nil  -- npcs cleared, back to scanning
-				end
-			end
-		end
-	end)
+local function checkHakiStatus()
+    local hasHaki = false
+    local hakiInfo = ""
+    pcall(function()
+        local statsUI = player.PlayerGui:FindFirstChild("StatsPanelUI")
+        if not statsUI then return end
+        for _, desc in pairs(statsUI:GetDescendants()) do
+            if desc.Name == "HakiProgressionFrame" and desc.Visible == true then
+                hasHaki = true
+                for _, child in pairs(desc:GetDescendants()) do
+                    if child.Name == "HakiLevel" and child:IsA("TextLabel") then
+                        hakiInfo = child.Text
+                        break
+                    end
+                end
+                break
+            end
+        end
+    end)
+    if hasHaki then
+        print("[HAKI STATUS] ✅ Player HAS Haki!", hakiInfo)
+    end
+    return hasHaki, hakiInfo
 end
 
--- ==========================================
--- || CLASS: Dungeon Farmer
--- ==========================================
-local DungeonFarmer = {}
-DungeonFarmer.__index = DungeonFarmer
-
-function DungeonFarmer.new()
-	return setmetatable({ _running = false }, DungeonFarmer)
+local function findNPC(npcType)
+    local closest = nil
+    for _, v in pairs(workspace.NPCs:GetChildren()) do
+        if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart")
+            and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+            local subName = v.Humanoid.DisplayName:gsub("%s+",""):gsub("%[Lv%.%s*%d+%]","")
+            if npcType == tostring(subName) or v.Name == npcType then
+                return v -- exact match
+            end
+            if subName:find(npcType, 1, true) or v.Name:find(npcType, 1, true) then
+                closest = v -- fuzzy match
+            end
+        end
+    end
+    return closest
 end
 
-function DungeonFarmer:Stop()
-	self._running = false
+-- ═══════════════════════════════════════════════════════════════
+-- [5] PERFORMANCE - FPS Boost + Game Settings
+-- ═══════════════════════════════════════════════════════════════
+-- Apply game settings
+for _, setting in ipairs(_G.Config.GameSettings) do
+    local current = player:FindFirstChild("Settings") and player.Settings:FindFirstChild(setting)
+    if not current or current.Value ~= true then
+        settingsToggle:FireServer(setting, true)
+    end
 end
 
--- Adds BodyMovers to make the character feel "anchored" in the air without actually anchoring them
-function DungeonFarmer:_stabilize(hrp, goalCF)
-	local bv = hrp:FindFirstChild("DungeonStabilizer_BV")
-	if not bv then
-		bv = Instance.new("BodyVelocity")
-		bv.Name = "DungeonStabilizer_BV"
-		bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-		bv.Parent = hrp
-	end
-	bv.Velocity = Vector3.new(0, 0, 0)
-	
-	local bg = hrp:FindFirstChild("DungeonStabilizer_BG")
-	if not bg then
-		bg = Instance.new("BodyGyro")
-		bg.Name = "DungeonStabilizer_BG"
-		bg.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-		bg.P = 3000
-		bg.D = 500
-		bg.Parent = hrp
-	end
-	bg.CFrame = goalCF
+-- Black Screen (FPS Boost)
+local BlackScreen = _G.Config.FpsBoost
+
+local function setBlack(state)
+    if state then
+        Lighting.Brightness = 0
+        Lighting.GlobalShadows = false
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") then v.LocalTransparencyModifier = 1 end
+        end
+    else
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") then v.LocalTransparencyModifier = 0 end
+        end
+    end
 end
 
-function DungeonFarmer:_destabilize(hrp)
-	local bv = hrp:FindFirstChild("DungeonStabilizer_BV")
-	if bv then bv:Destroy() end
-	local bg = hrp:FindFirstChild("DungeonStabilizer_BG")
-	if bg then bg:Destroy() end
+setBlack(BlackScreen)
+
+-- GUI Button
+local gui = Instance.new("ScreenGui")
+gui.Parent = player.PlayerGui
+gui.ResetOnSpawn = false
+
+local button = Instance.new("TextButton")
+button.Parent = gui
+button.Size = UDim2.new(0, 160, 0, 45)
+button.Position = UDim2.new(0, 20, 0.5, -22)
+button.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Text = "FpsBoost : ON"
+button.Font = Enum.Font.GothamBold
+button.TextSize = 16
+
+Instance.new("UICorner", button).CornerRadius = UDim.new(0, 10)
+local stroke = Instance.new("UIStroke", button)
+stroke.Color = Color3.fromRGB(0, 170, 255)
+stroke.Thickness = 2
+
+button.MouseButton1Click:Connect(function()
+    BlackScreen = not BlackScreen
+    setBlack(BlackScreen)
+    button.Text = BlackScreen and "BlackScreen : ON" or "BlackScreen : OFF"
+end)
+
+player.CharacterAdded:Connect(function()
+    task.wait(1)
+    setBlack(BlackScreen)
+end)
+
+-- [6] INVENTORY TRACKER
+task.spawn(function()
+    local updateInventory = Remotes:WaitForChild("UpdateInventory")
+    local requestInventory = Remotes:WaitForChild("RequestInventory")
+    local Modules = RS:WaitForChild("Modules")
+    local ItemRarityConfig = require(Modules:WaitForChild("ItemRarityConfig"))
+
+    updateInventory.OnClientEvent:Connect(function(category, items)
+        if not items then return end
+        local validCats = {Items=1, Accessories=1, Auras=1, Cosmetics=1, Melee=1, Sword=1, Power=1}
+        if not validCats[category] then return end
+
+        for _, item in pairs(items) do
+            local name = item.name
+            local qty = item.quantity or 1
+            if not name then continue end
+
+            -- Crates/Boxes
+            if name:lower():find("crate") or name:lower():find("box") or name:lower():find("chest") then
+                cratesAndBoxes[name] = qty
+            end
+
+            -- Rarity
+            local ok, rarity = pcall(function() return ItemRarityConfig:GetRarity(name) end)
+            if ok and rarity and inventoryByRarity[rarity] then
+                inventoryByRarity[rarity][name] = qty
+                if rarity == "Secret" or rarity == "Mythical" or rarity == "Legendary" then
+                    print("[INVENTORY]", rarity, ":", name, "x" .. qty)
+                end
+            end
+        end
+    end)
+
+    task.wait(3)
+    print("[INVENTORY] Requesting inventory data...")
+    pcall(function() requestInventory:FireServer() end)
+end)
+
+-- F1 = Print Inventory
+UIS.InputBegan:Connect(function(input, gp)
+    if gp or input.KeyCode ~= Enum.KeyCode.F1 then return end
+    local data = player:WaitForChild("Data", 2)
+    if not data then return end
+
+    local level = data:FindFirstChild("Level") and data.Level.Value or 0
+    local money = data:FindFirstChild("Money") and data.Money.Value or 0
+    local gems = data:FindFirstChild("Gems") and data.Gems.Value or 0
+
+    oldPrint("\n========================================")
+    oldPrint("📊 INVENTORY | ⭐Lv." .. level .. " 💰" .. money .. " 💎" .. gems)
+    oldPrint("========================================")
+
+    -- Crates
+    for name, qty in pairs(cratesAndBoxes) do
+        oldPrint("  📦 " .. name .. " x" .. qty)
+    end
+
+    -- Items by rarity
+    local order = {"Secret","Mythical","Legendary","Epic","Rare","Uncommon","Common"}
+    local emojis = {Secret="🌟",Mythical="✨",Legendary="🔥",Epic="💜",Rare="💙",Uncommon="💚",Common="⚪"}
+    for _, rarity in ipairs(order) do
+        local items = inventoryByRarity[rarity]
+        local count = 0
+        for _ in pairs(items) do count = count + 1 end
+        if count > 0 then
+            oldPrint(emojis[rarity] .. " [" .. rarity:upper() .. "] " .. count .. " items:")
+            for name, qty in pairs(items) do
+                oldPrint("   • " .. name .. " x" .. qty)
+            end
+        end
+    end
+    oldPrint("========================================\n")
+end)
+
+-- [7] HORST DISPLAY
+if _G.Config.HorstDisplay then
+task.spawn(function()
+    local data = player:WaitForChild("Data", 30)
+    if not data then
+        print("[HORST] ❌ Data not found!")
+        return
+    end
+
+    task.wait(5)
+    print("[HORST] Starting Horst Display...")
+
+    while task.wait(1) do
+        local level = (data:FindFirstChild("Level") and data.Level.Value) or 0
+        local money = (data:FindFirstChild("Money") and data.Money.Value) or 0
+        local gems  = (data:FindFirstChild("Gems") and data.Gems.Value) or 0
+
+        -- Haki status (safe)
+        local hakiStatus = "❌"
+        pcall(function()
+            local statsUI = player.PlayerGui:FindFirstChild("StatsPanelUI")
+            if not statsUI then return end
+            for _, desc in pairs(statsUI:GetDescendants()) do
+                if desc.Name == "HakiProgressionFrame" and desc.Visible == true then
+                    for _, child in pairs(desc:GetDescendants()) do
+                        if child.Name == "HakiLevel" and child:IsA("TextLabel") then
+                            hakiStatus = "✅ " .. child.Text
+                            break
+                        end
+                    end
+                    if hakiStatus == "❌" then hakiStatus = "✅ Haki" end
+                    break
+                end
+            end
+        end)
+
+        -- Observation Haki status (safe)
+        local obsHakiStatus = "❌"
+        pcall(function()
+            local statsUI = player.PlayerGui:FindFirstChild("StatsPanelUI")
+            if not statsUI then return end
+            for _, desc in pairs(statsUI:GetDescendants()) do
+                if desc.Name:find("Observation") and desc:IsA("Frame") and desc.Visible == true then
+                    -- หา level text
+                    for _, child in pairs(desc:GetDescendants()) do
+                        if child:IsA("TextLabel") and child.Text:find("Lv") then
+                            obsHakiStatus = "✅ Obs " .. child.Text
+                            break
+                        end
+                    end
+                    if obsHakiStatus == "❌" then obsHakiStatus = "✅ Obs Haki" end
+                    break
+                end
+            end
+        end)
+
+        -- Inventory summary
+        local totalItems = 0
+        local itemLists = {Secret={},Mythical={},Legendary={},Epic={},Rare={},Uncommon={},Common={}}
+        for rarity, items in pairs(inventoryByRarity) do
+            if itemLists[rarity] then
+                for name, qty in pairs(items) do
+                    table.insert(itemLists[rarity], name .. " x" .. qty)
+                    totalItems = totalItems + 1
+                end
+            end
+        end
+
+        local cratesList = {}
+        for name, qty in pairs(cratesAndBoxes) do
+            table.insert(cratesList, name .. " x" .. qty)
+        end
+
+        -- นับ Aura, Cosmetic Crate, Clan Reroll, Trait Reroll, Race Reroll
+        local auraCount = 0
+        local cosmeticCrateCount = 0
+        local clanRerollCount = 0
+        local traitRerollCount = 0
+        local raceRerollCount = 0
+        
+        -- เช็คจาก inventory (ทุก rarity)
+        for _, items in pairs(inventoryByRarity) do
+            for name, qty in pairs(items) do
+                local lower = name:lower()
+                if lower:find("aura") then
+                    auraCount = auraCount + qty
+                elseif lower:find("clan reroll") then
+                    clanRerollCount = clanRerollCount + qty
+                elseif lower:find("trait reroll") then
+                    traitRerollCount = traitRerollCount + qty
+                elseif lower:find("race reroll") then
+                    raceRerollCount = raceRerollCount + qty
+                end
+            end
+        end
+        
+        -- เช็ค Cosmetic Crate จาก crates
+        for name, qty in pairs(cratesAndBoxes) do
+            if name:lower():find("cosmetic") then
+                cosmeticCrateCount = cosmeticCrateCount + qty
+            end
+        end
+        
+        -- Build message
+        local extraInfo = " 🌀Aura:" .. auraCount .. " 🎁Cosmetic:" .. cosmeticCrateCount .. " 🔄Clan:" .. clanRerollCount .. " 🎭Trait:" .. traitRerollCount .. " 🧬Race:" .. raceRerollCount
+        local message = hakiStatus .. " " .. obsHakiStatus .. " ⭐LVL " .. level .. " 💰" .. formatNumber(money) .. " 💎" .. formatNumber(gems) .. extraInfo
+        print("[HORST]", message)
+
+        -- Important items
+        local important = {}
+        local importantNames = _G.Config.ImportantItems or {}
+
+        for _, crateInfo in pairs(cratesList) do
+            for _, keyword in pairs(importantNames) do
+                if crateInfo:lower():find(keyword:lower()) then
+                    table.insert(important, crateInfo)
+                    break
+                end
+            end
+        end
+
+        for _, items in pairs(itemLists) do
+            for _, itemInfo in pairs(items) do
+                for _, keyword in pairs(importantNames) do
+                    if itemInfo:lower():find(keyword:lower()) then
+                        table.insert(important, itemInfo)
+                        break
+                    end
+                end
+            end
+        end
+
+        if #important > 0 then
+            local display = {}
+            for i = 1, math.min(4, #important) do
+                table.insert(display, important[i])
+            end
+            message = message .. " " .. table.concat(display, " | ")
+            if #important > 4 then message = message .. " +" .. (#important - 4) end
+        elseif totalItems > 0 then
+            message = message .. " Items: " .. totalItems
+        else
+            message = message .. " Loading..."
+        end
+
+        if #message > 180 then message = message:sub(1, 177) .. "..." end
+
+        -- Send to Horst
+        local json = {
+            Level = level, Money = money, Gems = gems,
+            Inventory = {
+                Crates = #cratesList, TotalItems = totalItems,
+                Secret = #itemLists.Secret, Mythical = #itemLists.Mythical,
+                Legendary = #itemLists.Legendary, Epic = #itemLists.Epic,
+                Rare = #itemLists.Rare, Uncommon = #itemLists.Uncommon,
+                Common = #itemLists.Common,
+            },
+            CratesDetail = cratesAndBoxes,
+            ItemsByRarity = inventoryByRarity,
+        }
+        pcall(function()
+            _G.Horst_SetDescription(message, HttpService:JSONEncode(json))
+        end)
+    end
+end)
+end -- HorstDisplay
+
+-- [8] AUTO HIT + AUTO STATS + AUTO OPEN BOXES
+if _G.Config.AutoHit then
+task.spawn(function()
+    while task.wait(0.4) do
+        pcall(function()
+            local char = player.Character
+            if not char then return end
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            if not hrp then return end
+
+            hitRemote:FireServer()
+
+            -- สกิล Z ถ้ามอนใกล้
+            local nearest, dist = nil, math.huge
+            for _, npc in ipairs(workspace.NPCs:GetChildren()) do
+                if npc:FindFirstChild("HumanoidRootPart") and npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
+                    local d = (hrp.Position - npc.HumanoidRootPart.Position).Magnitude
+                    if d < dist then dist = d; nearest = npc end
+                end
+            end
+            if nearest and dist <= 12 then
+                VIM:SendKeyEvent(true, "Z", false, game)
+                task.wait(0.1)
+                VIM:SendKeyEvent(false, "Z", false, game)
+            end
+        end)
+    end
+end)
+end -- AutoHit
+
+-- Auto Stats (Level 1-1000 = Melee only, Level 1000+ = Sword/Defense/Power)
+if _G.Config.AutoStats then
+task.spawn(function()
+    while task.wait(5) do
+        pcall(function()
+            local points = player.Data.StatPoints.Value or 0
+            if points <= 0 then return end
+
+            local level = player.Data.Level.Value or 0
+            print("[STATS] Lv." .. level .. " | Stat points:", points)
+
+            if level < _G.Config.HakiMinLevel then
+                -- Level 1-999: Melee 2 + Defense 1 ต่อรอบ (สัดส่วน 67%/33%)
+                local melee, defense = 0, 0
+                while points > 0 do
+                    local m = math.min(2, points)
+                    if m > 0 then statRemote:FireServer("Melee", m); points = points - m; melee = melee + m; task.wait(0.1) end
+                    if points <= 0 then break end
+
+                    local d = math.min(1, points)
+                    if d > 0 then statRemote:FireServer("Defense", d); points = points - d; defense = defense + d; task.wait(0.1) end
+                end
+                print("[STATS] ✅ Melee +" .. melee .. ", Defense +" .. defense .. " (Lv." .. level .. ")")
+            else
+                -- Level 1000+: อัพ Sword 50%, Defense 30%, Power 20%
+                local sword, defense, power = 0, 0, 0
+                while points > 0 do
+                    local s = math.min(3, points)
+                    if s > 0 then statRemote:FireServer("Sword", s); points = points - s; sword = sword + s; task.wait(0.1) end
+                    if points <= 0 then break end
+
+                    local d = math.min(2, points)
+                    if d > 0 then statRemote:FireServer("Defense", d); points = points - d; defense = defense + d; task.wait(0.1) end
+                    if points <= 0 then break end
+
+                    local p = math.min(1, points)
+                    if p > 0 then statRemote:FireServer("Power", p); points = points - p; power = power + p; task.wait(0.1) end
+                end
+                print("[STATS] ✅ Sword +" .. sword .. ", Defense +" .. defense .. ", Power +" .. power)
+            end
+        end)
+    end
+end)
+end -- AutoStats
+
+
+-- [9] STATS & WEAPON SYSTEM
+local function resetStats()
+    print("[STATS] Resetting all stats...")
+    pcall(function()
+        local r = RemoteEvents:FindFirstChild("ResetStats")
+        if r then r:FireServer() end
+    end)
+    task.wait(2)
+    print("[STATS] ✅ Stats reset!")
 end
 
--- Returns a goal CFrame next to the NPC's HumanoidRootPart
-function DungeonFarmer:_getGoal(npcHRP, position)
-	local pos = npcHRP.Position
-	local cf  = npcHRP.CFrame
-	local dist = _G.FarmConfig.DungeonFarm.Distance or 5
-	
-	if position == "Top" then
-		return CFrame.new(pos + Vector3.new(0, dist, 0), pos)
-	else -- Behind
-		return cf * CFrame.new(0, 2, dist)
-	end
+local function upgradeStats()
+    print("[STATS] Upgrading stats after reset...")
+    local points = 0
+    pcall(function() points = player.Data.StatPoints.Value or 0 end)
+    if points <= 0 then return end
+
+    local swordPts   = math.floor(points * _G.Config.StatSword / 100)
+    local defensePts = math.floor(points * _G.Config.StatDefense / 100)
+    local powerPts   = math.floor(points * _G.Config.StatPower / 100)
+
+    local stats = {
+        { name = "Sword",   amount = swordPts },
+        { name = "Defense", amount = defensePts },
+        { name = "Power",   amount = powerPts },
+    }
+
+    pcall(function()
+        local remote = RemoteEvents:FindFirstChild("UpdatePlayerStats")
+            or RemoteEvents:FindFirstChild("AllocateStat")
+        if not remote then return end
+
+        for _, s in ipairs(stats) do
+            for i = 1, s.amount do
+                remote:FireServer(s.name, 1)
+                task.wait(0.1)
+            end
+            task.wait(0.5)
+        end
+    end)
+
+    print("[STATS] ✅ Sword +" .. swordPts .. ", Defense +" .. defensePts .. ", Power +" .. powerPts)
 end
 
-function DungeonFarmer:Start()
-	if self._running then return end
-	self._running = true
+local function buyDarkBlade()
+    print("[WEAPON] ========== BUYING DARK BLADE ==========")
+    isBuyingDarkBlade = true
 
-	task.spawn(function()
-		while self._running do
-			task.wait(0.05)
-			local cfg = _G.FarmConfig
-			if not cfg.DungeonFarm.Enabled then self.CurrentTarget = nil task.wait(0.5) continue end
-			if game.PlaceId == 77747658251236 then self.CurrentTarget = nil task.wait(1) continue end
+    -- กรณีที่ 1: มีอยู่แล้ว (แบบ v3)
+    if checkOwnerDarkBlade() then
+        print("[WEAPON] ✅ Dark Blade already equipped!")
+        isBuyingDarkBlade = false
+        return true
+    end
+    if checkDarkBlade("Dark Blade") or checkDarkBlade("ดาบสีเข้ม") then
+        print("[WEAPON] ✅ Equipping from inventory...")
+        equipDarkBladeFromInventory()
+        isBuyingDarkBlade = false
+        return true
+    end
 
-			local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
-			if playerGui and playerGui:FindFirstChild("DungeonUI") then
-				local dungeonUI = playerGui.DungeonUI
-				
-				if cfg.DungeonFarm.AutoReplay then
-					local replayFrame = dungeonUI:FindFirstChild("ReplayDungeonFrameVisibleOnlyWhenClearingDungeon")
-					if replayFrame and replayFrame.Visible then
-						pcall(function()
-							game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("DungeonWaveReplayVote"):FireServer("sponsor")
-							game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("DungeonWaveVote"):FireServer("start")
-						end)
-						task.wait(1)
-					end
-				end
-				
-				if cfg.DungeonFarm.AutoVote then
-					local contentFrame = dungeonUI:FindFirstChild("ContentFrame")
-					if contentFrame then
-						local actions = contentFrame:FindFirstChild("Actions")
-						if actions then
-							local diffFrame = actions:FindFirstChild(cfg.DungeonFarm.VoteDiff .. "DifficultyFrame")
-							if diffFrame and diffFrame.Visible then
-								pcall(function()
-									game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("DungeonWaveVote"):FireServer(cfg.DungeonFarm.VoteDiff)
-								end)
-								task.wait(1)
-							end
-						end
-					end
-				end
-			end
+    -- กรณีที่ 2: ยังไม่มี → ซื้อ
+    local gem = player.Data.Gems.Value
+    local money = player.Data.Money.Value
+    print("[WEAPON] Gems:", gem, "Money:", money)
 
-			local char = LocalPlayer.Character
-			local hrp  = char and char:FindFirstChild("HumanoidRootPart")
-			if not hrp then task.wait(1) continue end
+    if gem < _G.Config.DarkBladeGems or money < _G.Config.DarkBladeMoney then
+        print("[WEAPON] ❌ Not enough resources!")
+        isBuyingDarkBlade = false
+        return false
+    end
 
-			local npcsFolder = workspace:FindFirstChild("NPCs")
-			if not npcsFolder then task.wait(1) continue end
+    -- ซื้อแบบ v3 เป๊ะ: while loop + ResetStats + fireproximityprompt
+    local npcCF = CFrame.new(-132.516449, 13.2661686, -1091.2699, 0.972926259, 0, 0.231115878, 0, 1, 0, -0.231115878, 0, 0.972926259)
+    local maxAttempts = 20
 
-			local targets = npcsFolder:GetChildren()
-			if #targets == 0 then task.wait(0.5) continue end
+    while not (checkDarkBlade("Dark Blade") or checkDarkBlade("ดาบสีเข้ม") or checkOwnerDarkBlade()) and maxAttempts > 0 do
+        maxAttempts = maxAttempts - 1
+        print("[WEAPON] 🔄 Purchase attempt", 20 - maxAttempts)
 
-			for _, model in ipairs(targets) do
-				if not self._running or not cfg.DungeonFarm.Enabled then break end
+        -- ResetStats ก่อนซื้อ (แบบ v3)
+        pcall(function()
+            RemoteEvents:WaitForChild("ResetStats"):FireServer()
+        end)
 
-				local hum    = model:FindFirstChildOfClass("Humanoid")
-				local npcHRP = model:FindFirstChild("HumanoidRootPart")
-				if not hum or not npcHRP then continue end
-				if hum.Health <= 0 then continue end
-				
-				self.CurrentTarget = model.Name
+        local npcHRP = nil
+        pcall(function()
+            npcHRP = workspace.ServiceNPCs.DarkBladeNPC:FindFirstChild("HumanoidRootPart")
+        end)
 
-				local isBoss = model.Name:find("Boss") ~= nil
-				local speed  = cfg.DungeonFarm.TweenSpeed
-				local pos    = cfg.DungeonFarm.FarmPosition
+        if not npcHRP then
+            print("[WEAPON] ❌ NPC HRP not found, teleporting...")
+            tweenPos(npcCF)
+            task.wait(1)
+        else
+            local prompt = npcHRP:FindFirstChild("DarkBladeShopPrompt")
+            if prompt then
+                print("[WEAPON] ✅ Buying Dark Blade (fireproximityprompt)...")
+                prompt.MaxActivationDistance = math.huge
+                fireproximityprompt(prompt)
+                pcall(function()
+                    RemoteEvents:WaitForChild("ResetStats"):FireServer()
+                end)
+                task.wait(5)
+                equipDarkBladeFromInventory()
+                task.wait(1)
+            else
+                print("[WEAPON] ❌ Prompt not found")
+                tweenPos(npcCF)
+                task.wait(1)
+            end
+        end
+    end
 
-				if isBoss then
-					-- Stay on boss until it dies
-					while self._running and cfg.DungeonFarm.Enabled do
-						cfg = _G.FarmConfig
-						speed = cfg.DungeonFarm.TweenSpeed
-						pos   = cfg.DungeonFarm.FarmPosition
+    local purchased = checkDarkBlade("Dark Blade") or checkDarkBlade("ดาบสีเข้ม") or checkOwnerDarkBlade()
+    if purchased then
+        print("[WEAPON] 🎉 Dark Blade purchased!")
+        resetStats()
+        upgradeStats()
+        
+        -- Equip Dark Blade หลัง reset (รองรับทั้งภาษาอังกฤษและไทย)
+        print("[WEAPON] 🗡️ Equipping Dark Blade...")
+        task.wait(2)
+        equipDarkBladeFromInventory()
+        task.wait(1)
+        
+        if checkOwnerDarkBlade() then
+            print("[WEAPON] ✅ Dark Blade equipped!")
+        else
+            print("[WEAPON] ⚠️ Dark Blade not equipped yet")
+        end
+    else
+        print("[WEAPON] ❌ Failed to purchase")
+    end
 
-						if _G.ArcX_Farmer then
-							_G.ArcX_Farmer:CheckObservationHaki()
-							_G.ArcX_Farmer:CheckArmamentHaki()
-							_G.ArcX_Farmer:EquipWeapon(true)
-							_G.ArcX_Farmer:CastSkills(true)
-						end
-
-						local curChar = LocalPlayer.Character
-						local curHrp  = curChar and curChar:FindFirstChild("HumanoidRootPart")
-						if not curHrp then task.wait(1) break end
-
-						local liveHum = model:FindFirstChildOfClass("Humanoid")
-						if not model.Parent or not liveHum or liveHum.Health <= 0 then break end
-
-						local liveHRP = model:FindFirstChild("HumanoidRootPart")
-						if not liveHRP then break end
-
-						local goal = self:_getGoal(liveHRP, pos)
-						self:_stabilize(curHrp, goal)
-						curHrp.CFrame = goal
-						task.wait(speed)
-					end
-				else
-					-- Fast single-pass TP, don't care if it dies
-					local curChar = LocalPlayer.Character
-					local curHrp  = curChar and curChar:FindFirstChild("HumanoidRootPart")
-					if not curHrp then continue end
-					
-					if _G.ArcX_Farmer then
-						_G.ArcX_Farmer:CheckObservationHaki()
-						_G.ArcX_Farmer:CheckArmamentHaki()
-						_G.ArcX_Farmer:EquipWeapon(false)
-						_G.ArcX_Farmer:CastSkills(false)
-					end
-					
-					local goal = self:_getGoal(npcHRP, pos)
-					self:_stabilize(curHrp, goal)
-					curHrp.CFrame = goal
-					task.wait(speed)
-				end
-				
-				-- Destabilize when moving to next target
-				local curChar = LocalPlayer.Character
-				local curHrp  = curChar and curChar:FindFirstChild("HumanoidRootPart")
-				if curHrp then self:_destabilize(curHrp) end
-			end
-		end
-	end)
+    isBuyingDarkBlade = false
+    print("[WEAPON] ================================")
+    return purchased
 end
 
--- ==========================================
--- || AUTO MAKE DUNGEON
--- ==========================================
-local _autoMakeDungeonRunning = false
-
-local function StartAutoMakeDungeon()
-	if _autoMakeDungeonRunning then return end
-	_autoMakeDungeonRunning = true
-
-	task.spawn(function()
-		while _autoMakeDungeonRunning do
-			task.wait(3)
-			local cfg = _G.FarmConfig
-			if not cfg.DungeonFarm.AutoMake then continue end
-			if game.PlaceId ~= 77747658251236 then continue end
-
-			pcall(function()
-				game:GetService("ReplicatedStorage")
-					:WaitForChild("Remotes")
-					:WaitForChild("RequestDungeonPortal")
-					:FireServer(cfg.DungeonFarm.DungeonType)
-			end)
-		end
-	end)
+-- [10] FRUIT FARM SYSTEM
+local function checkHasFruit(fruitName)
+    oldPrint("[FRUIT] 🔍 Checking for", fruitName, "...")
+    
+    -- เช็คว่ามีผลในมือหรือ Backpack ก่อน (ใช้ string.find เพราะชื่อจริงคือ "Quake Fruit")
+    local char = player.Character
+    local backpack = player:FindFirstChild("Backpack")
+    
+    -- เช็คใน Character
+    if char then
+        for _, tool in pairs(char:GetChildren()) do
+            if tool:IsA("Tool") and tool.Name:find(fruitName) then
+                oldPrint("[FRUIT] ✅ Found", tool.Name, "in Character")
+                return true  -- return ทันที!
+            end
+        end
+    end
+    
+    -- เช็คใน Backpack
+    if backpack then
+        for _, tool in pairs(backpack:GetChildren()) do
+            if tool:IsA("Tool") and tool.Name:find(fruitName) then
+                oldPrint("[FRUIT] ✅ Found", tool.Name, "in Backpack")
+                return true  -- return ทันที!
+            end
+        end
+    end
+    
+    -- ถ้าไม่เจอใน Character/Backpack → เช็คผ่าน Inventory Remote
+    oldPrint("[FRUIT] 🔍 Not in Character/Backpack, checking Inventory Remote...")
+    local hasFruit = false
+    local connection = nil
+    
+    connection = RS.Remotes.UpdateInventory.OnClientEvent:Connect(function(tab, data)
+        for _, item in pairs(data) do
+            if item.name and item.name:find(fruitName) then
+                hasFruit = true
+                oldPrint("[FRUIT] ✅ Found", item.name, "in Inventory!")
+            end
+        end
+        if connection then
+            connection:Disconnect()
+        end
+    end)
+    
+    pcall(function()
+        RS.Remotes.RequestInventory:FireServer()
+    end)
+    
+    task.wait(1)
+    
+    if connection then
+        connection:Disconnect()
+    end
+    
+    if hasFruit then
+        oldPrint("[FRUIT] ✅ Has", fruitName)
+    else
+        oldPrint("[FRUIT] ❌ No", fruitName)
+    end
+    
+    return hasFruit
 end
 
--- ==========================================
--- || AUTO JOIN DUNGEON
--- ==========================================
-local _autoJoinDungeonRunning = false
-
-local function StartAutoJoinDungeon()
-	if _autoJoinDungeonRunning then return end
-	_autoJoinDungeonRunning = true
-
-	task.spawn(function()
-		while _autoJoinDungeonRunning do
-			task.wait(2)
-			local cfg = _G.FarmConfig
-			if not cfg.DungeonFarm.AutoJoin then continue end
-			if game.PlaceId ~= 77747658251236 then continue end
-
-			-- Skip if executor is Xeno
-			local isXeno = false
-			pcall(function()
-				local name = identifyexecutor()
-				if type(name) == "string" and name == "Xeno" then
-					isXeno = true
-				end
-			end)
-			if isXeno then continue end
-
-			-- Check if ActiveDungeonPortal exists
-			local portal = workspace:FindFirstChild("ActiveDungeonPortal")
-			if not portal then continue end
-
-			local joinPrompt = portal:FindFirstChild("JoinPrompt")
-			if not joinPrompt then continue end
-
-			-- Teleport to dungeon portal location
-			local char = LocalPlayer.Character
-			local hrp  = char and char:FindFirstChild("HumanoidRootPart")
-			if not hrp then continue end
-
-			hrp.CFrame = CFrame.new(1434, 2, -933)
-			task.wait(0.5)
-
-			-- Fire the proximity prompt
-			pcall(function()
-				fireproximityprompt(joinPrompt)
-			end)
-
-			hrp.CFrame = CFrame.new(1349, 1, -1473)
-
-			-- Fire the proximity prompt
-			pcall(function()
-				fireproximityprompt(joinPrompt)
-			end)
-			task.wait(3)
-		end
-	end)
+local function equipFruit(fruitName)
+    print("[FRUIT] 🍎 Equipping fruit:", fruitName)
+    
+    -- ลอง Equip จาก Backpack (ใช้ string.find)
+    local backpack = player:FindFirstChild("Backpack")
+    if backpack then
+        for _, tool in pairs(backpack:GetChildren()) do
+            if tool:IsA("Tool") and tool.Name:find(fruitName) then
+                local char = player.Character
+                if char and char:FindFirstChild("Humanoid") then
+                    print("[FRUIT] 🎯 Equipping:", tool.Name)
+                    char.Humanoid:EquipTool(tool)
+                    task.wait(1)
+                    return true
+                end
+            end
+        end
+    end
+    
+    -- ลอง Equip ผ่าน Remote (ลองทั้งชื่อเต็มและชื่อสั้น)
+    pcall(function()
+        RS:WaitForChild("Remotes"):WaitForChild("EquipWeapon"):FireServer(unpack({"Equip", fruitName}))
+    end)
+    task.wait(0.5)
+    pcall(function()
+        RS:WaitForChild("Remotes"):WaitForChild("EquipWeapon"):FireServer(unpack({"Equip", fruitName .. " Fruit"}))
+    end)
+    task.wait(1)
+    
+    return checkHasFruit(fruitName)
 end
 
--- ==========================================
--- || CLASS: Utility / Character Manager
--- ==========================================
-local Utility = {}
-
-local _utilityConnections = {}
-
-function Utility.EnableAntiAFK()
-	local VirtualUser = game:GetService("VirtualUser")
-	local conn = LocalPlayer.Idled:Connect(function()
-		VirtualUser:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
-		task.wait(1)
-		VirtualUser:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
-	end)
-	table.insert(_utilityConnections, conn)
+local function buyRandomFruit()
+    oldPrint("[FRUIT] 🎲 Buying random fruit...")
+    
+    -- ตำแหน่ง GemFruitDealer NPC
+    local npcCF = CFrame.new(400.641937, 2.79983521, 752.175842, 0.444819272, 0, 0.895620406, 0, 1, 0, -0.895620406, 0, 0.444819272)
+    
+    -- 1. tweenPos ไปหา NPC
+    tweenPos(npcCF)
+    task.wait(3)
+    
+    -- 2. TP ชิด NPC
+    local char = player.Character
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        char.HumanoidRootPart.CFrame = npcCF * CFrame.new(0, 0, -3)
+    end
+    task.wait(1)
+    
+    -- 3. หา Prompt ใน GemFruitDealer
+    local prompt = nil
+    pcall(function()
+        local npc = workspace.ServiceNPCs.GemFruitDealer
+        for _, desc in pairs(npc:GetDescendants()) do
+            if desc:IsA("ProximityPrompt") then
+                prompt = desc
+                break
+            end
+        end
+    end)
+    
+    if not prompt then
+        oldPrint("[FRUIT] ❌ Prompt not found!")
+        return false
+    end
+    
+    -- 4. กดซื้อ
+    oldPrint("[FRUIT] 💰 Firing prompt...")
+    prompt.MaxActivationDistance = math.huge
+    fireproximityprompt(prompt)
+    task.wait(3)
+    
+    return true
 end
 
-function Utility.EnableAutoRejoin()
-	local TeleportService = game:GetService("TeleportService")
-	local GuiService      = game:GetService("GuiService")
-
-	local conn = GuiService.ErrorMessageChanged:Connect(function()
-		local cfg = _G.FarmConfig
-		if not cfg.AutoRejoin then return end
-
-		local lastError = GuiService:GetErrorMessage()
-		if lastError:find("ArcX Security") then
-			warn("Auto-Rejoin blocked: Security Kick.")
-			return
-		end
-
-		task.spawn(function()
-			while task.wait(5) do
-				if pcall(function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end) then
-					break
-				end
-				task.wait(10)
-			end
-		end)
-	end)
-
-	table.insert(_utilityConnections, conn)
+-- เช็คว่าได้ผลอะไรจาก Backpack/Character (เฉพาะผลที่ยังไม่ได้กิน - มี FruitData)
+local function getAnyFruitFromBackpack()
+    local backpack = player:FindFirstChild("Backpack")
+    local char = player.Character
+    
+    -- เช็คใน Backpack (เฉพาะผลปีศาจ)
+    if backpack then
+        for _, tool in pairs(backpack:GetChildren()) do
+            if tool:IsA("Tool") and tool:FindFirstChild("FruitData") then
+                oldPrint("[FRUIT] 📦 Found fruit in Backpack:", tool.Name)
+                return tool
+            end
+        end
+    end
+    
+    -- เช็คใน Character (เฉพาะผลปีศาจที่ยังไม่ได้กิน)
+    if char then
+        for _, tool in pairs(char:GetChildren()) do
+            if tool:IsA("Tool") and tool:FindFirstChild("FruitData") then
+                oldPrint("[FRUIT] 📦 Found fruit in Character:", tool.Name)
+                return tool
+            end
+        end
+    end
+    
+    return nil
 end
 
--- ── Timed rejoin ──────────────────────────────────────────────────────────────
-local _timedRejoinRunning = false
-
-function Utility.EnableTimedRejoin()
-	_timedRejoinRunning = false
-	task.wait()
-	_timedRejoinRunning = true
-
-	local TeleportService = game:GetService("TeleportService")
-
-	task.spawn(function()
-		local elapsed = 0
-		while _timedRejoinRunning and task.wait(1) do
-			local cfg = _G.FarmConfig
-
-			if not cfg.TimedRejoin then
-				elapsed = 0
-				continue
-			end
-
-			elapsed += 1
-			local target = (cfg.RejoinDelay or 10) * 60
-			if elapsed > target then elapsed = target end
-
-			if elapsed >= target then
-				elapsed = 0
-
-				pcall(function()
-					Fluent:Notify({
-						Title    = "ArcX Timed Rejoin",
-						Content  = "Rejoining now (" .. (cfg.RejoinDelay or 10) .. " min timer)...",
-						Duration = 5,
-					})
-				end)
-				task.wait(5)
-
-				for _ = 1, 10 do
-					if pcall(function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end) then
-						break
-					end
-					task.wait(10)
-				end
-			end
-		end
-	end)
+-- กินผลทิ้ง (Equip → Activate → กด Yes ใน ConfirmUI)
+local function eatFruit(fruitTool)
+    if not fruitTool then return end
+    
+    local fruitName = fruitTool.Name
+    oldPrint("[FRUIT] 🍽️ Eating fruit:", fruitName)
+    
+    local char = player.Character
+    local humanoid = char and char:FindFirstChild("Humanoid")
+    local backpack = player:FindFirstChild("Backpack")
+    
+    -- 1. Equip ผล
+    if humanoid and fruitTool.Parent == backpack then
+        oldPrint("[FRUIT] 📦 Equipping fruit...")
+        humanoid:EquipTool(fruitTool)
+        task.wait(0.5)
+    end
+    
+    -- 2. Activate ผล → เปิด ConfirmUI
+    oldPrint("[FRUIT] 🔨 Activating fruit to open ConfirmUI...")
+    pcall(function()
+        fruitTool:Activate()
+    end)
+    task.wait(1)
+    
+    -- 3. หา ConfirmUI และกด Yes
+    local confirmUI = player.PlayerGui:FindFirstChild("ConfirmUI")
+    if confirmUI and confirmUI.Enabled then
+        oldPrint("[FRUIT] ✅ ConfirmUI found, clicking Yes...")
+        local yesButton = confirmUI:FindFirstChild("MainFrame")
+        if yesButton then
+            yesButton = yesButton:FindFirstChild("ButtonsHolder")
+        end
+        if yesButton then
+            yesButton = yesButton:FindFirstChild("Yes")
+        end
+        
+        if yesButton then
+            -- วิธี 1: กดปุ่ม Yes
+            pcall(function()
+                for _, connection in pairs(getconnections(yesButton.MouseButton1Click)) do
+                    connection:Fire()
+                end
+            end)
+            oldPrint("[FRUIT] 🖱️ Clicked Yes button")
+        end
+    else
+        -- ถ้าไม่มี UI → ยิง remote ตรงๆ
+        oldPrint("[FRUIT] ⚠️ No ConfirmUI, firing FruitAction remote directly...")
+        pcall(function()
+            RemoteEvents:WaitForChild("FruitAction"):FireServer("eat", fruitName)
+        end)
+    end
+    
+    task.wait(3)
+    
+    -- 4. เช็คว่าผลหาย FruitData หรือยัง (Quake จะอยู่ใน Character แต่ FruitData จะหาย)
+    local fruitTool = nil
+    if backpack then
+        fruitTool = backpack:FindFirstChild(fruitName)
+    end
+    if not fruitTool and char then
+        fruitTool = char:FindFirstChild(fruitName)
+    end
+    
+    if fruitTool and fruitTool:FindFirstChild("FruitData") then
+        oldPrint("[FRUIT] ⚠️ Fruit still has FruitData - trying to destroy...")
+        pcall(function()
+            fruitTool:Destroy()
+        end)
+    else
+        oldPrint("[FRUIT] ✅ Ate fruit successfully:", fruitName)
+    end
 end
 
-function Utility.EnableFriendCheck()
-	local function checkAndKick(player)
-		if not _G.FarmConfig.FriendOnly or player == LocalPlayer then return end
-
-		local isFriend = false
-		local ok, result = pcall(function() return LocalPlayer:IsFriendsWith(player.UserId) end)
-		if ok then isFriend = result end
-
-		if not isFriend then
-			LocalPlayer:Kick(
-				"\n[ArcX Security]\nStranger Detected: " .. player.Name
-				.. "\nAuto-Rejoin disabled to prevent looping."
-			)
-		end
-	end
-
-	for _, player in ipairs(Players:GetPlayers()) do
-		checkAndKick(player)
-	end
-
-	local conn = Players.PlayerAdded:Connect(checkAndKick)
-	table.insert(_utilityConnections, conn)
+local function allocateStatsPowerFirst()
+    print("[FRUIT] 📊 Allocating stats: Power first (11500), then Sword")
+    
+    local points = 0
+    pcall(function()
+        points = player.Data.StatPoints.Value or 0
+    end)
+    
+    if points <= 0 then
+        print("[FRUIT] ✅ No stat points to allocate")
+        return
+    end
+    
+    -- อัพ Power ให้ถึง 11500 ก่อน (ส่ง batch ทีละ 100)
+    local powerStat = 0
+    pcall(function()
+        powerStat = player.Data.Power.Value or 0
+    end)
+    
+    if powerStat < 11500 then
+        local needed = 11500 - powerStat
+        local toAllocate = math.min(needed, points)
+        
+        print("[FRUIT] 🔥 Allocating", toAllocate, "points to Power (batch)")
+        local remaining = toAllocate
+        while remaining > 0 do
+            local batch = math.min(100, remaining)
+            pcall(function()
+                statRemote:FireServer("Power", batch)
+            end)
+            remaining = remaining - batch
+            task.wait(0.1)
+        end
+        
+        points = points - toAllocate
+    end
+    
+    -- อัพ Sword ที่เหลือ (ส่ง batch ทีละ 100)
+    if points > 0 then
+        print("[FRUIT] ⚔️ Allocating", points, "points to Sword (batch)")
+        local remaining = points
+        while remaining > 0 do
+            local batch = math.min(100, remaining)
+            pcall(function()
+                statRemote:FireServer("Sword", batch)
+            end)
+            remaining = remaining - batch
+            task.wait(0.1)
+        end
+    end
+    
+    print("[FRUIT] ✅ Stats allocated!")
 end
 
-function Utility.SetupCharacterEvents(hakiRemote, obsHakiRemote)
-	local function onCharacterAdded(char)
-		char:WaitForChild("HumanoidRootPart", 5)
-		task.wait(1)
-		local cfg = _G.FarmConfig
-
-		if cfg.AutoHaki then
-			pcall(function() hakiRemote:FireServer("Toggle") end)
-		end
-
-		if cfg.AutoObservationHaki then
-			local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
-			if playerGui then
-				local cdUI    = playerGui:FindFirstChild("CooldownUI")
-				local hasCD   = cdUI
-					and cdUI:FindFirstChild("MainFrame")
-					and cdUI.MainFrame:FindFirstChild("Cooldown_ObsHaki_Observation") ~= nil
-
-				local dodgeUI   = playerGui:FindFirstChild("DodgeCounterUI")
-				local isVisible = dodgeUI
-					and dodgeUI:FindFirstChild("MainFrame")
-					and dodgeUI.MainFrame.Visible
-
-				if not hasCD and not isVisible then
-					pcall(function() obsHakiRemote:FireServer("Toggle") end)
-				end
-			end
-		end
-	end
-
-	local conn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-	table.insert(_utilityConnections, conn)
-
-	if LocalPlayer.Character then
-		task.spawn(onCharacterAdded, LocalPlayer.Character)
-	end
+local function fruitFarmLoop()
+    print("[FRUIT FARM] 🍎 Starting AFK Fruit Farm Loop...")
+    
+    local keyCodes = {Enum.KeyCode.Z, Enum.KeyCode.X, Enum.KeyCode.C, Enum.KeyCode.V}
+    
+    while _G.Config.FruitFarm and isFruitFarming do
+        task.wait(0.5)
+        
+        local char = player.Character
+        if not char or not char:FindFirstChild("HumanoidRootPart") then continue end
+        if char.Humanoid.Health <= 0 then continue end
+        
+        local hrp = char.HumanoidRootPart
+        local lockPos = _G.Config.FruitFarmPos
+        
+        -- ล็อคตำแหน่ง
+        if (hrp.Position - lockPos.Position).Magnitude > 5 then
+            hrp.CFrame = lockPos
+        end
+        
+        -- Equip ผล
+        local targetFruit = _G.Config.TargetFruit
+        equipFruit(targetFruit)
+        
+        -- เปิด Haki + Observation Haki
+        pcall(function() RemoteEvents:WaitForChild("HakiRemote"):FireServer("Toggle") end)
+        pcall(function() RemoteEvents:WaitForChild("ObservationHakiRemote"):FireServer("Toggle") end)
+        
+        -- ใช้สกิลผลปีศาจ (Z, X, C, V) - ใช้ FruitPowerRemote (ตาม dex)
+        for i, keyCode in ipairs(keyCodes) do
+            pcall(function()
+                local args = {
+                    "UseAbility",
+                    {
+                        TargetPosition = hrp.Position,
+                        FruitPower = targetFruit,
+                        KeyCode = keyCode
+                    }
+                }
+                RemoteEvents:WaitForChild("FruitPowerRemote"):FireServer(unpack(args))
+            end)
+            task.wait(0.3)
+        end
+        
+        task.wait(1.5) -- รอ 1.5 วิก่อนใช้สกิลรอบถัดไป
+    end
+    
+    print("[FRUIT FARM] ❌ Fruit Farm Loop ended")
 end
 
-function Utility.Cleanup()
-	_timedRejoinRunning = false
-
-	for _, conn in ipairs(_utilityConnections) do
-		conn:Disconnect()
-	end
-	_utilityConnections = {}
+-- [11] ARTIFACTS UNLOCK SYSTEM
+local function checkArtifactsUnlocked()
+    -- เช็คว่าเปิด Artifacts แล้วหรือยัง (ใช้ data.Unlocked จาก GetArtifactData)
+    local unlocked = false
+    pcall(function()
+        local data = RS:WaitForChild("RemoteFunctions"):WaitForChild("GetArtifactData"):InvokeServer()
+        if data and type(data) == "table" and data.Unlocked == true then
+            unlocked = true
+            print("[ARTIFACTS] ✅ Already unlocked")
+        else
+            print("[ARTIFACTS] ❌ Not unlocked yet")
+        end
+    end)
+    return unlocked
 end
 
-function Utility.GetWeapons()
-	local weapons = {}
-	local char = LocalPlayer.Character
-	if char then
-		for _, v in ipairs(char:GetChildren()) do
-			if v:IsA("Tool") then table.insert(weapons, v.Name) end
-		end
-	end
-	for _, v in ipairs(LocalPlayer.Backpack:GetChildren()) do
-		if v:IsA("Tool") then table.insert(weapons, v.Name) end
-	end
-	return #weapons > 0 and weapons or { "None" }
+local function unlockArtifacts()
+    print("[ARTIFACTS] ========== UNLOCK ARTIFACTS START ==========")
+    
+    -- 1. เช็คว่าเปิดแล้วหรือยัง
+    if checkArtifactsUnlocked() then
+        print("[ARTIFACTS] ⏭️ Already unlocked, skipping...")
+        return true
+    end
+    
+    -- 2. วาปไป NPC
+    print("[ARTIFACTS] 📍 Teleporting to ArtifactsUnlocker NPC...")
+    local npcCFrame = CFrame.new(-440.516388, 1.77979147, -1095.86072, -0.289305925, -0, -0.957236767, 0, 1, -0, 0.957236767, 0, -0.289305925)
+    
+    tweenPos(npcCFrame)
+    task.wait(3)
+    
+    -- 3. หา Prompt และยิง
+    print("[ARTIFACTS] 🔍 Finding ArtifactPrompt...")
+    local npc = workspace:FindFirstChild("ServiceNPCs")
+    if npc then
+        npc = npc:FindFirstChild("ArtifactsUnlocker")
+    end
+    if npc then
+        npc = npc:FindFirstChild("HumanoidRootPart")
+    end
+    
+    local prompt = nil
+    if npc then
+        prompt = npc:FindFirstChild("ArtifactPrompt")
+    end
+    
+    if not prompt then
+        print("[ARTIFACTS] ❌ ArtifactPrompt not found!")
+        return false
+    end
+    
+    print("[ARTIFACTS] 💰 Firing ArtifactPrompt...")
+    prompt.MaxActivationDistance = math.huge
+    fireproximityprompt(prompt)
+    task.wait(2)
+    
+    -- 4. รอ ConfirmUI และกด Yes
+    print("[ARTIFACTS] ⏳ Waiting for ConfirmUI...")
+    task.wait(1)
+    
+    local confirmUI = player.PlayerGui:FindFirstChild("ConfirmUI")
+    if confirmUI and confirmUI.Enabled then
+        print("[ARTIFACTS] ✅ ConfirmUI found, clicking Yes...")
+        local yesButton = confirmUI:FindFirstChild("MainFrame")
+        if yesButton then
+            yesButton = yesButton:FindFirstChild("ButtonsHolder")
+        end
+        if yesButton then
+            yesButton = yesButton:FindFirstChild("Yes")
+        end
+        
+        if yesButton then
+            pcall(function()
+                for _, connection in pairs(getconnections(yesButton.MouseButton1Click)) do
+                    connection:Fire()
+                end
+            end)
+            print("[ARTIFACTS] 🖱️ Clicked Yes button")
+        end
+    else
+        -- ถ้าไม่มี UI → ยิง remote ตรงๆ
+        print("[ARTIFACTS] ⚠️ No ConfirmUI, firing ArtifactUnlockSystem remote...")
+        pcall(function()
+            RemoteEvents:WaitForChild("ArtifactUnlockSystem"):FireServer()
+        end)
+    end
+    
+    task.wait(3)
+    
+    -- 5. เช็คว่าเปิดสำเร็จหรือยัง
+    if checkArtifactsUnlocked() then
+        print("[ARTIFACTS] ✅ Artifacts unlocked successfully!")
+        return true
+    else
+        print("[ARTIFACTS] ❌ Failed to unlock Artifacts")
+        return false
+    end
 end
 
--- ==========================================
--- || CODE REDEEMER
--- ==========================================
-local _codeRedeemDone = false
-
-local function RedeemCodes()
-	local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-	local ok, CodesConfig = pcall(function()
-		return require(ReplicatedStorage:WaitForChild("CodesConfig", 5))
-	end)
-
-	if not ok or not CodesConfig then
-		warn("[ArcX] Code Redeemer: CodesConfig module not found.")
-		return
-	end
-
-	local CodeRedeem = ReplicatedStorage
-		:WaitForChild("RemoteEvents", 5)
-		:FindFirstChild("CodeRedeem")
-
-	if not CodeRedeem then
-		warn("[ArcX] Code Redeemer: CodeRedeem remote not found.")
-		return
-	end
-
-	print("[ArcX] Starting code auto-redeem...")
-
-	for codeName, _ in pairs(CodesConfig.Codes) do
-		if CodesConfig.IsValid(codeName) then
-			print("[ArcX] Redeeming: " .. codeName)
-
-			local success, serverResponse = pcall(function()
-				return CodeRedeem:InvokeServer(codeName)
-			end)
-
-			if success then
-				print("[ArcX] Response for " .. codeName .. ":", serverResponse)
-			else
-				warn("[ArcX] Error redeeming " .. codeName .. ":", serverResponse)
-			end
-
-			task.wait(0.5)
-		end
-	end
-
-	print("[ArcX] Code auto-redeem finished.")
+local function equipArtifacts()
+    oldPrint("[ARTIFACTS] 🎯 Equipping Artifacts...")
+    
+    -- 1. เปิด UI ก่อน
+    pcall(function()
+        RemoteEvents:WaitForChild("ArtifactUIOpened"):FireServer()
+    end)
+    oldPrint("[ARTIFACTS] 📂 Opened Artifact UI")
+    task.wait(2)
+    
+    -- 2. ดึงข้อมูล artifact ทั้งหมด
+    local data = nil
+    local ok, err = pcall(function()
+        data = RS:WaitForChild("RemoteFunctions"):WaitForChild("GetArtifactData"):InvokeServer()
+    end)
+    oldPrint("[ARTIFACTS] 📡 GetArtifactData ok:", tostring(ok), "err:", tostring(err))
+    
+    if data and type(data) == "table" then
+        -- Deep debug: แสดงทุก field
+        local allIds = {}
+        local function deepScan(tbl, prefix)
+            for k, v in pairs(tbl) do
+                local key = prefix .. tostring(k)
+                if type(v) == "table" then
+                    oldPrint("[ARTIFACTS] 📊 " .. key .. " = {table}")
+                    deepScan(v, key .. ".")
+                else
+                    oldPrint("[ARTIFACTS] 📊 " .. key .. " = " .. tostring(v))
+                    -- เก็บทุกค่าที่เป็น string UUID format
+                    if type(v) == "string" and v:match("%x%x%x%x%x%x%x%x%-%x%x%x%x") then
+                        table.insert(allIds, v)
+                        oldPrint("[ARTIFACTS] 🔑 Found UUID: " .. v)
+                    end
+                end
+            end
+        end
+        deepScan(data, "")
+        
+        -- Equip ทุก UUID ที่เจอ
+        oldPrint("[ARTIFACTS] 🔑 Total UUIDs found: " .. #allIds)
+        for i, uuid in ipairs(allIds) do
+            pcall(function()
+                RemoteEvents:WaitForChild("ArtifactEquip"):FireServer(uuid)
+            end)
+            oldPrint("[ARTIFACTS] ✅ Equipped #" .. i .. ": " .. uuid)
+            task.wait(0.5)
+        end
+    else
+        oldPrint("[ARTIFACTS] ⚠️ No artifact data, type:", type(data))
+    end
+    
+    task.wait(1)
+    
+    -- 3. ปิด UI → กดปุ่ม Close ใน ArtifactsUI
+    pcall(function()
+        local artifactsUI = player.PlayerGui:FindFirstChild("ArtifactsUI")
+        if artifactsUI then
+            local mainFrame = artifactsUI:FindFirstChild("ArtifactsMainFrame")
+            if mainFrame then
+                local closeHolder = mainFrame:FindFirstChild("CloseButtonFrameHolder")
+                if closeHolder then
+                    -- หาปุ่มใน CloseButtonFrameHolder
+                    for _, btn in pairs(closeHolder:GetDescendants()) do
+                        if btn:IsA("TextButton") or btn:IsA("ImageButton") then
+                            oldPrint("[ARTIFACTS] 🔒 Clicking close button:", btn.Name)
+                            pcall(function()
+                                for _, conn in pairs(getconnections(btn.MouseButton1Click)) do
+                                    conn:Fire()
+                                end
+                            end)
+                            break
+                        end
+                    end
+                end
+            end
+        end
+    end)
+    task.wait(0.5)
+    
+    -- Fallback: ยิง remote + force disable
+    pcall(function()
+        RemoteEvents:WaitForChild("ArtifactCloseUI"):FireServer()
+    end)
+    pcall(function()
+        local artifactsUI = player.PlayerGui:FindFirstChild("ArtifactsUI")
+        if artifactsUI then
+            artifactsUI.Enabled = false
+            oldPrint("[ARTIFACTS] 🔒 Force disabled ArtifactsUI")
+        end
+    end)
+    
+    oldPrint("[ARTIFACTS] ✅ Closed Artifact UI")
 end
 
--- ==========================================
--- || QUEST MANAGER
--- ==========================================
-local QuestManager = {}
-QuestManager.__index = QuestManager
-
-function QuestManager.new()
-	return setmetatable({ _remote = nil }, QuestManager)
+-- [12] OBSERVATION HAKI BUY SYSTEM (Level 6000+)
+local function checkHasObservationHaki()
+    -- เช็คว่ามี Observation Haki แล้วหรือยัง (ใช้ HakiRemote GetProgression)
+    local hasObs = false
+    pcall(function()
+        local data = RemoteEvents:WaitForChild("HakiRemote"):FireServer("GetProgression")
+        -- เช็คจาก UI: ถ้ามี ObservationHaki UI visible = มีแล้ว
+        local statsUI = player.PlayerGui:FindFirstChild("StatsPanelUI")
+        if statsUI then
+            for _, desc in pairs(statsUI:GetDescendants()) do
+                if desc.Name:find("Observation") and desc:IsA("Frame") and desc.Visible == true then
+                    hasObs = true
+                    break
+                end
+            end
+        end
+    end)
+    
+    -- Fallback: เช็คว่า ObservationHakiRemote ตอบกลับได้ไหม
+    if not hasObs then
+        pcall(function()
+            RemoteEvents:WaitForChild("ObservationHakiRemote"):FireServer("Toggle")
+            task.wait(0.3)
+            RemoteEvents:WaitForChild("ObservationHakiRemote"):FireServer("Toggle")
+            -- ถ้าไม่ error = มี Obs Haki แล้ว
+            -- ลองดูจาก Character ว่ามี effect
+            local char = player.Character
+            if char then
+                for _, v in pairs(char:GetDescendants()) do
+                    if v.Name:find("Observation") or v.Name:find("observation") then
+                        hasObs = true
+                        break
+                    end
+                end
+            end
+        end)
+    end
+    
+    oldPrint("[OBS HAKI] Check hasObservationHaki:", tostring(hasObs))
+    return hasObs
 end
 
-function QuestManager.GetQuestNPCs()
-	local found = {}
-	local serviceNPCs = workspace:FindFirstChild("ServiceNPCs")
-	if not serviceNPCs then return { "None" } end
-
-	for _, child in ipairs(serviceNPCs:GetChildren()) do
-		if child.Name:match("^QuestNPC") then
-			table.insert(found, child.Name)
-		end
-	end
-
-	table.sort(found, function(a, b)
-		local na = tonumber(a:match("%d+$")) or 0
-		local nb = tonumber(b:match("%d+$")) or 0
-		return na < nb
-	end)
-
-	return #found > 0 and found or { "None" }
+local function buyObservationHaki()
+    oldPrint("[OBS HAKI] ========== BUY OBSERVATION HAKI START ==========")
+    
+    -- 1. เช็คว่ามีแล้วหรือยัง
+    if checkHasObservationHaki() then
+        oldPrint("[OBS HAKI] ⏭️ Already have Observation Haki, skipping...")
+        return true
+    end
+    
+    -- 2. วาปไป NPC
+    oldPrint("[OBS HAKI] 📍 Teleporting to ObservationBuyer NPC...")
+    local npcCFrame = CFrame.new(-713.182922, 12.1339779, -527.289795, -0.763382077, 0, 0.645947695, 0, 1, 0, -0.645947695, 0, -0.763382077)
+    
+    tweenPos(npcCFrame)
+    task.wait(3)
+    
+    -- 3. หา Prompt และยิง
+    oldPrint("[OBS HAKI] 🔍 Finding ObservationHakiPrompt...")
+    local npc = workspace:FindFirstChild("ServiceNPCs")
+    if npc then npc = npc:FindFirstChild("ObservationBuyer") end
+    if npc then npc = npc:FindFirstChild("HumanoidRootPart") end
+    
+    local prompt = nil
+    if npc then
+        prompt = npc:FindFirstChild("ObservationHakiPrompt")
+    end
+    
+    if not prompt then
+        oldPrint("[OBS HAKI] ❌ ObservationHakiPrompt not found!")
+        return false
+    end
+    
+    oldPrint("[OBS HAKI] 💰 Firing ObservationHakiPrompt...")
+    prompt.MaxActivationDistance = math.huge
+    fireproximityprompt(prompt)
+    task.wait(2)
+    
+    -- 4. รอ ConfirmUI และกด Yes
+    oldPrint("[OBS HAKI] ⏳ Waiting for ConfirmUI...")
+    task.wait(1)
+    
+    local confirmUI = player.PlayerGui:FindFirstChild("ConfirmUI")
+    if confirmUI and confirmUI.Enabled then
+        oldPrint("[OBS HAKI] ✅ ConfirmUI found, clicking Yes...")
+        local yesButton = confirmUI:FindFirstChild("MainFrame")
+        if yesButton then yesButton = yesButton:FindFirstChild("ButtonsHolder") end
+        if yesButton then yesButton = yesButton:FindFirstChild("Yes") end
+        
+        if yesButton then
+            pcall(function()
+                for _, connection in pairs(getconnections(yesButton.MouseButton1Click)) do
+                    connection:Fire()
+                end
+            end)
+            oldPrint("[OBS HAKI] 🖱️ Clicked Yes button")
+        end
+    else
+        oldPrint("[OBS HAKI] ⚠️ No ConfirmUI found")
+    end
+    
+    task.wait(3)
+    
+    -- 5. เช็คว่าซื้อสำเร็จ
+    oldPrint("[OBS HAKI] ✅ Observation Haki purchase attempted!")
+    return true
 end
 
-function QuestManager:AcceptOnce(npcName)
-	if not npcName or npcName == "None" or npcName == "" then
-		warn("[ArcX] AcceptOnce: No Quest NPC selected.")
-		return false
-	end
+-- [11] BOSS KEY AUTO BUY SYSTEM (Real-time Stock Update)
+local lastBossKeyBuyTime = 0
+local isBuyingBossKey = false
 
-	if not self._remote then
-		local re = game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvents")
-		self._remote = re and re:FindFirstChild("QuestAccept")
-	end
-
-	if not self._remote then
-		warn("[ArcX] QuestAccept remote not found.")
-		return false
-	end
-
-	local ok, err = pcall(function()
-		self._remote:FireServer(npcName)
-	end)
-
-	if ok then
-		print("[ArcX] Quest accepted from " .. npcName)
-		return true
-	else
-		warn("[ArcX] Quest accept failed:", err)
-		return false
-	end
+local function buyBossKeysFromStock(bossKeyStock)
+    if isBuyingBossKey then
+        oldPrint("[BOSS KEY] ⏰ Already buying, skipping...")
+        return false
+    end
+    
+    local currentTime = tick()
+    
+    -- ป้องกันการซื้อซ้ำเร็วเกินไป (รอ 5 วินาทีจากครั้งล่าสุด)
+    if currentTime - lastBossKeyBuyTime < 5 then
+        return false
+    end
+    
+    isBuyingBossKey = true
+    oldPrint("[BOSS KEY] ========== AUTO BUY BOSS KEY START ==========")
+    oldPrint(string.format("[BOSS KEY] 🔑 Boss Key in stock: %d", bossKeyStock))
+    
+    -- วาปไป MerchantNPC
+    local merchantCF = CFrame.new(368.817719, 2.79983521, 783.589844, -0.0566431284, 0, 0.998394549, 0, 1, 0, -0.998394549, 0, -0.0566431284)
+    oldPrint("[BOSS KEY] 📍 Teleporting to MerchantNPC...")
+    tweenPos(merchantCF)
+    task.wait(3)
+    
+    -- ซื้อทั้งหมด
+    oldPrint(string.format("[BOSS KEY] 💰 Buying %d Boss Keys...", bossKeyStock))
+    for i = 1, bossKeyStock do
+        pcall(function()
+            RS.Remotes.MerchantRemotes.PurchaseMerchantItem:InvokeServer("Boss Key", 1)
+        end)
+        task.wait(0.5)
+    end
+    
+    lastBossKeyBuyTime = currentTime
+    isBuyingBossKey = false
+    oldPrint("[BOSS KEY] ✅ Boss Key purchase complete!")
+    oldPrint("[BOSS KEY] ========== AUTO BUY BOSS KEY END ==========")
+    return true
 end
 
--- ==========================================
--- || CLEANUP PREVIOUS INSTANCES
--- ==========================================
-if _G.ArcX_Spawner       then _G.ArcX_Spawner:Stop()             end
-if _G.ArcX_Farmer        then _G.ArcX_Farmer:Stop()              end
-if _G.ArcX_DungeonFarmer then _G.ArcX_DungeonFarmer:Stop()       end
-if _G.ArcX_Tracker       then _G.ArcX_Tracker:Destroy()          end
-Utility.Cleanup()
-
-if _G.ArcX_Window then
-	pcall(function() _G.ArcX_Window:Destroy() end)
-	_G.ArcX_Window = nil
+-- ฟัง MerchantStockUpdate event แบบ real-time
+local function setupBossKeyAutoListener()
+    oldPrint("[BOSS KEY] 🎧 Setting up real-time stock listener...")
+    
+    -- เช็ค stock ครั้งแรกตอนเริ่มต้น
+    task.spawn(function()
+        task.wait(2)
+        oldPrint("[BOSS KEY] 📦 Checking initial stock...")
+        local success, stock = pcall(function()
+            return RS.Remotes.MerchantRemotes.GetMerchantStock:InvokeServer()
+        end)
+        
+        if success then
+            oldPrint(string.format("[BOSS KEY] 📋 Stock type: %s", type(stock)))
+            
+            if type(stock) == "table" then
+                -- ข้อมูล items อยู่ใน stock.stock
+                local items = stock.stock or stock
+                oldPrint(string.format("[BOSS KEY] 📦 Items type: %s", type(items)))
+                
+                if type(items) == "table" then
+                    -- นับจำนวน items
+                    local itemCount = 0
+                    for _ in pairs(items) do itemCount = itemCount + 1 end
+                    oldPrint(string.format("[BOSS KEY] 📊 Total items: %d", itemCount))
+                    
+                    -- แสดงข้อมูลทุก item
+                    local foundBossKey = false
+                    for key, item in pairs(items) do
+                        if type(item) == "table" then
+                            -- แสดง fields ทั้งหมดของ item
+                            oldPrint(string.format("[BOSS KEY] 🔍 Item[%s] fields:", tostring(key)))
+                            for k, v in pairs(item) do
+                                oldPrint(string.format("[BOSS KEY]   - %s = %s (%s)", tostring(k), tostring(v), type(v)))
+                            end
+                            
+                            local itemName = item.name or item.itemId or item.Name or item.ItemId or item.itemName or tostring(key)
+                            local itemStock = item.stock or item.quantity or item.Stock or item.Quantity or 0
+                            
+                            if itemName == "Boss Key" or (type(itemName) == "string" and string.find(itemName, "Boss Key")) then
+                                foundBossKey = true
+                                oldPrint(string.format("[BOSS KEY] 🔑 Boss Key found! Stock: %d", itemStock))
+                                if itemStock > 0 then
+                                    buyBossKeysFromStock(itemStock)
+                                end
+                                break
+                            end
+                        end
+                    end
+                    
+                    if not foundBossKey then
+                        oldPrint("[BOSS KEY] ❌ Boss Key not found in stock")
+                    end
+                else
+                    oldPrint("[BOSS KEY] ⚠️ Items is not a table")
+                end
+            else
+                oldPrint("[BOSS KEY] ⚠️ Stock is not a table")
+            end
+        else
+            oldPrint("[BOSS KEY] ❌ Failed to get initial stock")
+        end
+    end)
+    
+    -- ฟัง event สำหรับ stock update
+    pcall(function()
+        RS.Remotes.MerchantRemotes.MerchantStockUpdate.OnClientEvent:Connect(function(...)
+            if not _G.Config.AutoBuyBossKey then return end
+            
+            local args = {...}
+            oldPrint("[BOSS KEY] 🔔 Stock update event received!")
+            oldPrint(string.format("[BOSS KEY] 📊 Event args count: %d", #args))
+            
+            -- ลองหาข้อมูลจาก arguments ทั้งหมด
+            for i, arg in ipairs(args) do
+                if type(arg) == "table" then
+                    oldPrint(string.format("[BOSS KEY] 📦 Arg[%d] is table", i))
+                    for _, item in pairs(arg) do
+                        if type(item) == "table" and (item.name == "Boss Key" or item.itemId == "Boss Key") then
+                            local stock = item.stock or item.quantity or 0
+                            oldPrint(string.format("[BOSS KEY] � Boss Key found! Stock: %d", stock))
+                            if stock > 0 then
+                                task.spawn(function()
+                                    buyBossKeysFromStock(stock)
+                                end)
+                            end
+                            return
+                        end
+                    end
+                end
+            end
+        end)
+    end)
+    
+    oldPrint("[BOSS KEY] ✅ Real-time stock listener ready!")
 end
 
--- ==========================================
--- || REMOTE SETUP
--- ==========================================
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Remotes           = ReplicatedStorage:WaitForChild("Remotes")
-local RemoteEvents      = ReplicatedStorage:WaitForChild("RemoteEvents")
-local AbilityRemote     = ReplicatedStorage
-	:WaitForChild("AbilitySystem")
-	:WaitForChild("Remotes")
-	:WaitForChild("RequestAbility")
-
-local GameRemotes = {
-	Teleport        = Remotes:WaitForChild("TeleportToPortal"),
-	SummonBoss      = Remotes:WaitForChild("RequestSummonBoss"),
-	SpawnStrongest  = Remotes:WaitForChild("RequestSpawnStrongestBoss"),
-	Anos            = Remotes:WaitForChild("RequestSpawnAnosBoss"),
-	TrueAizen       = RemoteEvents:WaitForChild("RequestSpawnTrueAizen"),
-	Rimuru          = RemoteEvents:WaitForChild("RequestSpawnRimuru"),
-	Atomic          = RemoteEvents:WaitForChild("RequestSpawnAtomic"),
-	Haki            = RemoteEvents:WaitForChild("HakiRemote"),
-	ObservationHaki = RemoteEvents:WaitForChild("ObservationHakiRemote"),
-}
-
-local Tracker   = EntityTracker.new(workspace:WaitForChild("NPCs"))
-local Spawner   = BossSpawner.new(Tracker, GameRemotes)
-local AutoFarm  = Farmer.new(
-	Tracker,
-	GameRemotes.Teleport,
-	AbilityRemote,
-	GameRemotes.ObservationHaki,
-	GameRemotes.Haki
-)
-local AutoQuest     = QuestManager.new()
-local DungeonFarm   = DungeonFarmer.new()
-
-_G.ArcX_Tracker       = Tracker
-_G.ArcX_Spawner       = Spawner
-_G.ArcX_Farmer        = AutoFarm
-_G.ArcX_DungeonFarmer = DungeonFarm
-
-Utility.EnableAntiAFK()
-Utility.EnableAutoRejoin()
-Utility.EnableTimedRejoin()
-Utility.EnableFriendCheck()
-Utility.SetupCharacterEvents(GameRemotes.Haki, GameRemotes.ObservationHaki)
-
-print("ArcX AutoFarm Initialized Successfully.")
-
-local _lastWebhookTime = 0
-local function SendWebhook(title, description, color)
-	local url = Config.Webhook.URL
-	if not Config.Webhook.Enabled or not url or url == "" then return end
-	if tick() - _lastWebhookTime < 3 then return end
-	_lastWebhookTime = tick()
-
-	local data = {
-		content = "",
-		embeds = {{
-			title = title,
-			description = description,
-			color = color or 5814783,
-			footer = { text = "ArcX Notifier | " .. os.date("%X") }
-		}}
-	}
-	
-	local req = (request or http_request or (syn and syn.request))
-	if req then
-		pcall(function()
-			req({
-				Url = url,
-				Method = "POST",
-				Headers = { ["Content-Type"] = "application/json" },
-				Body = game:GetService("HttpService"):JSONEncode(data)
-			})
-		end)
-	end
+-- [12] ICHIGO EXCHANGE SYSTEM
+local function checkIchigoRequirements()
+    -- ตอนนี้ต้องใช้ Boss Ticket 500 ชิ้นเท่านั้น
+    local bossTicketCount = inventoryByRarity["Epic"]["Boss Ticket"] or 0
+    
+    -- ถ้ายังไม่มีข้อมูล ลอง refresh
+    if bossTicketCount == 0 then
+        pcall(function() RS.Remotes.RequestInventory:FireServer() end)
+        task.wait(1)
+        bossTicketCount = inventoryByRarity["Epic"]["Boss Ticket"] or 0
+    end
+    
+    local hasAllItems = bossTicketCount >= 500
+    local missingItems = {}
+    
+    if not hasAllItems then
+        table.insert(missingItems, string.format("Boss Ticket: %d / 500", bossTicketCount))
+    end
+    
+    return hasAllItems, missingItems
 end
 
--- ==========================================
--- || UI INTEGRATION (DIEVER HUB)
--- ==========================================
-_G.ArcX_UI_RunID = (_G.ArcX_UI_RunID or 0) + 1
-local currentRunID = _G.ArcX_UI_RunID
-
-local DIEVERHUB = "https://raw.githubusercontent.com/lnaa323sda/scki343/refs/heads/main/memoryTAKE.lua"
-local Hub = loadstring(game:HttpGet(DIEVERHUB))()
-
-local Win = Hub:CreateWindow({
-	Title = "Sailor Piece ⛵",
-	SubTitle = "| ArcX",
-	MiniText = "ArcX",
-	Logo = "rbxassetid://70511817915018",
-	Center = true,
-	MinSize = Vector2.new(360, 260),
-	MaxSize = Vector2.new(1400, 900),
-	ToggleKey = Enum.KeyCode.LeftControl,
-})
-
-Win:Notify("ArcX", "All systems online. Refresh weapons!", 3, "rbxassetid://70511817915018")
-
-local TabMain = Win:Tab("Main")
-local TabMobs = Win:Tab("Entities")
-local TabBosses = Win:Tab("Standard Bosses")
-local TabSpecials = Win:Tab("Special Bosses")
-local TabDungeon = Win:Tab("Dungeon")
-local TabCrafting = Win:Tab("Crafting")
-local TabMisc = Win:Tab("Misc")
-local TabSettings = Win:Tab("Settings")
-
--- Start loops AFTER UI initialization
-Spawner:Start()
-AutoFarm:Start()
-DungeonFarm:Start()
-StartAutoMakeDungeon()
-StartAutoJoinDungeon()
-
--- ==========================================
--- MAIN TAB 
--- ==========================================
-do
-	local S = TabMain:Section("Live Status & Farm Control")
-	S:Toggle("Enable Auto Farm", Config.LoopFarm, function(v) Config.LoopFarm = v end)
-	S:Slider("Teleport Delay", 0, 10, Config.TpTime * 10, function(v) Config.TpTime = v / 10 end)
-
-	local S2 = TabMain:Section("Haki Buffs")
-	S2:Toggle("Auto Armament Haki", Config.AutoHaki, function(v) Config.AutoHaki = v end)
-	S2:Toggle("Auto Observation Haki", Config.AutoObservationHaki, function(v) Config.AutoObservationHaki = v end)
-
-	local S3 = TabMain:Section("Weapon Management")
-	S3:Toggle("Auto Equip Weapon", Config.AutoEquip, function(v) Config.AutoEquip = v end)
-	
-	local weps = Utility.GetWeapons()
-	if #weps == 0 then weps = {"None"} end
-	S3:Dropdown("NPC Weapon", weps, Config.SelectedWeapon_NPC, function(v) Config.SelectedWeapon_NPC = v end)
-	S3:Dropdown("Boss Weapon", weps, Config.SelectedWeapon_Boss, function(v) Config.SelectedWeapon_Boss = v end)
-	
-	S3:Button("Refresh Weapon List", function()
-		Win:Notify("ArcX", "Reload script to properly refresh lists in Diever UI", 3, "rbxassetid://70511817915018")
-	end)
-
-	local S4 = TabMain:Section("Auto Skills")
-	S4:Toggle("Use Skills on Bosses", Config.AutoSkill.Bosses, function(v) Config.AutoSkill.Bosses = v end)
-	S4:Toggle("Use Skills on NPCs", Config.AutoSkill.NPCs, function(v) Config.AutoSkill.NPCs = v end)
+local function exchangeIchigo()
+    oldPrint("[ICHIGO] ========== EXCHANGE ICHIGO START ==========")
+    
+    -- 1. เช็คว่ามี Ichigo แล้วหรือยัง
+    if checkDarkBlade("Ichigo") then
+        oldPrint("[ICHIGO] ⏭️ Already have Ichigo, skipping...")
+        return true
+    end
+    
+    -- 2. เช็คว่ามี Boss Ticket 500 ชิ้นหรือยัง
+    local hasAll, missing = checkIchigoRequirements()
+    
+    if not hasAll then
+        oldPrint("[ICHIGO] ❌ Missing requirements:")
+        for _, item in pairs(missing) do
+            oldPrint("[ICHIGO]   - " .. item)
+        end
+        oldPrint("[ICHIGO] 🎯 Farm Saber Boss to get Boss Tickets!")
+        return false
+    end
+    
+    oldPrint("[ICHIGO] ✅ All requirements met (Boss Ticket: 500)! Exchanging...")
+    
+    -- 3. เรียก ExchangeItem remote โดยตรง
+    oldPrint("[ICHIGO] 💰 Calling ExchangeItem remote...")
+    local success = pcall(function()
+        RS.Remotes.ExchangeItem:InvokeServer("Ichigo")
+    end)
+    
+    if not success then
+        oldPrint("[ICHIGO] ❌ Failed to call ExchangeItem remote")
+        return false
+    end
+    
+    task.wait(3)
+    
+    -- 4. เช็คว่าได้ Ichigo แล้ว
+    if checkDarkBlade("Ichigo") then
+        oldPrint("[ICHIGO] ✅ Ichigo exchange successful!")
+        return true
+    else
+        oldPrint("[ICHIGO] ⚠️ Ichigo not found in inventory after exchange")
+        return false
+    end
 end
 
--- ==========================================
--- MOBS TAB
--- ==========================================
-do
-	local S = TabMobs:Section("Attack Threshold")
-	S:Slider("Min NPC Count", 1, 5, Config.NPCAttackThreshold, function(v) Config.NPCAttackThreshold = v end)
-
-	local EntityCategories = {
-		{ Name = "Regular NPCs", List = { "ArenaFighter", "Ninja", "Hollow", "Quincy", "Swordsman", "AcademyTeacher", "Slime", "StrongSorcerer", "Curse", "Sorcerer" } },
-		{ Name = "Timed Bosses", List = { "Gojo", "Yuji", "Sukuna", "Jinwoo", "Alucard", "Aizen", "Yamato", "StrongestShinobi" } },
-		{ Name = "Summon Bosses", List = { "Saber", "Ichigo", "QinShi", "Gilgamesh", "BlessedMaiden", "SaberAlter", "StrongestinHistory", "StrongestofToday", "Rimuru", "Anos", "TrueAizen", "Atomic" } },
-	}
-
-	for _, category in ipairs(EntityCategories) do
-		local Scat = TabMobs:Section(category.Name)
-		for _, entityName in ipairs(category.List) do
-			Scat:Toggle("Farm " .. entityName, not Config.IgnoredEntities[entityName], function(v)
-				Config.IgnoredEntities[entityName] = not v
-			end)
-		end
-	end
+-- [13] SABER BOSS FARM SYSTEM
+local function checkBossKeyCount()
+    -- Refresh inventory ทุกครั้งเพื่อให้ได้ข้อมูลล่าสุด
+    pcall(function() RS.Remotes.RequestInventory:FireServer() end)
+    task.wait(1)
+    
+    -- Boss Key เป็น Epic rarity
+    local count = inventoryByRarity["Epic"]["Boss Key"] or 0
+    
+    oldPrint(string.format("[SABER BOSS] 🔑 Boss Key: %d", count))
+    return count
 end
 
--- ==========================================
--- BOSSES TAB
--- ==========================================
-do
-	local S = TabBosses:Section("Spawn Settings")
-	S:Toggle("Auto-Spawn Bosses", Config.Boss.AutoSpawn, function(v) Config.Boss.AutoSpawn = v end)
-	S:Dropdown("Difficulty", { "Normal", "Medium", "Hard", "Extreme" }, Config.Boss.Difficulty, function(v) Config.Boss.Difficulty = v end)
+local function farmSaberBoss()
+    oldPrint("[SABER BOSS] ========== FARM SABER BOSS START ==========")
+    isFarmingIchigoBoss = true
+    
+    -- Loop ตีบอสจนกว่า Boss Key จะหมด
+    while isFarmingIchigoBoss do
+        -- เช็ค Boss Key
+        local bossKeyCount = checkBossKeyCount()
+        oldPrint(string.format("[SABER BOSS] 🎫 Boss Key: %d", bossKeyCount))
+        
+        if bossKeyCount < 1 then
+            oldPrint("[SABER BOSS] ❌ Not enough Boss Keys! Need 1 to summon.")
+            break
+        end
+        
+        -- 1. วาปไป SummonBossNPC
+        local summonNPCCFrame = CFrame.new(651.810181, -3.67419362, -1021.13123, 0.999550879, 0, 0.0299676117, 0, 1, 0, -0.0299676117, 0, 0.999550879)
+        oldPrint("[SABER BOSS] 📍 Teleporting to SummonBossNPC...")
+        tweenPos(summonNPCCFrame)
+        task.wait(3)
+    
+    -- 2. เรียกบอส SaberBoss
+    oldPrint("[SABER BOSS] 🔔 Summoning SaberBoss...")
+    local success = pcall(function()
+        RS.Remotes.RequestSummonBoss:FireServer("SaberBoss")
+    end)
+    
+    if not success then
+        pcall(function()
+            RS.Remotes.RequestAutoSpawn:FireServer("SaberBoss")
+        end)
+    end
+    
+    task.wait(5)
+    
+    -- 3. หาบอสและวาปไปตี
+    oldPrint("[SABER BOSS] 🔍 Finding SaberBoss...")
+    local boss = workspace:FindFirstChild("NPCs")
+    if boss then boss = boss:FindFirstChild("SaberBoss") end
+    
+    if not boss then
+        oldPrint("[SABER BOSS] ❌ SaberBoss not found! Waiting...")
+        task.wait(10)
+        boss = workspace:FindFirstChild("NPCs")
+        if boss then boss = boss:FindFirstChild("SaberBoss") end
+    end
+    
+    if boss and boss:FindFirstChild("HumanoidRootPart") and boss:FindFirstChild("Humanoid") then
+        oldPrint("[SABER BOSS] ✅ SaberBoss found! Starting combat...")
+        
+        local char = player.Character
+        if not char or not char:FindFirstChild("HumanoidRootPart") then
+            oldPrint("[SABER BOSS] ❌ Character not found!")
+            return
+        end
+        
+        -- Equip Dark Blade (รองรับทั้งภาษาอังกฤษและไทย)
+        local tool = findDarkBladeInHand()
+        if not tool then
+            equipDarkBladeFromInventory()
+            tool = findDarkBladeInHand()
+        end
+        if tool and tool.Parent == player.Backpack then
+            char.Humanoid:EquipTool(tool)
+        end
+        
+        -- ตีบอสจนตาย (ใช้วิธีเดียวกับฟาร์ม NPC)
+        local bossRoot = boss.HumanoidRootPart
+        local bossHumanoid = boss.Humanoid
+        local YPOS = 15
+        local skillIndex = 1
+        
+        -- Selection box
+        local box = Instance.new("SelectionBox")
+        box.Adornee = boss
+        box.Color3 = Color3.fromRGB(255, 0, 0)
+        box.LineThickness = 0.1
+        box.SurfaceTransparency = 0.6
+        box.SurfaceColor3 = Color3.fromRGB(255, 0, 0)
+        box.Parent = workspace
+        
+        repeat task.wait()
+            if not boss or not boss.Parent or not boss:FindFirstChild("HumanoidRootPart") or bossHumanoid.Health <= 0 then
+                break
+            end
+            if not char or not char:FindFirstChild("HumanoidRootPart") then break end
+            if char.Humanoid.Health <= 0 then break end
+            
+            -- Equip Dark Blade ทุกรอบ (รองรับทั้งภาษาอังกฤษแลเไทย)
+            local tool = findDarkBladeInHand()
+            if not tool then
+                equipDarkBladeFromInventory()
+                tool = findDarkBladeInHand()
+            end
+            if tool and tool.Parent == player.Backpack then
+                char.Humanoid:EquipTool(tool)
+            end
+            
+            -- BodyVelocity ล็อคตัวละคร
+            BodyVelocity.Velocity = Vector3.zero
+            BodyVelocity.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+            BodyVelocity.Parent = char.HumanoidRootPart
+            
+            -- Freeze Boss ถ้าเป็น owner
+            local success, owner = pcall(function()
+                return bossRoot:GetNetworkOwner()
+            end)
+            if success and owner == player then
+                bossRoot.CFrame = CFrame.new(bossRoot.Position)
+                bossRoot.AssemblyLinearVelocity = Vector3.zero
+                bossRoot.AssemblyAngularVelocity = Vector3.zero
+            end
+            
+            -- tweenPos ชิดบอส
+            tweenPos(
+                CFrame.new(bossRoot.Position + Vector3.new(0, YPOS, 0)) * CFrame.Angles(math.rad(-90), 0, 0),
+                function()
+                    pcall(function()
+                        local tool = char:FindFirstChildWhichIsA("Tool")
+                        if tool then tool:Activate() end
+                    end)
+                    hitRemote:FireServer()
+                end
+            )
+            
+            -- Haki + Observation Haki
+            pcall(function() RemoteEvents:WaitForChild("HakiRemote"):FireServer("Toggle") end)
+            pcall(function() RemoteEvents:WaitForChild("ObservationHakiRemote"):FireServer("Toggle") end)
+            
+            -- Combo: สกิล 1 ตัว → ตีธรรมดา → วน
+            pcall(function()
+                RS:WaitForChild("AbilitySystem"):WaitForChild("Remotes"):WaitForChild("RequestAbility"):FireServer(skillIndex)
+            end)
+            pcall(function()
+                local tool = char:FindFirstChildWhichIsA("Tool")
+                if tool then tool:Activate() end
+            end)
+            hitRemote:FireServer()
+            
+            skillIndex = skillIndex + 1
+            if skillIndex > 4 then skillIndex = 1 end
+            
+        until not boss.Parent or bossHumanoid.Health <= 0 or char.Humanoid.Health <= 0
+        
+        box:Destroy()
+        
+        -- เช็คว่าบอสตายจริงหรือตัวเราตาย
+        local bossStillAlive = boss and boss.Parent and boss:FindFirstChild("HumanoidRootPart") and bossHumanoid.Health > 0
+        
+        if bossStillAlive then
+            -- ตัวเราตาย แต่บอสยังมีชีวิต → รอ respawn แล้วกลับมาตีต่อ
+            oldPrint("[SABER BOSS] ⚠️ Player died! Waiting for respawn...")
+            task.wait(5)
+            
+            -- เช็คอีกครั้งว่าบอสยังอยู่ไหม (อาจตายระหว่างรอ respawn)
+            if boss and boss.Parent and boss:FindFirstChild("HumanoidRootPart") and bossHumanoid.Health > 0 then
+                -- หาตัวละครใหม่
+                local newChar = player.Character or player.CharacterAdded:Wait()
+                if newChar and newChar:FindFirstChild("HumanoidRootPart") then
+                    oldPrint("[SABER BOSS] 🔄 Respawned! Returning to boss...")
+                    
+                    -- วาปกลับไปหาบอส
+                    local bossPos = boss.HumanoidRootPart.Position
+                    tweenPos(CFrame.new(bossPos + Vector3.new(0, 15, 0)))
+                    task.wait(3)
+                end
+            else
+                oldPrint("[SABER BOSS] ⚠️ Boss died while waiting for respawn!")
+            end
+        else
+            -- บอสตายจริง
+            oldPrint("[SABER BOSS] ✅ SaberBoss defeated!")
+            
+            -- เช็คไอเทมที่ได้
+            oldPrint("[SABER BOSS] 📦 Checking drops...")
+            task.wait(2)
+            
+            oldPrint("[SABER BOSS] 🔄 Checking Boss Keys for next round...")
+        end
+    else
+        oldPrint("[SABER BOSS] ❌ SaberBoss not spawned or already dead!")
+        task.wait(5)
+    end
+    
+    end -- end while loop
+    
+    isFarmingIchigoBoss = false
+    oldPrint("[SABER BOSS] ========== FARM SABER BOSS END ==========")
 end
 
--- ==========================================
--- SPECIALS TAB
--- ==========================================
-do
-	local specialOrder = { "Atomic", "TrueAizen", "Sukuna", "Gojo", "Rimuru", "Anos" }
-	for _, bossName in ipairs(specialOrder) do
-		local bossData = Config.Specials[bossName]
-		if bossData then
-			local Scat = TabSpecials:Section(bossName)
-			Scat:Toggle("Auto Spawn " .. bossName, bossData.Auto, function(v) Config.Specials[bossName].Auto = v end)
-			Scat:Dropdown("Difficulty", { "Normal", "Medium", "Hard", "Extreme" }, bossData.Diff, function(v) Config.Specials[bossName].Diff = v end)
-		end
-	end
+-- [13] FRUIT FARM SYSTEM
+local function startFruitFarm()
+    oldPrint("[FRUIT] ========== FRUIT FARM START ==========")
+    isFruitFarming = true
+    
+    local targetFruit = _G.Config.TargetFruit
+    
+    -- 1. เช็คว่ามีผลแล้วหรือยัง
+    oldPrint("[FRUIT] STEP 1: checkHasFruit...")
+    local hasFruitAlready = checkHasFruit(targetFruit)
+    oldPrint("[FRUIT] STEP 1 result:", tostring(hasFruitAlready))
+    
+    if hasFruitAlready then
+        oldPrint("[FRUIT] ✅ Already have", targetFruit)
+        
+        -- กินผลก่อนไปฟาร์ม (ทุกครั้ง!)
+        local fruitTool = getAnyFruitFromBackpack()
+        if fruitTool then
+            oldPrint("[FRUIT] 🍽️ Eating target fruit before farming:", fruitTool.Name)
+            eatFruit(fruitTool)
+            task.wait(2)
+        else
+            oldPrint("[FRUIT] ⚠️ No fruit tool found in Backpack/Character!")
+        end
+        
+        equipFruit(targetFruit)
+        
+        -- ไปฟาร์มต่อเลย (ไม่รีสเตตัส!)
+        oldPrint("[FRUIT] STEP 6: Teleporting to farm position...")
+        local island = _G.Config.FruitFarmIsland
+        local pos = _G.Config.FruitFarmPos
+        
+        pcall(function()
+            tpRemote:FireServer(island)
+        end)
+        task.wait(3)
+        
+        local char = player.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            for i = 1, 10 do
+                char.HumanoidRootPart.CFrame = pos
+                task.wait(0.1)
+            end
+        end
+        
+        oldPrint("[FRUIT] ✅ Fruit farm setup complete!")
+        task.spawn(fruitFarmLoop)
+        return true
+    end
+    
+    -- 2. เช็คว่ารีสเตตัสแล้วหรือยัง (เช็คจาก Power stat จริงๆ)
+    local currentPower = 0
+    pcall(function()
+        currentPower = player.Data.Power.Value or 0
+    end)
+    
+    if currentPower < 11500 then
+        oldPrint("[FRUIT] STEP 2: Reset Stats (Power < 11500)...")
+        pcall(function()
+            RemoteEvents:WaitForChild("ResetStats"):FireServer()
+        end)
+        task.wait(3)
+        oldPrint("[FRUIT] STEP 2: Reset Stats done")
+        
+        -- 3. Allocate Stats: Power 11500 → Sword
+        oldPrint("[FRUIT] STEP 3: Allocate Stats...")
+        local ok3, err3 = pcall(allocateStatsPowerFirst)
+        if not ok3 then
+            oldPrint("[FRUIT] STEP 3 ERROR:", tostring(err3))
+        else
+            oldPrint("[FRUIT] STEP 3: Stats allocated OK")
+        end
+        task.wait(2)
+    else
+        oldPrint("[FRUIT] ⏭️ STEP 2-3: Power already >= 11500, skipping reset...")
+    end
+    
+    -- 4. สุ่มซื้อผลจนได้ตัวที่ต้องการ
+    oldPrint("[FRUIT] STEP 4: Starting buy loop...")
+    local maxAttempts = 100
+    local attemptNum = 0
+    local gotTarget = false
+    
+    while maxAttempts > 0 and not gotTarget do
+        maxAttempts = maxAttempts - 1
+        attemptNum = attemptNum + 1
+        oldPrint("[FRUIT] ══════════════════════════════════")
+        oldPrint("[FRUIT] 🎲 Attempt " .. attemptNum .. " / 100")
+        
+        -- 4a. ซื้อผลสุ่ม
+        local ok4, err4 = pcall(buyRandomFruit)
+        if not ok4 then
+            oldPrint("[FRUIT] ❌ buyRandomFruit ERROR:", tostring(err4))
+            task.wait(2)
+        else
+            -- 4b. รอให้ผลโหลดเข้า Backpack (เพิ่มเวลารอ)
+            oldPrint("[FRUIT] ⏳ Waiting for fruit to load into Backpack...")
+            task.wait(3)
+            local fruitTool = getAnyFruitFromBackpack()
+            
+            if fruitTool then
+                oldPrint("[FRUIT] 🍎 Got: " .. fruitTool.Name)
+                
+                -- เช็คว่าชื่อผลมี targetFruit อยู่ในนั้นหรือไม่ (เช่น "Quake Fruit" มี "Quake")
+                local isTargetFruit = fruitTool.Name:find(targetFruit) ~= nil
+                
+                if isTargetFruit then
+                    -- ได้ผลที่ต้องการ! → กินผลก่อนไปฟาร์ม
+                    oldPrint("[FRUIT] 🎉🎉🎉 GOT TARGET FRUIT: " .. fruitTool.Name .. " !!! 🎉🎉🎉")
+                    oldPrint("[FRUIT] 🍽️ Eating target fruit...")
+                    eatFruit(fruitTool)
+                    task.wait(2)
+                    gotTarget = true
+                else
+                    -- ไม่ใช่ผลที่ต้องการ → กินทิ้ง
+                    oldPrint("[FRUIT] ❌ Not " .. targetFruit .. " → Eating " .. fruitTool.Name .. "...")
+                    eatFruit(fruitTool)
+                    task.wait(2)
+                end
+            else
+                oldPrint("[FRUIT] ⚠️ No fruit found in Backpack after buying!")
+                task.wait(2)
+            end
+        end
+    end
+    
+    -- 5. Equip ผล
+    oldPrint("[FRUIT] STEP 5: Check final result...")
+    if checkHasFruit(targetFruit) then
+        oldPrint("[FRUIT] ✅ Got " .. targetFruit .. "! Equipping...")
+        equipFruit(targetFruit)
+        
+        -- 6. Teleport to farm position
+        oldPrint("[FRUIT] STEP 6: Teleporting to farm position...")
+        local island = _G.Config.FruitFarmIsland
+        local pos = _G.Config.FruitFarmPos
+        
+        pcall(function()
+            tpRemote:FireServer(island)
+        end)
+        task.wait(3)
+        
+        local char = player.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            for i = 1, 10 do
+                char.HumanoidRootPart.CFrame = pos
+                task.wait(0.1)
+            end
+        end
+        
+        oldPrint("[FRUIT] ✅ Fruit farm setup complete!")
+        task.spawn(fruitFarmLoop)
+        return true
+    else
+        oldPrint("[FRUIT] ❌ Failed to get " .. targetFruit)
+        isFruitFarming = false
+        return false
+    end
 end
 
--- ==========================================
--- DUNGEON TAB
--- ==========================================
-do
-	local S = TabDungeon:Section("Farm Settings")
-	S:Toggle("Enable Dungeon Auto Farm", Config.DungeonFarm.Enabled, function(v) Config.DungeonFarm.Enabled = v end)
-	S:Slider("TP Delay", 0, 20, Config.DungeonFarm.TweenSpeed * 10, function(v) Config.DungeonFarm.TweenSpeed = v / 10 end)
+-- [11] HAKI QUEST SYSTEM
+local function acceptHakiQuest()
+    print("[HAKI QUEST] Accepting quest...")
+    local hakiPos = Vector3.new(-497.94, 23.66, -1252.64)
 
-	local S2 = TabDungeon:Section("Position")
-	S2:Dropdown("Farm Position", { "Top", "Behind" }, Config.DungeonFarm.FarmPosition, function(v) Config.DungeonFarm.FarmPosition = v end)
-	S2:Slider("Distance (studs)", 0, 20, Config.DungeonFarm.Distance or 5, function(v) Config.DungeonFarm.Distance = v end)
+    -- ยกเลิก Quest เก่า (ถ้ามีและไม่ใช่ Haki)
+    pcall(function()
+        local questUI = player.PlayerGui:FindFirstChild("QuestUI")
+        if questUI and questUI:FindFirstChild("Quest") and questUI.Quest.Visible then
+            local title = questUI.Quest.Quest.Holder.Content.QuestInfo.QuestTitle.QuestTitle.Text
+            if not title:find("Path to Haki") then
+                abandonRemote:FireServer("repeatable")
+                task.wait(2)
+            else
+                return -- มี Haki quest อยู่แล้ว
+            end
+        end
+    end)
 
-	local S3 = TabDungeon:Section("Auto Run")
-	S3:Toggle("Auto Replay", Config.DungeonFarm.AutoReplay, function(v) Config.DungeonFarm.AutoReplay = v end)
-	S3:Toggle("Auto Vote Difficulty", Config.DungeonFarm.AutoVote, function(v) Config.DungeonFarm.AutoVote = v end)
-	S3:Dropdown("Vote Difficulty", { "Easy", "Medium", "Hard", "Extreme" }, Config.DungeonFarm.VoteDiff, function(v) Config.DungeonFarm.VoteDiff = v end)
-
-	local S4 = TabDungeon:Section("Dungeon Portal (Main Game)")
-	S4:Toggle("Auto Make Dungeon", Config.DungeonFarm.AutoMake, function(v) Config.DungeonFarm.AutoMake = v end)
-	S4:Dropdown("Dungeon Type", { "CidDungeon", "RuneDungeon", "DoubleDungeon", "InfiniteTower" }, Config.DungeonFarm.DungeonType, function(v) Config.DungeonFarm.DungeonType = v end)
-	S4:Toggle("Auto Join Dungeon", Config.DungeonFarm.AutoJoin, function(v) Config.DungeonFarm.AutoJoin = v end)
+    tweenPos(CFrame.new(hakiPos))
+    task.wait(2)
+    pcall(function() questRemote:FireServer("HakiQuestNPC") end)
+    task.wait(2)
 end
 
--- ==========================================
--- CRAFTING TAB
--- ==========================================
-do
-	local S = TabCrafting:Section("Crafting Info")
-	S:Label("Crafting Calculator Requires Inventory Info!")
-	
-	local craftingSetKeys = {}
-	for k, _ in pairs(CONSTANTS.CraftingSets) do table.insert(craftingSetKeys, k) end
-	local selectedSet = "StrongestinHistory"
-	
-	S:Dropdown("Select Set", craftingSetKeys, selectedSet, function(v) selectedSet = v end)
-	S:Button("Check Amount", function()
-		Win:Notify("ArcX", "Check your F9 console for full info.", 3, "rbxassetid://70511817915018")
-	end)
+local function goToHakiNPC()
+    local hakiPos = Vector3.new(-497.94, 23.66, -1252.64)
+    tweenPos(CFrame.new(hakiPos))
+    task.wait(4)
 
-	local S2 = TabCrafting:Section("Craft Items")
-	local craftAmount = 1
-	S2:Slider("Amount to Craft", 1, 100, 1, function(v) craftAmount = v end)
+    local char = player.Character
 
-	S2:Button("Craft Slime Key", function()
-		task.spawn(function()
-			pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("RequestSlimeCraft"):InvokeServer("SlimeKey", craftAmount) end)
-			Win:Notify("ArcX", "Crafted Slime Key", 3, "rbxassetid://70511817915018")
-		end)
-	end)
-	S2:Button("Craft Divine Grail", function()
-		task.spawn(function()
-			pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("RequestGrailCraft"):InvokeServer("DivineGrail", craftAmount) end)
-			Win:Notify("ArcX", "Crafted Divine Grail", 3, "rbxassetid://70511817915018")
-		end)
-	end)
+    -- กด E key (วิธีหลัก)
+    for i = 1, 5 do
+        print("[HAKI QUEST] Press E attempt", i)
+        pcall(function()
+            if char and char:FindFirstChild("HumanoidRootPart") then
+                char.HumanoidRootPart.CFrame = CFrame.new(hakiPos) * CFrame.new(0, 0, 3)
+            end
+        end)
+        task.wait(0.5)
+        VIM:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+        task.wait(0.1)
+        VIM:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+        task.wait(2)
 
-	local S3 = TabCrafting:Section("Auto Crafting")
-	S3:Toggle("Auto Craft Slime Key", Config.AutoCraft.SlimeKey, function(v) Config.AutoCraft.SlimeKey = v end)
-	S3:Toggle("Auto Craft Divine Grail", Config.AutoCraft.DivineGrail, function(v) Config.AutoCraft.DivineGrail = v end)
-	
-	task.spawn(function()
-		while task.wait(5) do
-			if _G.ArcX_UI_RunID ~= currentRunID then break end
-			if Config.AutoCraft.SlimeKey then
-				pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("RequestSlimeCraft"):InvokeServer("SlimeKey", 1) end)
-			end
-			if Config.AutoCraft.DivineGrail then
-				pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("RequestGrailCraft"):InvokeServer("DivineGrail", 1) end)
-			end
-		end
-	end)
+        if checkHakiStatus() then
+            print("[HAKI QUEST] 🎉 Haki obtained via E key!")
+            return true
+        end
+    end
+
+    print("[HAKI QUEST] ❌ Failed to get Haki after E key attempts")
+
+    return false
 end
 
--- ==========================================
--- MISC TAB
--- ==========================================
-do
-	local S = TabMisc:Section("Code Redeemer")
-	S:Button("Redeem All Active Codes", function()
-		task.spawn(RedeemCodes)
-		Win:Notify("ArcX", "Scanning and redeeming active codes...", 3, "rbxassetid://70511817915018")
-	end)
+local function farmThiefForHaki()
+    print("[HAKI QUEST] Starting Haki farm...")
+    local targetNPC = "Thief"
+    local killCount = 0
+    local lastCheckKills = 0
 
-	local S2 = TabMisc:Section("Quest Manager")
-	local questNPCList = QuestManager.GetQuestNPCs()
-	Config.AutoQuest.SelectedNPC = questNPCList[1] or "None"
-	
-	if #questNPCList == 0 then questNPCList = {"None"} end
-	S2:Dropdown("Quest NPC", questNPCList, questNPCList[1], function(v) Config.AutoQuest.SelectedNPC = v end)
-	S2:Button("Accept Quest", function()
-		task.spawn(function() AutoQuest:AcceptOnce(Config.AutoQuest.SelectedNPC) end)
-	end)
+    -- ดึงชื่อ NPC จาก Quest
+    pcall(function()
+        local questUI = player.PlayerGui:FindFirstChild("QuestUI")
+        if questUI and questUI:FindFirstChild("Quest") and questUI.Quest.Visible then
+            local title = questUI.Quest.Quest.Holder.Content.QuestInfo.QuestTitle.QuestTitle.Text
+            if not title:find("Path to Haki") then
+                abandonRemote:FireServer("repeatable")
+                task.wait(2)
+            end
+            local desc = questUI.Quest.Quest.Holder.Content.QuestInfo.QuestDescription.Text
+            local name = desc:match("Defeat the (%w+)") or desc:match("defeat (%w+)")
+            if name then targetNPC = name end
+        end
+    end)
+
+    -- Teleport ไปฟาร์ม
+    pcall(function() tpRemote:FireServer("Starter") end)
+    task.wait(3)
+
+    local farmStart = tick()
+
+    while task.wait(0.5) do
+        if not isHakiQuestActive then break end
+        if tick() - farmStart > _G.Config.HakiTimeout then
+            print("[HAKI QUEST] ⚠️ Timeout!")
+            isHakiQuestActive = false
+            break
+        end
+
+        local char = player.Character
+        if not char or not char:FindFirstChild("HumanoidRootPart") then continue end
+        if char.Humanoid.Health <= 0 then continue end
+
+        -- เช็ค Quest progress
+        local shouldGoToNPC = false
+        local questUI = player.PlayerGui:FindFirstChild("QuestUI")
+        local questVisible = questUI and questUI:FindFirstChild("Quest") and questUI.Quest.Visible
+
+        if questVisible then
+            pcall(function()
+                for _, child in pairs(questUI.Quest.Quest.Holder.Content.QuestInfo:GetDescendants()) do
+                    if child:IsA("TextLabel") then
+                        if child.Text:find("Completed!") then
+                            shouldGoToNPC = true
+                            break
+                        end
+                        local cur, tot = child.Text:match("(%d+)/(%d+)")
+                        if cur and tot and tonumber(cur) >= tonumber(tot) then
+                            shouldGoToNPC = true
+                        end
+                    end
+                end
+            end)
+        else
+            if killCount > 5 and (killCount - lastCheckKills) >= 5 then
+                shouldGoToNPC = true
+            end
+        end
+
+        -- ไปส่ง Quest
+        if shouldGoToNPC then
+            print("[HAKI QUEST] 🔄 Going to NPC...")
+            lastCheckKills = killCount
+
+            if goToHakiNPC() then
+                print("[HAKI QUEST] 🎉🎉 HAKI OBTAINED!")
+
+                if _G.Config.BuyDarkBlade then
+                    print("[HAKI QUEST] 🛒 Buying Dark Blade...")
+                    isHakiQuestActive = false
+                    pcall(buyDarkBlade)
+                end
+
+                print("[HAKI QUEST] ✅ Complete!")
+                return
+            end
+
+            -- ดึง NPC ใหม่จาก Quest ใหม่
+            pcall(function()
+                local q = player.PlayerGui:FindFirstChild("QuestUI")
+                if q and q:FindFirstChild("Quest") and q.Quest.Visible then
+                    local desc = q.Quest.Quest.Holder.Content.QuestInfo.QuestDescription.Text
+                    local name = desc:match("Defeat the (%w+)") or desc:match("defeat (%w+)")
+                    if name then targetNPC = name; print("[HAKI QUEST] New target:", targetNPC) end
+                end
+            end)
+
+            pcall(function() tpRemote:FireServer("Starter") end)
+            task.wait(3)
+            continue
+        end
+
+        -- ฟาร์ม NPC
+        local npcFound = false
+        for i = 1, 5 do
+            local npc = workspace.NPCs:FindFirstChild(targetNPC .. i)
+            if npc and npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
+                npcFound = true
+                local target = npc:FindFirstChild("HumanoidRootPart")
+                if target then
+                    while npc.Parent and npc.Humanoid.Health > 0 do
+                        if not char or not char:FindFirstChild("HumanoidRootPart") then break end
+                        if char.Humanoid.Health <= 0 then break end
+                        pcall(function() char.HumanoidRootPart.CFrame = target.CFrame * CFrame.new(0, 0, 5) end)
+                        pcall(function() hitRemote:FireServer() end)
+                        task.wait(0.3)
+                    end
+                    killCount = killCount + 1
+                    break
+                end
+            end
+        end
+
+        if not npcFound then task.wait(3) end
+    end
 end
 
--- ==========================================
--- SETTINGS TAB
--- ==========================================
-do
-	local S = TabSettings:Section("Performance")
-	S:Toggle("WhiteScreen Mode", Config.WhiteScreen, function(v)
-		Config.WhiteScreen = v
-		pcall(function() game:GetService("RunService"):Set3dRenderingEnabled(not v) end)
-	end)
-
-	local S2 = TabSettings:Section("Webhook & Auto Rejoin")
-	S2:Toggle("Enable Webhooks", Config.Webhook.Enabled, function(v) Config.Webhook.Enabled = v end)
-	S2:Toggle("Auto Rejoin on Disconnect", Config.AutoRejoin, function(v) Config.AutoRejoin = v end)
-	S2:Toggle("Timed Auto Rejoin", Config.TimedRejoin, function(v) Config.TimedRejoin = v end)
-	S2:Slider("Rejoin Interval (min)", 1, 120, Config.RejoinDelay, function(v) Config.RejoinDelay = v end)
-
-	local S3 = TabSettings:Section("Server Security")
-	S3:Toggle("Friend-Only Mode", Config.FriendOnly, function(v)
-		Config.FriendOnly = v
-		if v then
-			for _, player in ipairs(game.Players:GetPlayers()) do
-				if player ~= LocalPlayer then
-					local isFriend = false
-					pcall(function() isFriend = LocalPlayer:IsFriendsWith(player.UserId) end)
-					if not isFriend then
-						LocalPlayer:Kick("[ArcX Security] Friend-Only Mode Enabled: Stranger found.")
-					end
-				end
-			end
-		end
-	end)
+local function startHakiQuest()
+    if not _G.Config.HakiQuest then return end
+    print("[HAKI QUEST] Starting...")
+    pcall(acceptHakiQuest)
+    pcall(farmThiefForHaki)
 end
 
--- Final Actions
-if not _codeRedeemDone then
-	_codeRedeemDone = true
-	task.spawn(function()
-		task.wait(2)
-		RedeemCodes()
-	end)
+-- [11] NORMAL QUEST FARM
+local function selectWeapon()
+    -- เช็คว่า Dark Blade อยู่ในมือแล้วหรือยัง
+    local blade = findDarkBladeInHand()
+    if blade then return "Dark Blade" end
+
+    -- ลอง Equip จาก Inventory
+    if equipDarkBladeFromInventory() then return "Dark Blade" end
+
+    -- ไม่มี Dark Blade → ใช้อาวุธดีสุด
+    return getBestWeapon()
 end
 
-game:GetService("GuiService").ErrorMessageChanged:Connect(function(msg)
-	if Config.Webhook.Enabled then
-		SendWebhook("🔴 Disconnected", "Player **" .. LocalPlayer.Name .. "** disconnected.\nReason: " .. tostring(msg), 0xFF0000)
-	end
+local function equipToolByName(toolName, char)
+    local tool = nil
+    if toolName == "Dark Blade" then
+        tool = findDarkBladeInHand()
+    else
+        tool = player.Backpack:FindFirstChild(toolName) or char:FindFirstChild(toolName)
+    end
+
+    if tool and tool.Parent == player.Backpack then
+        print("[FARM] Equipping:", tool.Name)
+        char.Humanoid:EquipTool(tool)
+    end
+    return tool
+end
+
+local function farmLoop()
+    while _G.Config.AutoFarm do
+        task.wait()
+
+        -- รอถ้า Haki Quest, ซื้อดาบ, Fruit Farm, หรือ Ichigo Boss Farm กำลังทำงาน
+        if isHakiQuestActive or isBuyingDarkBlade or isFruitFarming or isFarmingIchigoBoss then
+            task.wait(10)
+            continue
+        end
+
+        local char = player.Character
+        if not char or not char:FindFirstChild("HumanoidRootPart") then continue end
+        if char.Humanoid.Health <= 0 then continue end
+
+        local questInfo = getQuestInfo()
+        if not questInfo then continue end
+
+        -- เช็คว่ามี Quest อยู่หรือยัง
+        local questUI = player.PlayerGui:FindFirstChild("QuestUI")
+        if not questUI then continue end
+
+        if not questUI.Quest.Visible then
+            -- ไม่มี Quest → ไปรับ (SmartTP แบบ v3)
+            _G.SmartTP(questInfo.position)
+            questRemote:FireServer(questInfo.npcName)
+
+        elseif questUI.Quest.Quest.Holder.Content.QuestInfo.QuestTitle.QuestTitle.Text ~= questInfo.questTitle then
+            -- Quest ผิด → ยกเลิก
+            abandonRemote:FireServer("repeatable")
+
+        else
+            -- Quest ถูกต้อง → ไปฟาร์ม
+            local toolName = selectWeapon()
+            local npcType = getNpcType(questInfo.npcName)
+            if not npcType then continue end
+
+            -- Equip ดาบก่อนเริ่มฟาร์ม
+            equipToolByName(toolName, char)
+
+            -- YPOS
+            local YPOS = 9
+            local firstMob = true
+
+            -- วน loop ตีมอนต่อเนื่อง จนกว่าเควสจะเสร็จ/ตาย/เควสเปลี่ยน
+            while _G.Config.AutoFarm do
+                -- เช็คว่าเควสยังอยู่ไหม
+                if char.Humanoid.Health <= 0 then break end
+                if not questUI.Quest.Visible then break end
+                if questUI.Quest.Quest.Holder.Content.QuestInfo.QuestTitle.QuestTitle.Text ~= questInfo.questTitle then break end
+
+                local closest = findNPC(npcType)
+
+                if not closest then
+                    -- หามอนไม่เจอ → วาปไปตำแหน่ง quest ครั้งแรกเท่านั้น
+                    if firstMob then
+                        print("[FARM] NPC:", npcType, "| Weapon:", toolName)
+                        tweenPos(CFrame.new(questInfo.position))
+                        task.wait(3)
+                    end
+                    task.wait(1)
+                    firstMob = false
+                    continue
+                end
+                firstMob = false
+
+                print("[FARM] Found:", closest.Name)
+
+                -- Equip ดาบให้แน่ใจ
+                equipToolByName(toolName, char)
+
+                -- Selection box
+                local box = Instance.new("SelectionBox")
+                box.Adornee = closest
+                box.Color3 = Color3.fromRGB(0, 255, 0)
+                box.LineThickness = 0.08
+                box.SurfaceTransparency = 0.6
+                box.SurfaceColor3 = Color3.fromRGB(0, 255, 0)
+                box.Parent = workspace
+
+                -- Skill combo index (วนสกิล 1-4)
+                local skillIndex = 1
+
+                -- Combat loop: combo สกิล → ตีธรรมดา → สกิล → ตีธรรมดา
+                repeat task.wait()
+
+                    if not closest or not closest.Parent
+                        or not closest:FindFirstChild("HumanoidRootPart")
+                        or closest.Humanoid.Health <= 0 then
+                        break
+                    end
+
+                    -- Equip weapon ทุกรอบ (ไม่ให้หลุดมือ)
+                    equipToolByName(toolName, char)
+
+                    -- BodyVelocity
+                    BodyVelocity.Velocity = Vector3.zero
+                    BodyVelocity.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+                    BodyVelocity.Parent = char.HumanoidRootPart
+
+                    -- Freeze NPC ถ้าเป็น owner
+                    local success, owner = pcall(function()
+                        return closest.HumanoidRootPart:GetNetworkOwner()
+                    end)
+                    if success and owner == player then
+                        closest.HumanoidRootPart.CFrame = CFrame.new(closest.HumanoidRootPart.Position)
+                        closest.HumanoidRootPart.AssemblyLinearVelocity = Vector3.zero
+                        closest.HumanoidRootPart.AssemblyAngularVelocity = Vector3.zero
+                    end
+
+                    -- tweenPos ชิดมอน
+                    tweenPos(
+                        CFrame.new(closest.HumanoidRootPart.Position + Vector3.new(0, YPOS, 0)) * CFrame.Angles(math.rad(-90), 0, 0),
+                        function()
+                            hitRemote:FireServer()
+                        end
+                    )
+
+                    -- Haki + Observation Haki
+                    pcall(function() RemoteEvents:WaitForChild("HakiRemote"):FireServer("Toggle") end)
+                    pcall(function() RemoteEvents:WaitForChild("ObservationHakiRemote"):FireServer("Toggle") end)
+
+                    -- Combo: สกิล 1 ตัว → ตีธรรมดา → วน
+                    pcall(function()
+                        RS:WaitForChild("AbilitySystem"):WaitForChild("Remotes"):WaitForChild("RequestAbility"):FireServer(skillIndex)
+                    end)
+                    hitRemote:FireServer() -- ตีธรรมดาหลังสกิล (combo)
+                    
+                    skillIndex = skillIndex + 1
+                    if skillIndex > 4 then skillIndex = 1 end
+
+                until char.Humanoid.Health <= 0 or not questUI.Quest.Visible or questUI.Quest.Quest.Holder.Content.QuestInfo.QuestTitle.QuestTitle.Text ~= questInfo.questTitle
+
+                box:Destroy()
+
+                -- Equip ดาบกลับหลังมอนตาย (ไม่ให้หลุดมือ)
+                equipToolByName(toolName, char)
+                print("[FARM] Killed:", closest.Name, "→ Finding next mob...")
+                task.wait(0.3) -- รอสั้นมากแล้วหามอนตัวต่อไปเลย
+            end
+
+            print("[FARM] Exit Farm Loop")
+        end
+    end
+end
+
+-- [12] MAIN CONTROLLER
+task.spawn(function()
+    task.wait(3)
+    pcall(function()
+        local backpack = player:WaitForChild("Backpack", 10)
+        if not backpack then return end
+        local char = player.Character
+        if not char then return end
+        local tool = backpack:FindFirstChild("Combat")
+        if tool then char:FindFirstChild("Humanoid"):EquipTool(tool) end
+    end)
+end)
+
+-- Boss Key Auto Buy (Real-time Event Listener)
+task.spawn(function()
+    task.wait(15)
+    
+    if _G.Config.AutoBuyBossKey then
+        setupBossKeyAutoListener()
+    end
+end)
+
+-- System Loop: Level Check → Dark Blade → Haki → Farm (ทำงานต่อเนื่อง)
+task.spawn(function()
+    task.wait(10)
+
+    while _G.Config.AutoFarm do
+        local level = 0
+        pcall(function() level = player.Data.Level.Value or 0 end)
+        print("[SYSTEM] 🔍 Level check:", level)
+
+        -- ===== PRIORITY -1: เช็คว่าครบเงื่อนไขสลับบัญชีหรือยัง (Level 11500 + Haki ทั้ง 2) =====
+        if level >= 11500 then
+            print("[SYSTEM] 🎯 Level >= 11500 → Checking account completion...")
+            
+            -- เช็คว่ามี Haki ทั้ง 2 แล้วหรือยัง
+            local hasArmamentHaki = false
+            local hasObservationHaki = false
+            
+            pcall(function()
+                -- เช็ค Armament Haki
+                local data = RemoteEvents:WaitForChild("HakiRemote"):FireServer("GetProgression")
+                if data and data.Armament then
+                    hasArmamentHaki = true
+                end
+                
+                -- เช็ค Observation Haki
+                hasObservationHaki = checkHasObservationHaki()
+            end)
+            
+            if hasArmamentHaki and hasObservationHaki then
+                print("[SYSTEM] ✅ Level 11500+ with both Haki types!")
+                print("[SYSTEM] 🔄 Calling Horst_AccountChangeDone...")
+                
+                if _G.Horst_AccountChangeDone then
+                    local ok, err = _G.Horst_AccountChangeDone()
+                    if ok then
+                        print("[SYSTEM] ✅ Account change done sent successfully!")
+                        print("[SYSTEM] 🔄 Waiting for account switch...")
+                        task.wait(999999) -- รอสลับบัญชี
+                    else
+                        print("[SYSTEM] ❌ Failed to send DONE:", err)
+                    end
+                else
+                    print("[SYSTEM] ⚠️ _G.Horst_AccountChangeDone not found!")
+                end
+            else
+                print(string.format("[SYSTEM] ⏳ Haki status: Armament=%s, Observation=%s", 
+                    tostring(hasArmamentHaki), tostring(hasObservationHaki)))
+            end
+        end
+
+        -- ===== Level < HakiMinLevel → ฟาร์มปกติ =====
+        if level < _G.Config.HakiMinLevel then
+            print("[SYSTEM] 📈 Level " .. level .. " - Normal Farm (Melee)")
+            task.wait(60) -- เช็คใหม่ทุก 60 วิ
+            continue
+        end
+
+        -- ===== PRIORITY 0: เช็ค Artifacts ที่ Level 4000 =====
+        if level >= 4000 then
+            print("[SYSTEM] 💎 Level >= 4000 → Checking Artifacts...")
+            if not checkArtifactsUnlocked() then
+                print("[SYSTEM] 🔓 Unlocking Artifacts...")
+                local unlocked = unlockArtifacts()
+                if unlocked then
+                    print("[SYSTEM] ✅ Artifacts unlocked! Equipping...")
+                    equipArtifacts()
+                end
+            else
+                print("[SYSTEM] ✅ Artifacts already unlocked")
+            end
+        end
+
+        -- ===== PRIORITY 0.5: เช็ค Observation Haki ที่ Level 6000 =====
+        if level >= 6000 then
+            print("[SYSTEM] 👁️ Level >= 6000 → Checking Observation Haki...")
+            if not checkHasObservationHaki() then
+                print("[SYSTEM] 🔓 Buying Observation Haki...")
+                buyObservationHaki()
+            else
+                print("[SYSTEM] ✅ Observation Haki already owned")
+            end
+        end
+
+        -- ===== PRIORITY 0.6: เช็ค Saber Boss Farm (อิสระจาก Ichigo) =====
+        if _G.Config.FarmSaberBoss then
+            -- เช็คว่ามี Boss Key อย่างน้อย 1 อันก่อน
+            local bossKeyCount = checkBossKeyCount()
+            if bossKeyCount >= 1 then
+                print("[SYSTEM] 🎯 Starting Saber Boss farm...")
+                farmSaberBoss()
+                task.wait(5)
+            else
+                print("[SYSTEM] ⚠️ Not enough Boss Keys for Saber Boss (need 1)")
+            end
+        end
+
+        -- ===== PRIORITY 0.7: เช็ค Ichigo Exchange =====
+        if _G.Config.ExchangeIchigo and level >= _G.Config.IchigoMinLevel then
+            print("[SYSTEM] ⚔️ Checking Ichigo Exchange...")
+            if not checkDarkBlade("Ichigo") then
+                local hasAll, missing = checkIchigoRequirements()
+                
+                if hasAll then
+                    print("[SYSTEM] ✅ All Ichigo requirements met! Exchanging...")
+                    exchangeIchigo()
+                else
+                    print("[SYSTEM] ❌ Missing Ichigo requirements:")
+                    for _, item in pairs(missing) do
+                        print("[SYSTEM]   - " .. item)
+                    end
+                end
+            else
+                print("[SYSTEM] ✅ Ichigo already owned")
+            end
+        end
+
+        -- ===== PRIORITY 1: เช็ค Dark Blade ก่อนเสมอ =====
+        print("[SYSTEM] 🗡️ Checking Dark Blade...")
+        local hasBlade = findDarkBladeInHand() ~= nil
+        if not hasBlade then
+            hasBlade = equipDarkBladeFromInventory()
+        end
+
+        if hasBlade then
+            print("[SYSTEM] ✅ Dark Blade found!")
+            
+            -- ถ้ามีดาบแล้ว + Level >= FruitMinLevel → เช็ค Fruit Farm
+            if _G.Config.FruitFarm and level >= _G.Config.FruitMinLevel then
+                print("[SYSTEM] 🍎 Level " .. level .. " >= " .. _G.Config.FruitMinLevel .. " → Checking Fruit Farm...")
+                
+                local hasFruit = checkHasFruit(_G.Config.TargetFruit)
+                if hasFruit then
+                    print("[SYSTEM] ✅ Already have " .. _G.Config.TargetFruit .. " → Fruit Farm Mode!")
+                    isFruitFarming = true
+                    equipFruit(_G.Config.TargetFruit)
+                    
+                    -- Teleport to fruit farm position
+                    local island = _G.Config.FruitFarmIsland
+                    local pos = _G.Config.FruitFarmPos
+                    pcall(function() tpRemote:FireServer(island) end)
+                    task.wait(3)
+                    
+                    local char = player.Character
+                    if char and char:FindFirstChild("HumanoidRootPart") then
+                        for i = 1, 10 do
+                            char.HumanoidRootPart.CFrame = pos
+                            task.wait(0.1)
+                        end
+                    end
+                    
+                    task.spawn(fruitFarmLoop)
+                    break
+                else
+                    print("[SYSTEM] ❌ No " .. _G.Config.TargetFruit .. " → Starting Fruit Farm process...")
+                    oldPrint("[DEBUG] About to call startFruitFarm...")
+                    local ok, err = pcall(startFruitFarm)
+                    if ok then
+                        oldPrint("[DEBUG] startFruitFarm completed OK")
+                    else
+                        oldPrint("[DEBUG] startFruitFarm ERROR:", tostring(err))
+                    end
+                    break
+                end
+            else
+                -- มีดาบแล้ว แต่ยังไม่ถึง FruitMinLevel → ฟาร์มปกติ
+                print("[SYSTEM] ✅ Dark Blade found! Normal Farm...")
+                break
+            end
+        end
+
+        -- STEP 2: ไม่มีดาบ → เช็ค Haki
+        print("[SYSTEM] ❌ No Dark Blade | Checking Haki...")
+        local hasHaki = checkHakiStatus()
+
+        if hasHaki then
+            -- STEP 3: มี Haki แต่ไม่มีดาบ → ซื้อดาบ
+            print("[SYSTEM] ✅ Has Haki but no Dark Blade → Buying...")
+            if _G.Config.BuyDarkBlade then
+                pcall(buyDarkBlade)
+            end
+            print("[SYSTEM] 🗡️ Dark Blade process done! Normal Farm...")
+            break
+        end
+
+        -- STEP 4: ไม่มีทั้ง Haki + ดาบ → ทำ Haki Quest
+        if _G.Config.HakiQuest and not isHakiQuestActive then
+            print("[SYSTEM] 🔥 No Haki + No Dark Blade → Starting Haki Quest...")
+            isHakiQuestActive = true
+            pcall(startHakiQuest)
+            -- หลัง Haki Quest เสร็จ (ซื้อดาบใน farmThiefForHaki แล้ว)
+            isHakiQuestActive = false
+            print("[SYSTEM] ✅ Haki Quest done! Normal Farm...")
+            break
+        end
+
+        task.wait(60) -- เช็คใหม่ทุก 60 วิ
+    end
+end)
+
+-- Normal Farm
+task.spawn(function()
+    task.wait(15)
+    pcall(farmLoop)
+end)
+
+-- [13] EVENT HANDLERS
+player.OnTeleport:Connect(function(state)
+    if state == Enum.TeleportState.Failed then
+        task.wait(1.5)
+        pcall(rejoin)
+    end
+end)
+
+Players.PlayerRemoving:Connect(function()
+    pcall(function()
+        game:HttpGet("https://node-api--0890939481gg.replit.app/leave")
+    end)
+end)
+
+-- [14] HEARTBEAT PHYSICS LOCK (แบบ v3 เป๊ะ)
+task.spawn(function()
+    RunService.Heartbeat:Connect(function()
+        if player.Character then
+            -- ล็อคแค่ velocity (ไม่ล็อค Anchored/PlatformStand) เพื่อให้รับ/ทำดาเมจได้
+            for _, v in pairs(player.Character:GetChildren()) do
+                if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
+                    v.CanCollide = false
+                    v.AssemblyLinearVelocity = Vector3.zero
+                    v.AssemblyAngularVelocity = Vector3.zero
+                end
+            end
+        end
+    end)
 end)
