@@ -1,12 +1,51 @@
--- Giống Banana_UI: tạo ScreenGui + parent CoreGui (chạy được qua executor / loadstring)
+a-- Giống Banana_UI: tạo ScreenGui + parent CoreGui (chạy được qua executor / loadstring)
 local TweenService = game:GetService("TweenService")
 local Lighting = game:GetService("Lighting")
 local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+
+local function parentIntroGui(screenGui)
+	screenGui.Parent = CoreGui
+	if screenGui.Parent then
+		return
+	end
+	pcall(function()
+		if type(gethui) == "function" then
+			screenGui.Parent = gethui()
+		end
+	end)
+	if screenGui.Parent then
+		return
+	end
+	local lp = Players.LocalPlayer
+	if lp then
+		screenGui.Parent = lp:FindFirstChildOfClass("PlayerGui") or lp:WaitForChild("PlayerGui", 8)
+	end
+end
+
+local function destroyIntroNamed(name)
+	local old = CoreGui:FindFirstChild(name)
+	if old then old:Destroy() end
+	pcall(function()
+		if type(gethui) == "function" then
+			local h = gethui()
+			if h then
+				old = h:FindFirstChild(name)
+				if old then old:Destroy() end
+			end
+		end
+	end)
+	local lp = Players.LocalPlayer
+	local pg = lp and lp:FindFirstChildOfClass("PlayerGui")
+	if pg then
+		old = pg:FindFirstChild(name)
+		if old then old:Destroy() end
+	end
+end
 
 pcall(function()
 	for _, name in ipairs({ "DieverHubTheme", "VxezeHubTheme" }) do
-		local old = CoreGui:FindFirstChild(name)
-		if old then old:Destroy() end
+		destroyIntroNamed(name)
 	end
 end)
 
@@ -16,7 +55,7 @@ gui.IgnoreGuiInset = true
 gui.ResetOnSpawn = false
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.DisplayOrder = 50
-gui.Parent = CoreGui
+parentIntroGui(gui)
 
 -- Xóa blur cũ nếu có
 local oldBlur = Lighting:FindFirstChild("VxezeBlur")
@@ -89,7 +128,9 @@ local titleStroke = Instance.new("UIStroke")
 titleStroke.Color = Color3.fromRGB(20, 45, 70)
 titleStroke.Thickness = 2.8
 titleStroke.Transparency = 0.15
-titleStroke.LineJoinMode = Enum.LineJoinMode.Round
+pcall(function()
+	titleStroke.LineJoinMode = Enum.LineJoinMode.Round
+end)
 titleStroke.Parent = title
 
 -- Glow chữ
