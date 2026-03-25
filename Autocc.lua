@@ -1,4 +1,4 @@
-a-- Giống Banana_UI: tạo ScreenGui + parent CoreGui (chạy được qua executor / loadstring)
+-- Giống Banana_UI: tạo ScreenGui + parent CoreGui (chạy được qua executor / loadstring)
 local TweenService = game:GetService("TweenService")
 local Lighting = game:GetService("Lighting")
 local CoreGui = game:GetService("CoreGui")
@@ -66,7 +66,7 @@ logo.Size = UDim2.new(0, 150, 0, 150)
 logo.BackgroundTransparency = 1
 logo.ImageTransparency = 1
 logo.ScaleType = Enum.ScaleType.Fit
-logo.Image = "rbxassetid://134841272452705"
+logo.Image = "rbxassetid://70511817915018"
 logo.Parent = main
 
 -- Tên hub
