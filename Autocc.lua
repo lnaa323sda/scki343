@@ -1,15 +1,17 @@
--- Giống Banana_UI: tạo ScreenGui + parent CoreGui (chạy được qua executor / loadstring)
+a-- Giống Banana_UI: tạo ScreenGui + parent CoreGui (chạy được qua executor / loadstring)
 local TweenService = game:GetService("TweenService")
 local Lighting = game:GetService("Lighting")
 local CoreGui = game:GetService("CoreGui")
 
 pcall(function()
-	local old = CoreGui:FindFirstChild("VxezeHubTheme")
-	if old then old:Destroy() end
+	for _, name in ipairs({ "DieverHubTheme", "VxezeHubTheme" }) do
+		local old = CoreGui:FindFirstChild(name)
+		if old then old:Destroy() end
+	end
 end)
 
 local gui = Instance.new("ScreenGui")
-gui.Name = "VxezeHubTheme"
+gui.Name = "DieverHubTheme"
 gui.IgnoreGuiInset = true
 gui.ResetOnSpawn = false
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -64,7 +66,7 @@ logo.Size = UDim2.new(0, 150, 0, 150)
 logo.BackgroundTransparency = 1
 logo.ImageTransparency = 1
 logo.ScaleType = Enum.ScaleType.Fit
-logo.Image = "rbxassetid://70511817915018"
+logo.Image = "rbxassetid://134841272452705"
 logo.Parent = main
 
 -- Tên hub
@@ -74,17 +76,20 @@ title.AnchorPoint = Vector2.new(0.5, 0.5)
 title.Position = UDim2.new(0.5, 0, 0.76, 0)
 title.Size = UDim2.new(0, 340, 0, 55)
 title.BackgroundTransparency = 1
-title.Text = "Vxeze Hub"
+-- Techno Hideo (ảnh): Roblox không có font DaFont — dùng SciFi (futuristic/góc cạnh) + viền đậm kiểu Dimitri
+local hubTitle = "Diever Hub"
+title.Text = hubTitle
 title.TextColor3 = Color3.fromRGB(87, 190, 255)
 title.TextScaled = true
-title.Font = Enum.Font.GothamBold
+title.Font = Enum.Font.SciFi
 title.TextTransparency = 1
 title.Parent = main
 
 local titleStroke = Instance.new("UIStroke")
-titleStroke.Color = Color3.fromRGB(170, 230, 255)
-titleStroke.Thickness = 1.2
-titleStroke.Transparency = 0.45
+titleStroke.Color = Color3.fromRGB(20, 45, 70)
+titleStroke.Thickness = 2.8
+titleStroke.Transparency = 0.15
+titleStroke.LineJoinMode = Enum.LineJoinMode.Round
 titleStroke.Parent = title
 
 -- Glow chữ
@@ -94,10 +99,10 @@ glow.AnchorPoint = Vector2.new(0.5, 0.5)
 glow.Position = title.Position
 glow.Size = title.Size
 glow.BackgroundTransparency = 1
-glow.Text = "Vxeze Hub"
+glow.Text = hubTitle
 glow.TextColor3 = Color3.fromRGB(0, 170, 255)
 glow.TextScaled = true
-glow.Font = Enum.Font.GothamBold
+glow.Font = Enum.Font.SciFi
 glow.TextTransparency = 1
 glow.ZIndex = title.ZIndex - 1
 glow.Parent = main
