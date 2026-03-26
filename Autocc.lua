@@ -6,7 +6,7 @@ local _KAITUN_THEME_URL = "https://raw.githubusercontent.com/lnaa323sda/scki343/
 pcall(function()
 	loadstring(game:HttpGet(_KAITUN_THEME_URL))()
 end)
-task.wait(10)
+task.wait(8)
 
 -- [1] CONFIG - ตั้งค่าทั้งหมดที่นี่
 _G.Config = {
