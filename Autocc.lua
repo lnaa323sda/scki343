@@ -105,7 +105,7 @@ logo.Size = UDim2.new(0, 150, 0, 150)
 logo.BackgroundTransparency = 1
 logo.ImageTransparency = 1
 logo.ScaleType = Enum.ScaleType.Fit
-logo.Image = "rbxassetid://70511817915018"
+logo.Image = "rbxassetid://134841272452705"
 logo.Parent = main
 
 -- Tên hub
